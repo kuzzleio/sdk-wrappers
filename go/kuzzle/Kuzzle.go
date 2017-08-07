@@ -2,7 +2,6 @@ package main
 
 /*
 	typedef struct {
-		int state;
 	} kuzzle;
 
 	extern char* kuzzle_wrapper_connect();
@@ -27,7 +26,6 @@ func Kuzzle(host, protocol *C.char) C.kuzzle {
 	KuzzleInstance, _ = kuzzle.NewKuzzle(c, nil)
 
 	instance := C.kuzzle{}
-	instance.state = 42
 
 	return instance
 }
