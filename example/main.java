@@ -6,6 +6,11 @@ public class main {
             e.printStackTrace();
         }
 
-        kuzzle k = kcore.Kuzzle("localhost:7512", "websocket");
+        try {
+            kuzzle k = kcore.Kuzzle("localhost:7512", "websocketz");
+            System.out.println(k);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
