@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -fPIC -I/home/kblondel/Downloads/android-studio/jre/include/linux -I/home/kblondel/Downloads/android-studio/jre/include/
+CFLAGS = -fPIC -I/home/kblondel/Downloads/android-studio/jre/include/linux -I/home/kblondel/Downloads/android-studio/jre/include/ -I./headers
 LDFLAGS = -L./
 LIBS = -lgokcore
 SRCS = kcore_wrap.c
@@ -8,7 +8,7 @@ TARGET = libkcore.so
 
 GOCC = /usr/lib/go-1.8/bin/go
 GOFLAGS = -buildmode=c-shared
-GOSRC = ./go/kuzzle/Kuzzle.go
+GOSRC = ./go/kuzzle/*.go
 GOTARGET = libgokcore.so
 
 SWIG = swig

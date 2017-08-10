@@ -7,8 +7,10 @@ public class main {
         }
 
         try {
-            kuzzle k = kcore.Kuzzle("localhost:7512", "websocketz");
-            System.out.println(k);
+            kuzzle k = kcore.Kuzzle("localhost:7512", "websocket");
+            System.out.println(k.checkToken("test").getValid());
+            System.out.println(k.checkToken("test").getState());
+            System.out.println(k.checkToken("test").getExpiresAt());
         } catch(Exception e) {
             e.printStackTrace();
         }
