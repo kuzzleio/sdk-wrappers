@@ -6,7 +6,7 @@ SRCS = kcore_wrap.c
 OBJS = $(SRCS:.c=.o)
 TARGET = libkcore.so
 
-GOCC = /usr/lib/go-1.8/bin/go
+GOCC = /usr/local/bin/go
 GOFLAGS = -buildmode=c-shared
 GOSRC = ./go/kuzzle/*.go
 GOTARGET = libgokcore.so
@@ -35,6 +35,6 @@ java: 	core swigjava wrapper object
 clean:
 	rm -rf build *.class *.o *.h *.so *.java *.c *~ *.go
 
-.PHONY: all node php java wrapper swigjava clean
+.PHONY: all java wrapper swigjava clean object
 
 .DEFAULT_GOAL := all
