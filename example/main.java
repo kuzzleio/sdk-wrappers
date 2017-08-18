@@ -6,9 +6,13 @@ public class main {
         try {
             kuzzle k = kcore.Kuzzle("localhost:7512", "websocket");
 
+            query_options options = new query_options();
+            options.setScroll("yolo");
+
             try {
-                token_validity r = k.checkToken(null);
-                // System.out.println(r.getState());
+                ack_response r = k.createIndex("fgfdgdfg", options);
+                System.out.println(r.getAcknowledged());
+                System.out.println(r.getShardsAcknowledged());
             } catch(Exception e) {
                 e.printStackTrace();
             }

@@ -13,19 +13,38 @@
 
     %exception checkToken {
       $action
-      if (result == 0) {
+      if (result == $null) {
         jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
         (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CheckToken: token required");
         return $null;
       }
     }
-    token_validity* checkToken(char* token) {
-       token_validity res;
-       int err = kuzzle_wrapper_check_token(&res, token);
-       if (err == 0) {
-        return &res;
-       }
-       return 0;
+    static token_validity* checkToken(char* token) {
+        static token_validity res;
+        int err = kuzzle_wrapper_check_token(&res, token);
+
+        if (err == 0) {
+            return &res;
+        }
+        return (void*)0;
+    }
+
+    %exception createIndex {
+      $action
+      if (result == $null) {
+        jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
+        (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
+        return $null;
+      }
+    }
+    static ack_response* createIndex(char* index, query_options *options) {
+        static ack_response res;
+        int err = kuzzle_wrapper_create_index(&res, index, options);
+
+        if (err == 0) {
+            return &res;
+        }
+        return (void*)0;
     }
 }
 

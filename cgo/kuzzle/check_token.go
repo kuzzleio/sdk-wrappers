@@ -2,7 +2,6 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <string.h>
 	#include <kuzzle.h>
  */
 import "C"
@@ -11,7 +10,7 @@ import "unsafe"
 //export kuzzle_wrapper_check_token
 func kuzzle_wrapper_check_token(result *C.token_validity, token *C.char) C.int {
 	res, err := KuzzleInstance.CheckToken(C.GoString(token))
-	if err.Error() == "Kuzzle.CheckToken: token required" {
+	if err != nil && err.Error() == "Kuzzle.CheckToken: token required" {
 		return C.int(C.EINVAL)
 	}
 

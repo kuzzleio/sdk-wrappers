@@ -8,7 +8,7 @@ TARGET = libkcore.so
 
 GOCC = /usr/local/bin/go
 GOFLAGS = -buildmode=c-shared
-GOSRC = ./go/kuzzle/*.go
+GOSRC = ./cgo/kuzzle/
 GOTARGET = libgokcore.so
 
 SWIG = swig
