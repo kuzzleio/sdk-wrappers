@@ -40,11 +40,17 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
+typedef struct {
+    char jwt[512];
+    char error[2048];
+} login_result;
+
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
 extern char* kuzzle_wrapper_get_jwt();
 extern int kuzzle_wrapper_check_token(token_validity*, char*);
 extern int kuzzle_wrapper_create_index(ack_response*, char*, query_options*);
+extern int kuzzle_wrapper_login(login_result*, char*, json_object*, int*);
 
 #endif

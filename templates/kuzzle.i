@@ -46,6 +46,42 @@
         }
         return (void*)0;
     }
+
+    %exception createMyCredentials {
+      $action
+      if (result == $null) {
+        jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
+        (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CreateMyCredentials: strategy is required");
+        return $null;
+      }
+    }
+    static json_object* createMyCredentials(char* strategy, json_object *credentials, query_options *options) {
+        static json_object *res;
+        int err = kuzzle_wrapper_create_my_credentials(res, strategy, credentials, options);
+
+        if (err == 0) {
+            return res;
+        }
+        return (void*)0;
+    }
+
+    %exception login {
+      $action
+      if (result == $null) {
+        jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
+        (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.Login: cannot authenticate to Kuzzle without an authentication strategy");
+        return $null;
+      }
+    }
+    static login_result* login(char* strategy, json_object *credentials, int* expires_in) {
+        static login_result *res;
+        int err = kuzzle_wrapper_login(res, strategy, credentials, expires_in);
+
+        if (err == 0) {
+            return res;
+        }
+        return (void*)0;
+    }
 }
 
 %javaexception("java.lang.Exception") Kuzzle {

@@ -10,9 +10,9 @@ public class main {
             options.setScroll("yolo");
 
             try {
-                ack_response r = k.createIndex("fgfdgdfg", options);
-                System.out.println(r.getAcknowledged());
-                System.out.println(r.getShardsAcknowledged());
+
+                // System.out.println(k.login("local"));
+                // ack_response r = k.createMyCredentials("local", options);
             } catch(Exception e) {
                 e.printStackTrace();
             }
