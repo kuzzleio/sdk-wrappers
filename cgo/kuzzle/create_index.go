@@ -31,7 +31,7 @@ func kuzzle_wrapper_create_index(result *C.ack_response, index *C.char, options 
 		opts.SetRetryOnConflict(int(options.retryOnConflict))
 
 		out, _ := json.Marshal(opts.GetVolatile())
-		var vols map[string]interface{}
+		vols := make(map[string]interface{})
 		json.Unmarshal(out, &vols)
 		opts.SetVolatile(vols)
 	}

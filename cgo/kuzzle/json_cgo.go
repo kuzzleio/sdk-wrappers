@@ -49,17 +49,46 @@ func (parser *JsonParser) parse_cjson(jobj *C.json_object, content map[string]in
 	for entry, entry_next := C.json_object_get_object(jobj).head, C.json_object_get_object(jobj).head; entry != nil; entry = entry_next {
 		entry_next = entry.next
 
-		jtype := C.json_object_get_type((*C.json_object)(entry.v))
+		key := (*C.char)(entry.k)
+		value := (*C.json_object)(entry.v)
+
+		jtype := C.json_object_get_type(value)
 
 		switch jtype {
 		case C.json_type_boolean, C.json_type_double, C.json_type_int, C.json_type_string:
-			parser.get_json_value(C.GoString((*C.char)(entry.k)), (*C.json_object)(entry.v), content)
+			parser.get_json_value(C.GoString(key), value, content)
 			break
 		case C.json_type_object:
-			C.json_object_object_get_ex(jobj, (*C.char)(entry.k), &jobj)
-			content[C.GoString((*C.char)(entry.k))] = make(map[string]interface{})
-			parser.parse_cjson(jobj, content[C.GoString((*C.char)(entry.k))].(map[string]interface{}))
+			C.json_object_object_get_ex(jobj, key, &jobj)
+			content[C.GoString(key)] = make(map[string]interface{})
+			parser.parse_cjson(jobj, content[C.GoString(key)].(map[string]interface{}))
 			break
+		case C.json_type_array:
+
+			break
+		}
+	}
+}
+
+func (parser *JsonParser) parseArray(jobj *C.json_object, key *C.char, content map[string]interface{}) {
+	jarray := jobj
+
+	if key != nil {
+		C.json_object_object_get_ex(jobj, key, &jarray)
+	}
+
+	arraylen := C.json_object_array_length(jarray)
+	var jvalue *C.json_object
+
+	for i := 0; i < int(arraylen); i++ {
+		jvalue = C.json_object_array_get_idx(jarray, C.int(i))
+		jtype := C.json_object_get_type(jvalue)
+		if jtype == C.json_type_array {
+			parser.parseArray(jvalue, nil, content)
+		} else if jtype != C.json_type_object {
+			parser.get_json_value(C.GoString(key), jvalue, content)
+		} else {
+			parser.parse_cjson(jvalue, content)
 		}
 	}
 }
