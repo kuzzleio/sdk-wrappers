@@ -9,6 +9,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
+	"fmt"
 )
 
 //export kuzzle_wrapper_create_index
@@ -30,9 +31,21 @@ func kuzzle_wrapper_create_index(result *C.ack_response, index *C.char, options 
 		opts.SetIfExist(C.GoString(&options.ifExist[0]))
 		opts.SetRetryOnConflict(int(options.retryOnConflict))
 
+		var jobj *C.json_object = C.json_tokener_parse(C.CString("{\"foo\":\"bar\", \"az\":[\"one\",\"two\"]}"))
+		jp := JsonParser{}
+		jp.Parse(jobj)
+
+		fmt.Printf("%s\n", jp.GetContent())
+
+		opts.SetVolatile(jp.GetContent())
+
 		out, _ := json.Marshal(opts.GetVolatile())
 		vols := make(map[string]interface{})
-		json.Unmarshal(out, &vols)
+		err := json.Unmarshal(out, &vols)
+		if err != nil {
+			println(err.Error())
+		}
+		fmt.Printf("%s\n", out)
 		opts.SetVolatile(vols)
 	}
 
