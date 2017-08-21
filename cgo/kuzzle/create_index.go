@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"fmt"
 	"encoding/json"
 )
 
@@ -30,23 +29,12 @@ func kuzzle_wrapper_create_index(result *C.ack_response, index *C.char, options 
 		opts.SetRefresh(C.GoString(&options.refresh[0]))
 		opts.SetIfExist(C.GoString(&options.ifExist[0]))
 		opts.SetRetryOnConflict(int(options.retryOnConflict))
+
+		out, _ := json.Marshal(opts.GetVolatile())
+		var vols map[string]interface{}
+		json.Unmarshal(out, &vols)
+		opts.SetVolatile(vols)
 	}
-
-	var jobj *C.json_object = C.json_tokener_parse(C.CString("{\"foo\":\"bar\", \"az\":{\"second\": \"yihi\"}}"))
-	jp := JsonParser{}
-	jp.Parse(jobj)
-
-	type ss struct{second string `json:"second"`}
-	s := struct{foo string `json:"foo"`; az ss `json:"az"`}{"bar", ss{"yihi"}}
-
-	fmt.Printf("%v\n", jp.GetContent())
-	j, _ := json.Marshal(jp.GetContent())
-	fmt.Printf("%s", j)
-
-	json.Unmarshal(j, &s)
-	fmt.Printf("%v\n", s.az.second)
-
-	//C.json_parse(jobj)
 
 	res, err := KuzzleInstance.CreateIndex(C.GoString(index), opts)
 	if err != nil && err.Error() == "Collection.createIndex: index required" {

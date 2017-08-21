@@ -37,6 +37,7 @@ typedef struct {
     char refresh[32];
     char ifExist[32];
     int retryOnConflict;
+    json_object *volatiles;
 } query_options;
 
 extern kuzzle* Kuzzle(char*, char*);
