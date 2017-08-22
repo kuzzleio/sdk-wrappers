@@ -59,5 +59,6 @@ extern int kuzzle_wrapper_check_token(token_validity*, char*);
 extern int kuzzle_wrapper_create_index(ack_response*, char*, query_options*);
 extern int kuzzle_wrapper_login(login_result*, char*, json_object*, int*);
 extern int kuzzle_wrapper_create_my_credentials(json_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_disconnect();
 
 #endif
