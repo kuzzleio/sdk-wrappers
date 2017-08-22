@@ -55,8 +55,8 @@
         return $null;
       }
     }
-    static json_object* createMyCredentials(char* strategy, json_object *credentials, query_options *options) {
-        static json_object *res;
+    static json_result* createMyCredentials(char* strategy, json_object *credentials, query_options *options) {
+        static json_result *res;
         int err = kuzzle_wrapper_create_my_credentials(res, strategy, credentials, options);
 
         if (err == 0) {

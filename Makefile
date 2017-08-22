@@ -17,7 +17,7 @@ SWIGTEMPLATE = kcore.i
 all: java
 
 kcore_wrap.o: kcore_wrap.c
-	$(CC) -c $< -o $@ $(CFLAGS) $(LDFLAGS) $(LIBS)
+	$(CC) -ggdb -c $< -o $@ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 core:
 	$(GOCC) build -o $(GOTARGET) $(GOFLAGS) $(GOSRC)
@@ -25,7 +25,7 @@ core:
 wrapper: $(OBJS)
 
 object:
-	gcc -shared kcore_wrap.o -o libkcore.so $(LDFLAGS) $(LIBS)
+	gcc -ggdb -shared kcore_wrap.o -o libkcore.so $(LDFLAGS) $(LIBS)
 
 swigjava:
 	$(SWIG) -java $(SWIGTEMPLATE)
