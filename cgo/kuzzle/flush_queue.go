@@ -7,6 +7,6 @@ package main
 import "C"
 
 //export kuzzle_wrapper_disconnect
-func kuzzle_wrapper_disconnect() {
-	KuzzleInstance.Disconnect()
+func kuzzle_wrapper_flush_queue() {
+	KuzzleInstance.FlushQueue()
 }
