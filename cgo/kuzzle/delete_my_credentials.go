@@ -3,6 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
+	#include <json/json.h>
 	#include <kuzzle.h>
 */
 import "C"
@@ -11,16 +12,16 @@ import (
 	"unsafe"
 )
 
-//export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(result *C.ack_response, index *C.char, options *C.query_options) C.int {
+//export kuzzle_wrapper_delete_my_credentials
+func kuzzle_wrapper_delete_my_credentials(result *C.ack_response, strategy *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.CreateIndex(C.GoString(index), opts)
+	res, err := KuzzleInstance.DeleteMyCredentials(C.GoString(strategy), opts)
 	if err != nil {
-		if err.Error() == "Collection.createIndex: index required" {
+		if err.Error() == "Kuzzle.DeleteMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
 		} else {
 			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))

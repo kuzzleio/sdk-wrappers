@@ -26,6 +26,7 @@ typedef struct {
 typedef struct {
     unsigned acknowledged;
     unsigned shardsAcknowledged;
+    char error[2048];
 } ack_response;
 
 typedef struct {
