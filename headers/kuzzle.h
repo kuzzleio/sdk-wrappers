@@ -9,8 +9,8 @@ typedef struct {
 
 typedef struct {
     char   *query;
-    char   *timestamp;
-    char   *requestId;
+    char   timestamp[11];
+    char   requestId[36];
 } query_object;
 
 typedef struct {
