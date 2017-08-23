@@ -57,6 +57,11 @@ typedef struct {
     char error[2048];
 } json_result;
 
+typedef struct {
+    unsigned result;
+    char error[2048];
+} bool_result;
+
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
@@ -68,5 +73,6 @@ extern int kuzzle_wrapper_create_my_credentials(json_result*, char*, json_object
 extern void kuzzle_wrapper_disconnect();
 extern void kuzzle_wrapper_flush_queue();
 extern int kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
+extern int kuzzle_wrapper_get_auto_refresh(bool_result*, char*, query_options*);
 
 #endif
