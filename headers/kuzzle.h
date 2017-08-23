@@ -78,5 +78,6 @@ extern void kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
 extern int kuzzle_wrapper_get_auto_refresh(bool_result*, char*, query_options*);
 extern int kuzzle_wrapper_get_my_credentials(json_result*, char*, query_options*);
 extern void kuzzle_wrapper_get_my_rights(json_result*, query_options*);
+extern void kuzzle_wrapper_get_server_info(json_result*, query_options*);
 
 #endif
