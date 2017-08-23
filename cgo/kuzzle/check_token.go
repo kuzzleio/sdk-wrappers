@@ -10,8 +10,13 @@ import "unsafe"
 //export kuzzle_wrapper_check_token
 func kuzzle_wrapper_check_token(result *C.token_validity, token *C.char) C.int {
 	res, err := KuzzleInstance.CheckToken(C.GoString(token))
-	if err != nil && err.Error() == "Kuzzle.CheckToken: token required" {
-		return C.int(C.EINVAL)
+	if err != nil {
+		if err.Error() == "Kuzzle.CheckToken: token required" {
+			return C.int(C.EINVAL)
+		} else {
+			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			return 0
+		}
 	}
 
 	var valid C.uint

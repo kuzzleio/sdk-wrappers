@@ -23,6 +23,7 @@ func kuzzle_wrapper_get_auto_refresh(result *C.bool_result, index *C.char, optio
 			return C.int(C.EINVAL)
 		} else {
 			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			return 0
 		}
 	}
 
