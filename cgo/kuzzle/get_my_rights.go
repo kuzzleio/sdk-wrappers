@@ -9,18 +9,18 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"encoding/json"
 	"unsafe"
+	"encoding/json"
 )
 
-//export kuzzle_wrapper_get_all_statistics
-func kuzzle_wrapper_get_all_statistics(result *C.json_result, options *C.query_options) {
+//export kuzzle_wrapper_get_my_rights
+func kuzzle_wrapper_get_my_rights(result *C.json_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.GetAllStatistics(opts)
+	res, err := KuzzleInstance.GetMyRights(opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 		return

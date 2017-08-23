@@ -58,6 +58,7 @@ typedef struct {
     char error[2048];
 } json_result;
 
+//used for any boolean result
 typedef struct {
     unsigned result;
     char error[2048];
@@ -73,8 +74,9 @@ extern int kuzzle_wrapper_login(login_result*, char*, json_object*, int*);
 extern int kuzzle_wrapper_create_my_credentials(json_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect();
 extern void kuzzle_wrapper_flush_queue();
-extern int kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
+extern void kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
 extern int kuzzle_wrapper_get_auto_refresh(bool_result*, char*, query_options*);
 extern int kuzzle_wrapper_get_my_credentials(json_result*, char*, query_options*);
+extern void kuzzle_wrapper_get_my_rights(json_result*, query_options*);
 
 #endif
