@@ -7,6 +7,7 @@
 typedef struct {
 } kuzzle;
 
+//query object used by query()
 typedef struct {
     char   *query;
     char   timestamp[11];
@@ -17,18 +18,21 @@ typedef struct {
     query_object** query;
 } offline_queue;
 
+//response of check_token()
 typedef struct {
     unsigned valid;
     char state[512];
     int expiresAt;
 } token_validity;
 
+//response for any delete* function
 typedef struct {
     unsigned acknowledged;
     unsigned shardsAcknowledged;
     char error[2048];
 } ack_response;
 
+//options passed to query()
 typedef struct {
     unsigned queuable;
     int from;
@@ -41,11 +45,13 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
+//result of login()
 typedef struct {
     char jwt[512];
     char error[2048];
 } login_result;
 
+//any json result
 typedef struct {
     json_object *result;
     char error[2048];
@@ -61,5 +67,6 @@ extern int kuzzle_wrapper_login(login_result*, char*, json_object*, int*);
 extern int kuzzle_wrapper_create_my_credentials(json_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect();
 extern void kuzzle_wrapper_flush_queue();
+extern int kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
 
 #endif

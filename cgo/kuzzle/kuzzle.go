@@ -56,8 +56,8 @@ func kuzzle_wrapper_get_offline_queue() *C.offline_queue {
 		struct_qo := C.query_object{}
 
 		struct_qo.query = C.CString(string(qo.Query))
-		struct_qo.requestId = C.CString(qo.RequestId)
-		struct_qo.timestamp = C.CString(qo.Timestamp.String())
+		struct_qo.requestId = *(*[36]C.char)(unsafe.Pointer(C.CString(qo.RequestId)))
+		struct_qo.timestamp = *(*[11]C.char)(unsafe.Pointer(C.CString(qo.Timestamp.String())))
 
 		C.memcpy(unsafePointer, unsafe.Pointer(&struct_qo), C.size_t(unsafe.Sizeof(struct_qo)))
 		arr = append(arr, struct_qo)
