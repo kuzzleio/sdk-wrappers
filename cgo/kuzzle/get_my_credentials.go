@@ -3,7 +3,6 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <json/json.h>
 	#include <kuzzle.h>
 */
 import "C"
