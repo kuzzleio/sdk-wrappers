@@ -86,6 +86,13 @@ typedef struct {
     char error[2048];
 } string_array_result;
 
+typedef struct {
+    int total;
+    int successful;
+    int failed;
+    char error[2048];
+} shards;
+
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
@@ -106,5 +113,6 @@ extern int kuzzle_wrapper_list_collections(json_result*, char*, query_options*);
 extern void kuzzle_wrapper_list_indexes(string_array_result*, query_options*);
 extern char* kuzzle_wrapper_logout();
 extern void kuzzle_wrapper_now(now_result*, query_options*);
+extern void kuzzle_wrapper_refresh_index(shards*, char*, query_options*);
 
 #endif
