@@ -65,6 +65,7 @@ typedef struct {
     char error[2048];
 } bool_result;
 
+//used for get_statistics
 typedef struct {
     json_object* completed_requests;
     json_object* connections;
@@ -73,6 +74,12 @@ typedef struct {
     double timestamp;
     char error[2048];
 } statistics;
+
+//used for string array result
+typedef struct {
+    char **result;
+    char error[2048];
+} string_array_result;
 
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
@@ -91,5 +98,6 @@ extern void kuzzle_wrapper_get_my_rights(json_result*, query_options*);
 extern void kuzzle_wrapper_get_server_info(json_result*, query_options*);
 extern void kuzzle_wrapper_get_statistics(statistics*, time_t, query_options*);
 extern int kuzzle_wrapper_list_collections(json_result*, char*, query_options*);
+extern void kuzzle_wrapper_list_indexes(string_array_result*, query_options*);
 
 #endif

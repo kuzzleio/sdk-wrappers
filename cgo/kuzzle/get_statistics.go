@@ -31,5 +31,13 @@ func kuzzle_wrapper_get_statistics(result *C.statistics, timestamp C.time_t, opt
 	}
 
 	ongoing, _ := json.Marshal(res.OngoingRequests)
+	completed_requests, _ := json.Marshal(res.CompletedRequests)
+	connections, _ := json.Marshal(res.Connections)
+	failed_requests, _ := json.Marshal(res.FailedRequests)
+
 	result.ongoing_requests = C.json_tokener_parse(C.CString(string(ongoing)))
+	result.completed_requests = C.json_tokener_parse(C.CString(string(completed_requests)))
+	result.completed_requests = C.json_tokener_parse(C.CString(string(connections)))
+	result.completed_requests = C.json_tokener_parse(C.CString(string(failed_requests)))
+	result.timestamp = C.double(res.Timestamp)
 }
