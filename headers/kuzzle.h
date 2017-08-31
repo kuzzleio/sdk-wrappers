@@ -115,6 +115,6 @@ extern char* kuzzle_wrapper_logout();
 extern void kuzzle_wrapper_now(now_result*, query_options*);
 extern void kuzzle_wrapper_refresh_index(shards*, char*, query_options*);
 extern int kuzzle_wrapper_set_auto_refresh(bool_result*, char*, unsigned, query_options*);
-extern void kuzzle_wrapper_set_default_index();
+extern int kuzzle_wrapper_set_default_index(char*);
 
 #endif
