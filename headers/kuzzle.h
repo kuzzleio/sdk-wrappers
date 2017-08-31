@@ -99,5 +99,6 @@ extern void kuzzle_wrapper_get_server_info(json_result*, query_options*);
 extern void kuzzle_wrapper_get_statistics(statistics*, time_t, query_options*);
 extern int kuzzle_wrapper_list_collections(json_result*, char*, query_options*);
 extern void kuzzle_wrapper_list_indexes(string_array_result*, query_options*);
+extern char* kuzzme_wrapper_logout();
 
 #endif
