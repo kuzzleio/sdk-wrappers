@@ -8,7 +8,7 @@ package main
 import "C"
 
 //export kuzzle_wrapper_set_default_index
-func kuzzle_wrapper_set_default_index(index *C.char) int {
+func kuzzle_wrapper_set_default_index(index *C.char) C.int {
 	err := KuzzleInstance.SetDefaultIndex(C.GoString(index))
 	if err != nil {
 		return C.int(C.EINVAL)
