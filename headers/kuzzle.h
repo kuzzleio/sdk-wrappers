@@ -2,8 +2,8 @@
 #define _KUZZLE_H_
 
 #include <json/json.h>
-#include <errno.h>
 #include <time.h>
+#include <errno.h>
 
 typedef struct {
 } kuzzle;
@@ -65,6 +65,11 @@ typedef struct {
     char error[2048];
 } bool_result;
 
+typedef struct {
+    double result;
+    char error[2048];
+} now_result;
+
 //used for get_statistics
 typedef struct {
     json_object* completed_requests;
@@ -99,6 +104,7 @@ extern void kuzzle_wrapper_get_server_info(json_result*, query_options*);
 extern void kuzzle_wrapper_get_statistics(statistics*, time_t, query_options*);
 extern int kuzzle_wrapper_list_collections(json_result*, char*, query_options*);
 extern void kuzzle_wrapper_list_indexes(string_array_result*, query_options*);
-extern char* kuzzme_wrapper_logout();
+extern char* kuzzle_wrapper_logout();
+extern void kuzzle_wrapper_now(now_result*, query_options*);
 
 #endif

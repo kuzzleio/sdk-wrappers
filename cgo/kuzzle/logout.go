@@ -6,7 +6,6 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
-import "unsafe"
 
 //export kuzzle_wrapper_logout
 func kuzzle_wrapper_logout() *C.char {
