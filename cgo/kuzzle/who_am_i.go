@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"unsafe"
-	"fmt"
 )
 
 //export kuzzle_wrapper_who_am_i
