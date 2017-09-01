@@ -117,5 +117,6 @@ extern void kuzzle_wrapper_refresh_index(shards*, char*, query_options*);
 extern int kuzzle_wrapper_set_auto_refresh(bool_result*, char*, unsigned, query_options*);
 extern int kuzzle_wrapper_set_default_index(char*);
 extern void kuzzle_wrapper_unset_jwt();
+extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options*);
 
 #endif
