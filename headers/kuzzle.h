@@ -118,5 +118,6 @@ extern int kuzzle_wrapper_set_auto_refresh(bool_result*, char*, unsigned, query_
 extern int kuzzle_wrapper_set_default_index(char*);
 extern void kuzzle_wrapper_unset_jwt();
 extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options*);
+extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
 
 #endif
