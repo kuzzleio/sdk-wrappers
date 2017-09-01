@@ -65,6 +65,7 @@ typedef struct {
     char error[2048];
 } bool_result;
 
+//used for now result
 typedef struct {
     double result;
     char error[2048];
@@ -86,12 +87,32 @@ typedef struct {
     char error[2048];
 } string_array_result;
 
+//used for refresh_index
 typedef struct {
     int total;
     int successful;
     int failed;
     char error[2048];
 } shards;
+
+//meta of a document
+typedef struct {
+    char author[512];
+    int created_at;
+    int updated_at;
+    char updater[512];
+    unsigned active;
+    int deleted_at;
+} kuzzle_meta;
+
+//kuzzle user
+typedef struct {
+    char id[512];
+    json_object* source;
+    kuzzle_meta* meta;
+    char **strategies;
+    char error[2048];
+} user;
 
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
@@ -119,5 +140,6 @@ extern int kuzzle_wrapper_set_default_index(char*);
 extern void kuzzle_wrapper_unset_jwt();
 extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options*);
 extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_who_am_i(user*);
 
 #endif
