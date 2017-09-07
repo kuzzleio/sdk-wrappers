@@ -8,6 +8,53 @@
 typedef struct {
 } kuzzle;
 
+//define a request
+typedef struct {
+    char request_id[36];
+    char controller[128];
+    char action[128];
+    char index[128];
+    char collection[128];
+    json_object *body;
+    char id[128];
+    int from;
+    int size;
+    char scroll[32];
+    char scroll_id[128];
+    char strategy[128];
+    int expires_in;
+    json_object* volatiles;
+    char scope[512];
+    char state[512];
+    char user[512];
+    int start;
+    int stop;
+    int end;
+    int bit;
+    char member[512];
+    char member1[512];
+    char member2[512];
+    char **members;
+    float lon;
+    float lat;
+    float distance;
+    char unit[128];
+    json_object* options;
+    char **keys;
+    int cursor;
+    int offset;
+    char field[512];
+    char **fields;
+    char subcommand[1024];
+    char pattern[1024];
+    int idx;
+    char min[512];
+    char max[512];
+    char limit[512];
+    int count;
+    char match[512];
+} kuzzle_request;
+
 //query object used by query()
 typedef struct {
     char   *query;
@@ -114,6 +161,14 @@ typedef struct {
     char error[2048];
 } user;
 
+typedef struct {
+    char request_id[36];
+    json_object* result;
+    char room_id[36];
+    char channel[128];
+    char error[2048];
+} kuzzle_response;
+
 extern kuzzle* Kuzzle(char*, char*);
 extern char* kuzzle_wrapper_connect();
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
@@ -141,5 +196,6 @@ extern void kuzzle_wrapper_unset_jwt();
 extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options*);
 extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_who_am_i(user*);
+extern void kuzzle_wrapper_query(kuzzle_response*, kuzzle_request*, query_options*);
 
 #endif
