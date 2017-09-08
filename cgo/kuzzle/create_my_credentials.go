@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_create_my_credentials(result *C.json_result, strategy *C.char, credentials *C.json_object, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	jp := JsonParser{}

@@ -14,7 +14,7 @@ import (
 func kuzzle_wrapper_now(res *C.now_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	time, err := KuzzleInstance.Now(opts)

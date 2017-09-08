@@ -5,6 +5,20 @@
 #include <time.h>
 #include <errno.h>
 
+enum {
+    CONNECTED,
+    DISCARDED,
+    DISCONNECTED,
+    LOGIN_ATTEMPT,
+    NETWORK_ERROR,
+    OFFLINE_QUEUE_POP,
+    OFFLINE_QUEUE_PUSH,
+    QUERY_ERROR,
+    RECONNECTED,
+    JWT_EXPIRED,
+    ERROR
+} event;
+
 typedef struct {
 } kuzzle;
 
@@ -94,6 +108,25 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
+//enum used for options.connect
+enum {AUTO, MANUAL} connect_mode;
+//options passed to the Kuzzle() fct
+typedef struct {
+    double queue_ttl;
+    int queue_max_size;
+    int offline_mode;
+    unsigned auto_queue;
+    unsigned auto_reconnect;
+    unsigned auto_replay;
+    unsigned auto_resubscribe;
+    double reconnection_delay;
+    double replay_interval;
+    int connect;
+    char refresh[64];
+    char default_index[128];
+    json_object    *headers;
+} options;
+
 //result of login()
 typedef struct {
     char jwt[512];
@@ -169,7 +202,7 @@ typedef struct {
     char error[2048];
 } kuzzle_response;
 
-extern kuzzle* Kuzzle(char*, char*);
+extern kuzzle* Kuzzle(char*, char*, options*);
 extern char* kuzzle_wrapper_connect();
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
 extern char* kuzzle_wrapper_get_jwt();
@@ -197,5 +230,6 @@ extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options
 extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_who_am_i(user*);
 extern void kuzzle_wrapper_query(kuzzle_response*, kuzzle_request*, query_options*);
+extern void kuzzle_wrapper_add_listener(int, void*);
 
 #endif

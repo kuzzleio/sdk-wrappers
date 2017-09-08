@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_get_all_statistics(result *C.json_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := KuzzleInstance.GetAllStatistics(opts)

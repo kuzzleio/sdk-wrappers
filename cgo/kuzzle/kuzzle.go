@@ -18,16 +18,21 @@ import (
 var KuzzleInstance *kuzzle.Kuzzle
 
 //export Kuzzle
-func Kuzzle(host, protocol *C.char) *C.kuzzle {
+func Kuzzle(host, protocol *C.char, options *C.options) *C.kuzzle {
 	var c connection.Connection
 
+	var opts types.Options
+	if options != nil {
+		opts = SetOptions(options)
+	}
+
 	if C.GoString(protocol) == "websocket" {
-		c = websocket.NewWebSocket(C.GoString(host), nil)
+		c = websocket.NewWebSocket(C.GoString(host), opts)
 	} else {
 		return nil
 	}
 
-	KuzzleInstance, _ = kuzzle.NewKuzzle(c, nil)
+	KuzzleInstance, _ = kuzzle.NewKuzzle(c, opts)
 
 	return &C.kuzzle{}
 }

@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_list_collections(result *C.json_result, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := KuzzleInstance.ListCollections(C.GoString(index), opts)
