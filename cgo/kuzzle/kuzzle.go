@@ -12,7 +12,6 @@ import (
 	"github.com/kuzzleio/sdk-go/connection"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
-	"fmt"
 )
 
 var KuzzleInstance *kuzzle.Kuzzle
@@ -67,8 +66,6 @@ func kuzzle_wrapper_get_offline_queue() *C.offline_queue {
 		C.memcpy(unsafePointer, unsafe.Pointer(&struct_qo), C.size_t(unsafe.Sizeof(struct_qo)))
 		arr = append(arr, struct_qo)
 	}
-
-	fmt.Printf("%s\n", (*unsafe.Pointer)(unsafe.Pointer((*C.query_object)(unsafePointer))))
 
 	oq := C.offline_queue{}
 	oq.query = (**C.query_object)(unsafePointer)
