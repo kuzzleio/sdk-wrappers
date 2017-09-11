@@ -197,5 +197,7 @@ extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options
 extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_who_am_i(user*);
 extern void kuzzle_wrapper_query(kuzzle_response*, kuzzle_request*, query_options*);
+extern void kuzzle_wrapper_set_headers(json_object*, unsigned);
+extern json_object* kuzzle_wrapper_get_headers();
 
 #endif
