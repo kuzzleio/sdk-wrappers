@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_create_index(result *C.ack_response, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := KuzzleInstance.CreateIndex(C.GoString(index), opts)

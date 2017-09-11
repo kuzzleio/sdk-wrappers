@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_list_indexes(result *C.string_array_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := KuzzleInstance.ListIndexes(opts)

@@ -15,14 +15,12 @@ import (
 func kuzzle_wrapper_set_auto_refresh(result *C.bool_result, index *C.char, auto_refresh C.uint, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	var autoRefresh bool
 	if auto_refresh == 1 {
 		autoRefresh = true
-	} else {
-		autoRefresh = false
 	}
 
 	res, err := KuzzleInstance.SetAutoRefresh(C.GoString(index), autoRefresh, opts)

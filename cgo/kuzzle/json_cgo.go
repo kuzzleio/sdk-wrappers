@@ -93,7 +93,12 @@ func (parser *JsonParser) parse_cjson(jobj *C.json_object, content map[string]in
 		return
 	}
 
-	for entry, entry_next := C.json_object_get_object(jobj).head, C.json_object_get_object(jobj).head; entry != nil; entry = entry_next {
+	obj := C.json_object_get_object(jobj)
+	if obj == nil {
+		return
+	}
+
+	for entry, entry_next := obj.head, obj.head; entry != nil; entry = entry_next {
 		entry_next = entry.next
 
 		key := (*C.char)(entry.k)

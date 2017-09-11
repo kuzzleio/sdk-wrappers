@@ -14,7 +14,7 @@ import (
 func kuzzle_wrapper_get_auto_refresh(result *C.bool_result, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := KuzzleInstance.GetAutoRefresh(C.GoString(index), opts)
