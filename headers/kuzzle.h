@@ -232,5 +232,6 @@ extern void kuzzle_wrapper_who_am_i(user*);
 extern void kuzzle_wrapper_query(kuzzle_response*, kuzzle_request*, query_options*);
 extern void kuzzle_wrapper_add_listener(int, void*);
 extern void kuzzle_wrapper_remove_all_listeners(int);
+extern void kuzzle_wrapper_remove_listener(int);
 
 #endif
