@@ -201,5 +201,7 @@ extern void kuzzle_wrapper_query(kuzzle*, kuzzle_response*, kuzzle_request*, que
 extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
 extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
 extern void kuzzle_wrapper_set_jwt(kuzzle*, char*);
+extern void kuzzle_wrapper_start_queuing(kuzzle*);
+extern void kuzzle_wrapper_stop_queuing(kuzzle*);
 
 #endif
