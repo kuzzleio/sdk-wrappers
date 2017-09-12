@@ -10,10 +10,11 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_update_self
-func kuzzle_wrapper_update_self(result *C.json_result, credentials *C.json_object, options *C.query_options) {
+func kuzzle_wrapper_update_self(k *C.kuzzle, result *C.json_result, credentials *C.json_object, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,7 +23,7 @@ func kuzzle_wrapper_update_self(result *C.json_result, credentials *C.json_objec
 	jp := JsonParser{}
 	jp.Parse(credentials)
 
-	res, err := KuzzleInstance.UpdateSelf(jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(jp.GetContent(), opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 	}

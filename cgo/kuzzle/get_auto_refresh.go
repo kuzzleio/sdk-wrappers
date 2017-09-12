@@ -8,16 +8,17 @@ import "C"
 import (
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_get_auto_refresh
-func kuzzle_wrapper_get_auto_refresh(result *C.bool_result, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_get_auto_refresh(k *C.kuzzle, result *C.bool_result, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := KuzzleInstance.GetAutoRefresh(C.GoString(index), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).GetAutoRefresh(C.GoString(index), opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.CheckToken: token required" {
 			return C.int(C.EINVAL)

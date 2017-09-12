@@ -9,10 +9,11 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_set_auto_refresh
-func kuzzle_wrapper_set_auto_refresh(result *C.bool_result, index *C.char, auto_refresh C.uint, options *C.query_options) C.int {
+func kuzzle_wrapper_set_auto_refresh(k *C.kuzzle, result *C.bool_result, index *C.char, auto_refresh C.uint, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -23,7 +24,7 @@ func kuzzle_wrapper_set_auto_refresh(result *C.bool_result, index *C.char, auto_
 		autoRefresh = true
 	}
 
-	res, err := KuzzleInstance.SetAutoRefresh(C.GoString(index), autoRefresh, opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).SetAutoRefresh(C.GoString(index), autoRefresh, opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.SetAutoRefresh: index required" {
 			return C.int(C.EINVAL)

@@ -8,38 +8,28 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/connection/websocket"
-	"github.com/kuzzleio/sdk-go/connection"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
 	"fmt"
+	"github.com/kuzzleio/sdk-go/connection"
+	"github.com/kuzzleio/sdk-go/connection/websocket"
 )
 
-var KuzzleInstance *kuzzle.Kuzzle
-
 //export Kuzzle
-func Kuzzle(host, protocol *C.char, options *C.options) *C.kuzzle {
+func Kuzzle(k *C.kuzzle, host, protocol *C.char) {
 	var c connection.Connection
 
-	var opts types.Options
-	if options != nil {
-		opts = SetOptions(options)
-	}
-
 	if C.GoString(protocol) == "websocket" {
-		c = websocket.NewWebSocket(C.GoString(host), opts)
-	} else {
-		return nil
+		c = websocket.NewWebSocket(C.GoString(host), nil)
 	}
 
-	KuzzleInstance, _ = kuzzle.NewKuzzle(c, opts)
-
-	return &C.kuzzle{}
+	instance, _ := kuzzle.NewKuzzle(c, nil)
+	k.instance = unsafe.Pointer(instance)
 }
 
 //export kuzzle_wrapper_connect
-func kuzzle_wrapper_connect() *C.char {
-	err := KuzzleInstance.Connect()
+func kuzzle_wrapper_connect(k *C.kuzzle) *C.char {
+	err := (*kuzzle.Kuzzle)(k.instance).Connect()
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -76,8 +66,8 @@ func kuzzle_wrapper_get_offline_queue() *C.offline_queue {
 }
 
 //export kuzzle_wrapper_get_jwt
-func kuzzle_wrapper_get_jwt() *C.char {
-	return C.CString(KuzzleInstance.GetJwt())
+func kuzzle_wrapper_get_jwt(k *C.kuzzle) *C.char {
+	return C.CString((*kuzzle.Kuzzle)(k.instance).GetJwt())
 }
 
 func main() {
