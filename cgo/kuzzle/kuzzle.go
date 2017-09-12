@@ -16,14 +16,19 @@ import (
 )
 
 //export Kuzzle
-func Kuzzle(k *C.kuzzle, host, protocol *C.char) {
+func Kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.options) {
 	var c connection.Connection
 
-	if C.GoString(protocol) == "websocket" {
-		c = websocket.NewWebSocket(C.GoString(host), nil)
+	var opts types.Options
+	if options != nil {
+		opts = SetOptions(options)
 	}
 
-	instance, _ := kuzzle.NewKuzzle(c, nil)
+	if C.GoString(protocol) == "websocket" {
+		c = websocket.NewWebSocket(C.GoString(host), opts)
+	}
+
+	instance, _ := kuzzle.NewKuzzle(c, opts)
 	k.instance = unsafe.Pointer(instance)
 }
 
