@@ -5,8 +5,11 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
+import (
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_disconnect
-func kuzzle_wrapper_disconnect() {
-	KuzzleInstance.Disconnect()
+func kuzzle_wrapper_disconnect(k *C.kuzzle) {
+	(*kuzzle.Kuzzle)(k.instance).Disconnect()
 }

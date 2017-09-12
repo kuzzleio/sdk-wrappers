@@ -6,10 +6,13 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_login
-func kuzzle_wrapper_login(result *C.login_result, strategy *C.char, credentials *C.json_object, expires_in *C.int) C.int {
+func kuzzle_wrapper_login(k *C.kuzzle, result *C.login_result, strategy *C.char, credentials *C.json_object, expires_in *C.int) C.int {
 	jp := JsonParser{}
 	jp.Parse(credentials)
 
@@ -17,7 +20,7 @@ func kuzzle_wrapper_login(result *C.login_result, strategy *C.char, credentials 
 	if expires_in != nil {
 		expire = int(*expires_in)
 	}
-	res, err := KuzzleInstance.Login(C.GoString(strategy), jp.GetContent(), &expire)
+	res, err := (*kuzzle.Kuzzle)(k.instance).Login(C.GoString(strategy), jp.GetContent(), &expire)
 	if err != nil {
 		if err.Error() == "Kuzzle.Login: cannot authenticate to Kuzzle without an authentication strategy" {
 			return C.int(C.EINVAL)

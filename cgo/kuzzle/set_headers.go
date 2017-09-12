@@ -5,9 +5,12 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
+import (
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_set_headers
-func kuzzle_wrapper_set_headers(content *C.json_object, replace C.uint) {
+func kuzzle_wrapper_set_headers(k *C.kuzzle, content *C.json_object, replace C.uint) {
 	jp := JsonParser{}
 	jp.Parse(content)
 
@@ -15,5 +18,5 @@ func kuzzle_wrapper_set_headers(content *C.json_object, replace C.uint) {
 	if replace == 1 {
 		r = true
 	}
-	KuzzleInstance.SetHeaders(jp.GetContent(), r)
+	(*kuzzle.Kuzzle)(k.instance).SetHeaders(jp.GetContent(), r)
 }

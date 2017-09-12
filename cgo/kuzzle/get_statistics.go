@@ -12,10 +12,11 @@ import (
 	"unsafe"
 	"time"
 	"strconv"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_get_statistics
-func kuzzle_wrapper_get_statistics(result *C.statistics, timestamp C.time_t, options *C.query_options) {
+func kuzzle_wrapper_get_statistics(k *C.kuzzle, result *C.statistics, timestamp C.time_t, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
@@ -24,7 +25,7 @@ func kuzzle_wrapper_get_statistics(result *C.statistics, timestamp C.time_t, opt
 	t, _ := strconv.ParseInt(C.GoString(C.ctime(&timestamp)), 10, 64)
 	tm := time.Unix(t, 0)
 
-	res, err := KuzzleInstance.GetStatistics(&tm, opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).GetStatistics(&tm, opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 		return
