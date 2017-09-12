@@ -9,16 +9,17 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_delete_my_credentials
-func kuzzle_wrapper_delete_my_credentials(result *C.ack_response, strategy *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, result *C.ack_response, strategy *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.DeleteMyCredentials(C.GoString(strategy), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).DeleteMyCredentials(C.GoString(strategy), opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.DeleteMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)

@@ -20,10 +20,11 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_query
-func kuzzle_wrapper_query(result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
+func kuzzle_wrapper_query(k *C.kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
@@ -86,7 +87,7 @@ func kuzzle_wrapper_query(result *C.kuzzle_response, request *C.kuzzle_request, 
 	req.Fields = goStrings(request.fields)
 
 	resC := make(chan types.KuzzleResponse)
-	KuzzleInstance.Query(req, opts, resC)
+	(*kuzzle.Kuzzle)(k.instance).Query(req, opts, resC)
 
 	res := <-resC
 

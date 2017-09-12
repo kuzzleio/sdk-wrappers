@@ -10,16 +10,17 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(result *C.json_result, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_list_collections(k *C.kuzzle, result *C.json_result, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.ListCollections(C.GoString(index), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(C.GoString(index), opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.ListCollections: index required" {
 			return C.int(C.EINVAL)

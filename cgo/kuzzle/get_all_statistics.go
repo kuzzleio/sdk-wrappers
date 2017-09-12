@@ -10,16 +10,17 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_get_all_statistics
-func kuzzle_wrapper_get_all_statistics(result *C.json_result, options *C.query_options) {
+func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, result *C.json_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.GetAllStatistics(opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 		return

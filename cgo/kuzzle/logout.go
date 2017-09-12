@@ -6,10 +6,13 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
+import (
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_logout
-func kuzzle_wrapper_logout() *C.char {
-	err := KuzzleInstance.Logout()
+func kuzzle_wrapper_logout(k *C.kuzzle) *C.char {
+	err := (*kuzzle.Kuzzle)(k.instance).Logout()
 	if err != nil {
 		return C.CString(err.Error())
 	}

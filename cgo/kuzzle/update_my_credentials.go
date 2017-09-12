@@ -10,10 +10,11 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_update_my_credentials
-func kuzzle_wrapper_update_my_credentials(result *C.json_result, strategy *C.char, credentials *C.json_object, options *C.query_options) C.int {
+func kuzzle_wrapper_update_my_credentials(k *C.kuzzle, result *C.json_result, strategy *C.char, credentials *C.json_object, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
@@ -22,7 +23,7 @@ func kuzzle_wrapper_update_my_credentials(result *C.json_result, strategy *C.cha
 	jp := JsonParser{}
 	jp.Parse(credentials)
 
-	res, err := KuzzleInstance.UpdateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.UpdateMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
