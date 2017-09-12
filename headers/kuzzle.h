@@ -9,6 +9,10 @@ typedef struct {
     void* instance;
 } kuzzle;
 
+typdef struct {
+  void* instance;
+} collection;
+
 //define a request
 typedef struct {
     char request_id[36];
