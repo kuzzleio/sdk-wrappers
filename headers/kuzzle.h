@@ -6,6 +6,7 @@
 #include <errno.h>
 
 typedef struct {
+    void* instance;
 } kuzzle;
 
 //define a request
@@ -169,33 +170,35 @@ typedef struct {
     char error[2048];
 } kuzzle_response;
 
-extern kuzzle* Kuzzle(char*, char*);
-extern char* kuzzle_wrapper_connect();
+extern void Kuzzle(kuzzle*, char*, char*);
+extern char* kuzzle_wrapper_connect(kuzzle*);
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
-extern char* kuzzle_wrapper_get_jwt();
-extern int kuzzle_wrapper_check_token(token_validity*, char*);
-extern int kuzzle_wrapper_create_index(ack_response*, char*, query_options*);
-extern int kuzzle_wrapper_login(login_result*, char*, json_object*, int*);
-extern int kuzzle_wrapper_create_my_credentials(json_result*, char*, json_object*, query_options*);
-extern void kuzzle_wrapper_disconnect();
-extern void kuzzle_wrapper_flush_queue();
-extern void kuzzle_wrapper_get_all_statistics(json_result*, query_options*);
-extern int kuzzle_wrapper_get_auto_refresh(bool_result*, char*, query_options*);
-extern int kuzzle_wrapper_get_my_credentials(json_result*, char*, query_options*);
-extern void kuzzle_wrapper_get_my_rights(json_result*, query_options*);
-extern void kuzzle_wrapper_get_server_info(json_result*, query_options*);
-extern void kuzzle_wrapper_get_statistics(statistics*, time_t, query_options*);
-extern int kuzzle_wrapper_list_collections(json_result*, char*, query_options*);
-extern void kuzzle_wrapper_list_indexes(string_array_result*, query_options*);
-extern char* kuzzle_wrapper_logout();
-extern void kuzzle_wrapper_now(now_result*, query_options*);
-extern void kuzzle_wrapper_refresh_index(shards*, char*, query_options*);
-extern int kuzzle_wrapper_set_auto_refresh(bool_result*, char*, unsigned, query_options*);
-extern int kuzzle_wrapper_set_default_index(char*);
-extern void kuzzle_wrapper_unset_jwt();
-extern void kuzzle_wrapper_update_self(json_result*, json_object*, query_options*);
-extern void kuzzle_wrapper_validate_my_credentials(bool_result*, char*, json_object*, query_options*);
-extern void kuzzle_wrapper_who_am_i(user*);
-extern void kuzzle_wrapper_query(kuzzle_response*, kuzzle_request*, query_options*);
+extern char* kuzzle_wrapper_get_jwt(kuzzle*);
+extern int kuzzle_wrapper_check_token(kuzzle*, token_validity*, char*);
+extern int kuzzle_wrapper_create_index(kuzzle*, ack_response*, char*, query_options*);
+extern int kuzzle_wrapper_login(kuzzle*, login_result*, char*, json_object*, int*);
+extern int kuzzle_wrapper_create_my_credentials(kuzzle*, json_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_disconnect(kuzzle*);
+extern void kuzzle_wrapper_flush_queue(kuzzle*);
+extern void kuzzle_wrapper_get_all_statistics(kuzzle*, json_result*, query_options*);
+extern int kuzzle_wrapper_get_auto_refresh(kuzzle*, bool_result*, char*, query_options*);
+extern int kuzzle_wrapper_get_my_credentials(kuzzle*, json_result*, char*, query_options*);
+extern void kuzzle_wrapper_get_my_rights(kuzzle*, json_result*, query_options*);
+extern void kuzzle_wrapper_get_server_info(kuzzle*, json_result*, query_options*);
+extern void kuzzle_wrapper_get_statistics(kuzzle*, statistics*, time_t, query_options*);
+extern int kuzzle_wrapper_list_collections(kuzzle*, json_result*, char*, query_options*);
+extern void kuzzle_wrapper_list_indexes(kuzzle*, string_array_result*, query_options*);
+extern char* kuzzle_wrapper_logout(kuzzle*);
+extern void kuzzle_wrapper_now(kuzzle*, now_result*, query_options*);
+extern void kuzzle_wrapper_refresh_index(kuzzle*, shards*, char*, query_options*);
+extern int kuzzle_wrapper_set_auto_refresh(kuzzle*, bool_result*, char*, unsigned, query_options*);
+extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
+extern void kuzzle_wrapper_unset_jwt(kuzzle*);
+extern void kuzzle_wrapper_update_self(kuzzle*, json_result*, json_object*, query_options*);
+extern void kuzzle_wrapper_validate_my_credentials(kuzzle*, bool_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_who_am_i(kuzzle*, user*);
+extern void kuzzle_wrapper_query(kuzzle*, kuzzle_response*, kuzzle_request*, query_options*);
+extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
+extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
 
 #endif

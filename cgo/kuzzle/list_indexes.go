@@ -9,16 +9,17 @@ import "C"
 import (
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_list_indexes
-func kuzzle_wrapper_list_indexes(result *C.string_array_result, options *C.query_options) {
+func kuzzle_wrapper_list_indexes(k *C.kuzzle, result *C.string_array_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := KuzzleInstance.ListIndexes(opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).ListIndexes(opts)
 	if err != nil {
 		(*result).error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 	}

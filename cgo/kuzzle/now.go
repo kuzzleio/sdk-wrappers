@@ -8,16 +8,17 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_now
-func kuzzle_wrapper_now(res *C.now_result, options *C.query_options) {
+func kuzzle_wrapper_now(k *C.kuzzle, res *C.now_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	time, err := KuzzleInstance.Now(opts)
+	time, err := (*kuzzle.Kuzzle)(k.instance).Now(opts)
 	if err != nil {
 		res.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 	}

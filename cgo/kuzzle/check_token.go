@@ -5,11 +5,14 @@ package main
 	#include <kuzzle.h>
  */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_check_token
-func kuzzle_wrapper_check_token(result *C.token_validity, token *C.char) C.int {
-	res, err := KuzzleInstance.CheckToken(C.GoString(token))
+func kuzzle_wrapper_check_token(k *C.kuzzle, result *C.token_validity, token *C.char) C.int {
+	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
 	if err != nil {
 		if err.Error() == "Kuzzle.CheckToken: token required" {
 			return C.int(C.EINVAL)
