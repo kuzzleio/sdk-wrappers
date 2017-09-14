@@ -235,5 +235,6 @@ extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
 extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
 extern void kuzzle_wrapper_add_listener(kuzzle*, int, void*);
 extern void kuzzle_wrapper_remove_listener(kuzzle*, int);
+extern void kuzzle_wrapper_replay_queue(kuzzle*);
 
 #endif
