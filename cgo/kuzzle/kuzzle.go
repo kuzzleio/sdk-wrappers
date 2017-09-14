@@ -9,10 +9,10 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
-	"github.com/kuzzleio/sdk-go/types"
-	"fmt"
 	"github.com/kuzzleio/sdk-go/connection"
 	"github.com/kuzzleio/sdk-go/connection/websocket"
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export Kuzzle
@@ -43,31 +43,28 @@ func kuzzle_wrapper_connect(k *C.kuzzle) *C.char {
 }
 
 //export kuzzle_wrapper_get_offline_queue
-func kuzzle_wrapper_get_offline_queue() *C.offline_queue {
-	//todo does not work
-	po := make([]types.QueryObject, 2)
+func kuzzle_wrapper_get_offline_queue(k *C.kuzzle, result *C.offline_queue) {
+	offlineQueue := (*kuzzle.Kuzzle)(k.instance).GetOfflineQueue()
+	qooo := types.QueryObject{RequestId: "test"}
+	*offlineQueue = append(*offlineQueue, qooo)
 
-	po[0] = types.QueryObject{RequestId: "42"}
+	cArray := C.malloc(C.size_t(len(*offlineQueue)) * C.size_t(unsafe.Sizeof(uintptr(0))))
 
-	arr := make([]C.query_object, len(po))
-	unsafePointer := unsafe.Pointer(C.malloc(C.size_t(len(po))))
+	query_objects := (*[1<<30 - 1]*C.query_object)(cArray)
 
-	for _, qo := range po {
-		struct_qo := C.query_object{}
-
-		struct_qo.query = C.CString(string(qo.Query))
-		struct_qo.requestId = *(*[36]C.char)(unsafe.Pointer(C.CString(qo.RequestId)))
-		struct_qo.timestamp = *(*[11]C.char)(unsafe.Pointer(C.CString(qo.Timestamp.String())))
-
-		C.memcpy(unsafePointer, unsafe.Pointer(&struct_qo), C.size_t(unsafe.Sizeof(struct_qo)))
-		arr = append(arr, struct_qo)
+	idx := 0
+	for _, queryObject := range *offlineQueue {
+		qo := C.query_object{}
+		qo.timestamp = C.ulonglong(queryObject.Timestamp.Unix())
+		qo.request_id = *(*[36]C.char)(unsafe.Pointer(C.CString(queryObject.RequestId)))
+		mquery, _ := json.Marshal(queryObject.Query)
+		qo.query = C.json_tokener_parse(C.CString(string(mquery)))
+		query_objects[idx] = &qo
+		idx += 1
 	}
+	query_objects[idx] = nil
 
-	fmt.Printf("%s\n", (*unsafe.Pointer)(unsafe.Pointer((*C.query_object)(unsafePointer))))
-
-	oq := C.offline_queue{}
-	oq.query = (**C.query_object)(unsafePointer)
-	return &oq
+	*result = C.offline_queue{(**C.query_object)(cArray)}
 }
 
 //export kuzzle_wrapper_get_jwt
