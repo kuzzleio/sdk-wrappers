@@ -72,9 +72,9 @@ typedef struct {
 
 //query object used by query()
 typedef struct {
-    char   *query;
-    char   timestamp[11];
-    char   requestId[36];
+    json_object *query;
+    unsigned long long   timestamp;
+    char   request_id[36];
 } query_object;
 
 typedef struct {
@@ -205,7 +205,7 @@ typedef struct {
 
 extern void Kuzzle(kuzzle*, char*, char*, options*);
 extern char* kuzzle_wrapper_connect(kuzzle*);
-extern offline_queue* kuzzle_wrapper_get_offline_queue();
+extern void kuzzle_wrapper_get_offline_queue(kuzzle*, offline_queue*);
 extern char* kuzzle_wrapper_get_jwt(kuzzle*);
 extern int kuzzle_wrapper_check_token(kuzzle*, token_validity*, char*);
 extern int kuzzle_wrapper_create_index(kuzzle*, ack_response*, char*, query_options*);
