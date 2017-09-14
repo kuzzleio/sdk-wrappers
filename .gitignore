@@ -1,2 +1,7 @@
 # IDE
 .idea
+
+# Libgokcore
+libgokcore.h
+libgokcore.so
+
