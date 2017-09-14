@@ -21,7 +21,7 @@ func kuzzle_wrapper_create_index(k *C.kuzzle, result *C.ack_response, index *C.c
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CreateIndex(C.GoString(index), opts)
 	if err != nil {
-		if err.Error() == "Collection.createIndex: index required" {
+		if err.Error() == "Kuzzle.createIndex: index required" {
 			return C.int(C.EINVAL)
 		} else {
 			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
