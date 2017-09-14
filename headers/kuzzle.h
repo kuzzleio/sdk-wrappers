@@ -9,6 +9,20 @@ typedef struct {
     void* instance;
 } kuzzle;
 
+enum {
+    CONNECTED,
+    DISCARDED,
+    DISCONNECTED,
+    LOGIN_ATTEMPT,
+    NETWORK_ERROR,
+    OFFLINE_QUEUE_POP,
+    OFFLINE_QUEUE_PUSH,
+    QUERY_ERROR,
+    RECONNECTED,
+    JWT_EXPIRED,
+    ERROR
+} event;
+
 //define a request
 typedef struct {
     char request_id[36];
@@ -95,6 +109,25 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
+//enum used for options.connect
+enum {AUTO, MANUAL} connect_mode;
+//options passed to the Kuzzle() fct
+typedef struct {
+    double queue_ttl;
+    int queue_max_size;
+    int offline_mode;
+    unsigned auto_queue;
+    unsigned auto_reconnect;
+    unsigned auto_replay;
+    unsigned auto_resubscribe;
+    double reconnection_delay;
+    double replay_interval;
+    int connect;
+    char refresh[64];
+    char default_index[128];
+    json_object    *headers;
+} options;
+
 //result of login()
 typedef struct {
     char jwt[512];
@@ -170,7 +203,7 @@ typedef struct {
     char error[2048];
 } kuzzle_response;
 
-extern void Kuzzle(kuzzle*, char*, char*);
+extern void Kuzzle(kuzzle*, char*, char*, options*);
 extern char* kuzzle_wrapper_connect(kuzzle*);
 extern offline_queue* kuzzle_wrapper_get_offline_queue();
 extern char* kuzzle_wrapper_get_jwt(kuzzle*);
@@ -201,5 +234,7 @@ extern void kuzzle_wrapper_query(kuzzle*, kuzzle_response*, kuzzle_request*, que
 extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
 extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
 extern void kuzzle_wrapper_replay_queue(kuzzle*);
+extern void kuzzle_wrapper_add_listener(kuzzle*, int, void*);
+extern void kuzzle_wrapper_remove_listener(kuzzle*, int);
 
 #endif
