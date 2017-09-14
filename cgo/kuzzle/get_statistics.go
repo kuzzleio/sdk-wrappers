@@ -19,7 +19,7 @@ import (
 func kuzzle_wrapper_get_statistics(k *C.kuzzle, result *C.statistics, timestamp C.time_t, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	t, _ := strconv.ParseInt(C.GoString(C.ctime(&timestamp)), 10, 64)

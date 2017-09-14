@@ -13,6 +13,7 @@ public class main {
 
                 // System.out.println(k.login("local"));
                 // ack_response r = k.createMyCredentials("local", options);
+                r.getAcknowledged();
             } catch(Exception e) {
                 e.printStackTrace();
             }
