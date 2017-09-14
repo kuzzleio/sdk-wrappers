@@ -7,7 +7,7 @@
 
 typedef struct {
     void* instance;
-} kuzzle;
+} Kuzzle;
 
 enum {
     CONNECTED,
@@ -203,41 +203,41 @@ typedef struct {
     char error[2048];
 } kuzzle_response;
 
-extern void Kuzzle(kuzzle*, char*, char*, options*);
-extern char* kuzzle_wrapper_connect(kuzzle*);
-extern void kuzzle_wrapper_get_offline_queue(kuzzle*, offline_queue*);
-extern char* kuzzle_wrapper_get_jwt(kuzzle*);
-extern int kuzzle_wrapper_check_token(kuzzle*, token_validity*, char*);
-extern int kuzzle_wrapper_create_index(kuzzle*, ack_response*, char*, query_options*);
-extern int kuzzle_wrapper_login(kuzzle*, login_result*, char*, json_object*, int*);
-extern int kuzzle_wrapper_create_my_credentials(kuzzle*, json_result*, char*, json_object*, query_options*);
-extern void kuzzle_wrapper_disconnect(kuzzle*);
-extern void kuzzle_wrapper_flush_queue(kuzzle*);
-extern void kuzzle_wrapper_get_all_statistics(kuzzle*, json_result*, query_options*);
-extern int kuzzle_wrapper_get_auto_refresh(kuzzle*, bool_result*, char*, query_options*);
-extern int kuzzle_wrapper_get_my_credentials(kuzzle*, json_result*, char*, query_options*);
-extern void kuzzle_wrapper_get_my_rights(kuzzle*, json_result*, query_options*);
-extern void kuzzle_wrapper_get_server_info(kuzzle*, json_result*, query_options*);
-extern void kuzzle_wrapper_get_statistics(kuzzle*, statistics*, time_t, query_options*);
-extern int kuzzle_wrapper_list_collections(kuzzle*, json_result*, char*, query_options*);
-extern void kuzzle_wrapper_list_indexes(kuzzle*, string_array_result*, query_options*);
-extern char* kuzzle_wrapper_logout(kuzzle*);
-extern void kuzzle_wrapper_now(kuzzle*, now_result*, query_options*);
-extern void kuzzle_wrapper_refresh_index(kuzzle*, shards*, char*, query_options*);
-extern int kuzzle_wrapper_set_auto_refresh(kuzzle*, bool_result*, char*, unsigned, query_options*);
-extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
-extern void kuzzle_wrapper_unset_jwt(kuzzle*);
-extern void kuzzle_wrapper_update_self(kuzzle*, json_result*, json_object*, query_options*);
-extern void kuzzle_wrapper_validate_my_credentials(kuzzle*, bool_result*, char*, json_object*, query_options*);
-extern void kuzzle_wrapper_who_am_i(kuzzle*, user*);
-extern void kuzzle_wrapper_query(kuzzle*, kuzzle_response*, kuzzle_request*, query_options*);
-extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
-extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
-extern void kuzzle_wrapper_add_listener(kuzzle*, int, void*);
-extern void kuzzle_wrapper_remove_listener(kuzzle*, int);
-extern void kuzzle_wrapper_replay_queue(kuzzle*);
-extern void kuzzle_wrapper_set_jwt(kuzzle*, char*);
-extern void kuzzle_wrapper_start_queuing(kuzzle*);
-extern void kuzzle_wrapper_stop_queuing(kuzzle*);
+extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, options*);
+extern char* kuzzle_wrapper_connect(Kuzzle*);
+extern void kuzzle_wrapper_get_offline_queue(Kuzzle*, offline_queue*);
+extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
+extern int kuzzle_wrapper_check_token(Kuzzle*, token_validity*, char*);
+extern int kuzzle_wrapper_create_index(Kuzzle*, ack_response*, char*, query_options*);
+extern int kuzzle_wrapper_login(Kuzzle*, login_result*, char*, json_object*, int*);
+extern int kuzzle_wrapper_create_my_credentials(Kuzzle*, json_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_disconnect(Kuzzle*);
+extern void kuzzle_wrapper_flush_queue(Kuzzle*);
+extern void kuzzle_wrapper_get_all_statistics(Kuzzle*, json_result*, query_options*);
+extern int kuzzle_wrapper_get_auto_refresh(Kuzzle*, bool_result*, char*, query_options*);
+extern int kuzzle_wrapper_get_my_credentials(Kuzzle*, json_result*, char*, query_options*);
+extern void kuzzle_wrapper_get_my_rights(Kuzzle*, json_result*, query_options*);
+extern void kuzzle_wrapper_get_server_info(Kuzzle*, json_result*, query_options*);
+extern void kuzzle_wrapper_get_statistics(Kuzzle*, statistics*, time_t, query_options*);
+extern int kuzzle_wrapper_list_collections(Kuzzle*, json_result*, char*, query_options*);
+extern void kuzzle_wrapper_list_indexes(Kuzzle*, string_array_result*, query_options*);
+extern char* kuzzle_wrapper_logout(Kuzzle*);
+extern void kuzzle_wrapper_now(Kuzzle*, now_result*, query_options*);
+extern void kuzzle_wrapper_refresh_index(Kuzzle*, shards*, char*, query_options*);
+extern int kuzzle_wrapper_set_auto_refresh(Kuzzle*, bool_result*, char*, unsigned, query_options*);
+extern int kuzzle_wrapper_set_default_index(Kuzzle*, char*);
+extern void kuzzle_wrapper_unset_jwt(Kuzzle*);
+extern void kuzzle_wrapper_update_self(Kuzzle*, json_result*, json_object*, query_options*);
+extern void kuzzle_wrapper_validate_my_credentials(Kuzzle*, bool_result*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_who_am_i(Kuzzle*, user*);
+extern void kuzzle_wrapper_query(Kuzzle*, kuzzle_response*, kuzzle_request*, query_options*);
+extern void kuzzle_wrapper_set_headers(Kuzzle*, json_object*, unsigned);
+extern json_object* kuzzle_wrapper_get_headers(Kuzzle*);
+extern void kuzzle_wrapper_add_listener(Kuzzle*, int, void*);
+extern void kuzzle_wrapper_remove_listener(Kuzzle*, int);
+extern void kuzzle_wrapper_replay_queue(Kuzzle*);
+extern void kuzzle_wrapper_set_jwt(Kuzzle*, char*);
+extern void kuzzle_wrapper_start_queuing(Kuzzle*);
+extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 
 #endif

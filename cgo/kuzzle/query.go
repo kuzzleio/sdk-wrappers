@@ -24,7 +24,7 @@ import (
 )
 
 //export kuzzle_wrapper_query
-func kuzzle_wrapper_query(k *C.kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
+func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_all_statistics
-func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, result *C.json_result, options *C.query_options) {
+func kuzzle_wrapper_get_all_statistics(k *C.Kuzzle, result *C.json_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(k *C.kuzzle, result *C.ack_response, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_create_index(k *C.Kuzzle, result *C.ack_response, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
