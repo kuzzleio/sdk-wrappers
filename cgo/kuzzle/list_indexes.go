@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_indexes
-func kuzzle_wrapper_list_indexes(k *C.kuzzle, result *C.string_array_result, options *C.query_options) {
+func kuzzle_wrapper_list_indexes(k *C.Kuzzle, result *C.string_array_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

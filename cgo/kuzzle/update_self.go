@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_update_self
-func kuzzle_wrapper_update_self(k *C.kuzzle, result *C.json_result, credentials *C.json_object, options *C.query_options) {
+func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials *C.json_object, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
