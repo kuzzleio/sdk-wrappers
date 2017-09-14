@@ -5,3 +5,5 @@
 libgokcore.h
 libgokcore.so
 
+# .out files
+*.out
