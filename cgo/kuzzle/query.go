@@ -27,7 +27,7 @@ import (
 func kuzzle_wrapper_query(k *C.kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	req := types.KuzzleRequest{
