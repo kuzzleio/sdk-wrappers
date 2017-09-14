@@ -11,14 +11,14 @@ import (
 	"github.com/kuzzleio/sdk-go/collection"
 )
 
-//export kuzzle_wrapper_collection_delete_specifications
-func kuzzle_wrapper_collection_delete_specifications(c *C.collection, result *C.ack_response, options *C.query_options) C.int {
+//export kuzzle_wrapper_collection_truncate
+func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).DeleteSpecifications(opts)
+	res, err := (*collection.Collection)(c.instance).Truncate(opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
 		return 0
