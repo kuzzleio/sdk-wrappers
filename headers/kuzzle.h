@@ -9,7 +9,7 @@ typedef struct {
     void* instance;
 } kuzzle;
 
-typdef struct {
+typedef struct {
   void* instance;
 } collection;
 
@@ -173,6 +173,45 @@ typedef struct {
     char channel[128];
     char error[2048];
 } kuzzle_response;
+
+typedef struct {
+    uint result;
+    char error[2048];
+} bool_response;
+
+typedef struct {
+    int result;
+    char error[2048];
+} int_response;
+
+typedef struct {
+    char id[512];
+    json_object* source;
+    kuzzle_meta* meta;
+} document;
+
+typedef struct {
+} filters;
+
+typedef struct {
+    json_object* query;
+    char **sort;
+    json_object* aggregations;
+    char **search_after;
+} search_filters;
+
+typedef struct {
+    json_object* hits;
+    int total;
+} search_response;
+
+typedef struct {
+    char request_id[36];
+    search_response result;
+    char room_id[36];
+    char channel[128];
+    char error[2048];
+} kuzzle_search_response;
 
 extern void Kuzzle(kuzzle*, char*, char*);
 extern char* kuzzle_wrapper_connect(kuzzle*);
