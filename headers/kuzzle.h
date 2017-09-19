@@ -82,7 +82,7 @@ typedef struct {
 } offline_queue;
 
 //response of check_token()
-typedef struct {
+typedef struct token_validity_struct {
     unsigned valid;
     char state[512];
     int expiresAt;
@@ -109,8 +109,7 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
-//enum used for options.connect
-enum {AUTO, MANUAL} connect_mode;
+enum Mode {AUTO, MANUAL};
 //options passed to the Kuzzle() fct
 typedef struct {
     double queue_ttl;
@@ -122,11 +121,11 @@ typedef struct {
     unsigned auto_resubscribe;
     double reconnection_delay;
     double replay_interval;
-    int connect;
+    enum Mode connect;
     char refresh[64];
     char default_index[128];
     json_object    *headers;
-} options;
+} Options;
 
 //result of login()
 typedef struct {
@@ -203,7 +202,8 @@ typedef struct {
     char error[2048];
 } kuzzle_response;
 
-extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, options*);
+// Kuzzle main object functions
+extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
 extern char* kuzzle_wrapper_connect(Kuzzle*);
 extern void kuzzle_wrapper_get_offline_queue(Kuzzle*, offline_queue*);
 extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
@@ -239,5 +239,8 @@ extern void kuzzle_wrapper_replay_queue(Kuzzle*);
 extern void kuzzle_wrapper_set_jwt(Kuzzle*, char*);
 extern void kuzzle_wrapper_start_queuing(Kuzzle*);
 extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
+
+//Options
+extern void kuzzle_wrapper_new_options(Options*);
 
 #endif

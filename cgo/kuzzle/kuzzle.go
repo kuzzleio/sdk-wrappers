@@ -16,7 +16,7 @@ import (
 )
 
 //export kuzzle_wrapper_new_kuzzle
-func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.options) {
+func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.Options) {
 	var c connection.Connection
 
 	var opts types.Options
