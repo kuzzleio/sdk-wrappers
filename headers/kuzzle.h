@@ -9,6 +9,10 @@ typedef struct {
     void* instance;
 } kuzzle;
 
+typedef struct {
+  void* instance;
+} security;
+
 enum {
     CONNECTED,
     DISCARDED,
@@ -202,6 +206,19 @@ typedef struct {
     char channel[128];
     char error[2048];
 } kuzzle_response;
+
+typedef struct {
+    char request_id[36];
+    user result;
+    char room_id[36];
+    char channel[128];
+    char error[2048];
+} kuzzle_user_response;
+
+typedef struct {
+    char result[512];
+    char error[2048];
+} kuzzle_string_response;
 
 extern void Kuzzle(kuzzle*, char*, char*, options*);
 extern char* kuzzle_wrapper_connect(kuzzle*);
