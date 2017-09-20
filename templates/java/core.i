@@ -10,6 +10,7 @@
 %}
 
 %rename(TokenValidity) token_validity_struct;
+%rename(AckResponse) ack_response_struct;
 %rename(queueTTL) queue_ttl;
 
 %extend Options {
@@ -73,6 +74,34 @@
     }
     char* connect() {
         return kuzzle_wrapper_connect($self);
+    }
+
+    // createIndex
+    %exception createIndex {
+        $action
+        if (result == $null) {
+            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
+            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
+            return $null;
+        }
+    }
+    ack_response* createIndex(char* index, query_options* options) {
+        static ack_response res;
+        int err = kuzzle_wrapper_create_index($self, &res, index, options);
+
+        if (err == 0) {
+            return &res;
+        }
+        return (void*)0;
+    }
+    ack_response* createIndex(char* index) {
+        static ack_response res;
+        int err = kuzzle_wrapper_create_index($self, &res, index, (void*)0);
+
+        if (err == 0) {
+            return &res;
+        }
+        return (void*)0;
     }
 }
 

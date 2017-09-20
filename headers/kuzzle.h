@@ -90,7 +90,7 @@ typedef struct token_validity_struct {
 } token_validity;
 
 //response for any delete* function
-typedef struct {
+typedef struct ack_response_struct {
     unsigned acknowledged;
     unsigned shardsAcknowledged;
     char error[2048];
