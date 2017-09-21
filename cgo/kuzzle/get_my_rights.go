@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_my_rights
-func kuzzle_wrapper_get_my_rights(k *C.kuzzle, result *C.json_result, options *C.query_options) {
+func kuzzle_wrapper_get_my_rights(k *C.Kuzzle, result *C.json_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

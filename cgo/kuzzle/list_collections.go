@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.kuzzle, result *C.json_result, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_list_collections(k *C.Kuzzle, result *C.json_result, index *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

@@ -10,7 +10,7 @@ import (
 )
 
 //export kuzzle_wrapper_set_headers
-func kuzzle_wrapper_set_headers(k *C.kuzzle, content *C.json_object, replace C.uint) {
+func kuzzle_wrapper_set_headers(k *C.Kuzzle, content *C.json_object, replace C.uint) {
 	jp := JsonParser{}
 	jp.Parse(content)
 

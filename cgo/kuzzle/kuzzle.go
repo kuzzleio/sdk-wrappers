@@ -15,8 +15,8 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 )
 
-//export Kuzzle
-func Kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.options) {
+//export kuzzle_wrapper_new_kuzzle
+func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.Options) {
 	var c connection.Connection
 
 	var opts types.Options
@@ -33,7 +33,7 @@ func Kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.options) {
 }
 
 //export kuzzle_wrapper_connect
-func kuzzle_wrapper_connect(k *C.kuzzle) *C.char {
+func kuzzle_wrapper_connect(k *C.Kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Connect()
 	if err != nil {
 		return C.CString(err.Error())
@@ -43,7 +43,7 @@ func kuzzle_wrapper_connect(k *C.kuzzle) *C.char {
 }
 
 //export kuzzle_wrapper_get_offline_queue
-func kuzzle_wrapper_get_offline_queue(k *C.kuzzle, result *C.offline_queue) {
+func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
 	offlineQueue := (*kuzzle.Kuzzle)(k.instance).GetOfflineQueue()
 	qooo := types.QueryObject{RequestId: "test"}
 	*offlineQueue = append(*offlineQueue, qooo)
@@ -68,7 +68,7 @@ func kuzzle_wrapper_get_offline_queue(k *C.kuzzle, result *C.offline_queue) {
 }
 
 //export kuzzle_wrapper_get_jwt
-func kuzzle_wrapper_get_jwt(k *C.kuzzle) *C.char {
+func kuzzle_wrapper_get_jwt(k *C.Kuzzle) *C.char {
 	return C.CString((*kuzzle.Kuzzle)(k.instance).GetJwt())
 }
 
