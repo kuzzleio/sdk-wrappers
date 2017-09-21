@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_refresh_index(k *C.kuzzle, res *C.shards, index *C.char, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	shards, err := (*kuzzle.Kuzzle)(k.instance).RefreshIndex(C.GoString(index), opts)
