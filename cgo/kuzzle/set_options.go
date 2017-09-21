@@ -35,7 +35,7 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	return
 }
 
-func SetOptions(options *C.options) (opts types.Options) {
+func SetOptions(options *C.Options) (opts types.Options) {
 	opts = types.NewOptions()
 
 	opts.SetQueueTTL(time.Duration(int(options.queue_ttl)))

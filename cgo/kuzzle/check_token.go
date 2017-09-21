@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_check_token
-func kuzzle_wrapper_check_token(k *C.kuzzle, result *C.token_validity, token *C.char) C.int {
+func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.char) C.int {
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
 	if err != nil {
 		if err.Error() == "Kuzzle.CheckToken: token required" {

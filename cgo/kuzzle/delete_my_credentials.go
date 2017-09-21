@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_delete_my_credentials
-func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, result *C.ack_response, strategy *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_delete_my_credentials(k *C.Kuzzle, result *C.ack_response, strategy *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

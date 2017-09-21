@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_who_am_i
-func kuzzle_wrapper_who_am_i(k *C.kuzzle, user *C.user) {
+func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
 	res, err := (*kuzzle.Kuzzle)(k.instance).WhoAmI()
 	if err != nil {
 		user.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))

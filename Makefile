@@ -12,7 +12,6 @@ GOSRC = ./cgo/kuzzle/
 GOTARGET = libgokcore.so
 
 SWIG = swig
-SWIGTEMPLATE = kcore.i
 
 all: java
 
@@ -28,13 +27,13 @@ object:
 	gcc -ggdb -shared kcore_wrap.o -o libkcore.so $(LDFLAGS) $(LIBS)
 
 swigjava:
-	$(SWIG) -java $(SWIGTEMPLATE)
+	$(SWIG) -java -package io.kuzzle.sdk -outdir ./io/kuzzle/sdk -o kcore_wrap.c templates/java/core.i
 
 java: 	core swigjava wrapper object
 
 clean:
-	rm -rf build *.class *.o *.h *.so *.java *.c *~ *.go
+	rm -rf build *.class *.o *.h *.so io/kuzzle/sdk/*.java *.c *~ *.go
 
-.PHONY: all java wrapper swigjava clean object
+.PHONY: all java wrapper swigjava clean object core
 
 .DEFAULT_GOAL := all

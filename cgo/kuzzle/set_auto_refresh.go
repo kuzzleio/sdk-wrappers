@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_set_auto_refresh
-func kuzzle_wrapper_set_auto_refresh(k *C.kuzzle, result *C.bool_result, index *C.char, auto_refresh C.uint, options *C.query_options) C.int {
+func kuzzle_wrapper_set_auto_refresh(k *C.Kuzzle, result *C.bool_result, index *C.char, auto_refresh C.uint, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
