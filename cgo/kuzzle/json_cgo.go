@@ -111,9 +111,10 @@ func (parser *JsonParser) parse_cjson(jobj *C.json_object, content map[string]in
 			parser.get_json_value(C.GoString(key), value, content, false)
 			break
 		case C.json_type_object:
-			C.json_object_object_get_ex(jobj, key, &jobj)
+			obj := C.json_object_new_object()
+			C.json_object_object_get_ex(jobj, key, &obj)
 			content[C.GoString(key)] = make(map[string]interface{})
-			parser.parse_cjson(jobj, content[C.GoString(key)].(map[string]interface{}))
+			parser.parse_cjson(obj, content[C.GoString(key)].(map[string]interface{}))
 			break
 		case C.json_type_array:
 			parser.parseArray(jobj, key, content)
@@ -123,7 +124,7 @@ func (parser *JsonParser) parse_cjson(jobj *C.json_object, content map[string]in
 }
 
 func (parser *JsonParser) parseArray(jobj *C.json_object, key *C.char, content map[string]interface{}) {
-	jarray := jobj
+	jarray := C.json_object_new_object()
 
 	if key != nil {
 		C.json_object_object_get_ex(jobj, key, &jarray)

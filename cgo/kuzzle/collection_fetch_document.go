@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.kuzzle_response, id *C.char, options *C.query_options) C.int {
   var opts types.QueryOptions
   if options != nil {
-    opts = SetOptions(options)
+    opts = SetQueryOptions(options)
   }
 
   res, err := (*collection.Collection)(c.instance).FetchDocument(C.GoString(id), opts)

@@ -16,7 +16,7 @@ import (
 func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_response, search_filters *C.search_filters, options *C.query_options) C.int {
   var opts types.QueryOptions
   if options != nil {
-    opts = SetOptions(options)
+    opts = SetQueryOptions(options)
   }
 
   // TODO: Initialize Search Filters from C to Go

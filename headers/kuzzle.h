@@ -223,6 +223,16 @@ typedef struct {
 } document;
 
 typedef struct {
+    void* instance;
+    char error[2048];
+} collection_mapping;
+
+typedef struct {
+    char* type;
+    json_object* fields;
+} field_mapping;
+
+typedef struct {
 } filters;
 
 typedef struct {

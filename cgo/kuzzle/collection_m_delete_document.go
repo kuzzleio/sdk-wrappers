@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.string_array_result, ids **C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	gIds := goStrings(ids)

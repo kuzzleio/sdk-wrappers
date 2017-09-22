@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
-		opts = SetOptions(options)
+		opts = SetQueryOptions(options)
 	}
 
 	res, err := (*collection.Collection)(c.instance).Truncate(opts)

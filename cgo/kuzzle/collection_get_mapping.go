@@ -9,14 +9,13 @@ import (
   "unsafe"
   "github.com/kuzzleio/sdk-go/types"
   "github.com/kuzzleio/sdk-go/collection"
-  "encoding/json"
 )
 
 //export kuzzle_wrapper_collection_get_mapping
-func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.kuzzle_response, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection_mapping, options *C.query_options) C.int {
   var opts types.QueryOptions
   if options != nil {
-    opts = SetOptions(options)
+    opts = SetQueryOptions(options)
   }
 
   res, err := (*collection.Collection)(c.instance).GetMapping(opts)
@@ -25,11 +24,7 @@ func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.kuzzle_res
     return 0
   }
 
-  var jsonRes *C.json_object
-  r, _ := json.Marshal(res)
-
-  jsonRes = C.json_tokener_parse(C.CString(string(r)))
-  result.result = jsonRes
+  result.instance = unsafe.Pointer(&res)
 
   return 0
 }

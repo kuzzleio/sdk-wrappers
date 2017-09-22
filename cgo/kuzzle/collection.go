@@ -13,7 +13,7 @@ import (
 )
 
 //export Collection
-func Collection(c *C.collection, k *C.kuzzle, colName *C.char, index *C.char) *C.collection {
+func Collection(c *C.collection, k *C.Kuzzle, colName *C.char, index *C.char) *C.collection {
 	instance := collection.NewCollection((*kuzzle.Kuzzle)(k.instance), C.GoString(colName), C.GoString(index))
 
 	c.instance = unsafe.Pointer(instance)

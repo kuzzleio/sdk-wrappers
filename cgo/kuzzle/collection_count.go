@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, filters *C.filters, options *C.query_options) C.int {
   var opts types.QueryOptions
   if options != nil {
-    opts = SetOptions(options)
+    opts = SetQueryOptions(options)
   }
 
   res, err := (*collection.Collection)(c.instance).Count(filters, opts)
