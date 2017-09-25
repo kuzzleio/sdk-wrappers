@@ -9,11 +9,10 @@ import (
   "unsafe"
   "github.com/kuzzleio/sdk-go/types"
   "github.com/kuzzleio/sdk-go/collection"
-  "encoding/json"
 )
 
 //export kuzzle_wrapper_collection_fetch_document
-func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.kuzzle_response, id *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.document, id *C.char, options *C.query_options) C.int {
   var opts types.QueryOptions
   if options != nil {
     opts = SetQueryOptions(options)
@@ -29,11 +28,7 @@ func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.kuzzle_
     }
   }
 
-  var jsonRes *C.json_object
-  r, _ := json.Marshal(res)
-
-  jsonRes = C.json_tokener_parse(C.CString(string(r)))
-  result.result = jsonRes
+  result.instance = unsafe.Pointer(&res)
 
   return 0
 }
