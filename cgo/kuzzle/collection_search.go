@@ -9,7 +9,6 @@ import (
   "unsafe"
   "github.com/kuzzleio/sdk-go/types"
   "github.com/kuzzleio/sdk-go/collection"
-  "encoding/json"
 )
 
 //export kuzzle_wrapper_collection_search
