@@ -18,6 +18,11 @@ typedef struct {
     char error[2048];
 } collection_mapping;
 
+typedef struct {
+    void* instance;
+    char error[2048];
+} document;
+
 enum {
     CONNECTED,
     DISCARDED,
@@ -243,7 +248,7 @@ typedef struct {
 } search_filters;
 
 typedef struct {
-    json_object* hits;
+    document* hits;
     int total;
 } search_response;
 
