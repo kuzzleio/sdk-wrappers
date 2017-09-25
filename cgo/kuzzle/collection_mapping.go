@@ -7,7 +7,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 )
@@ -84,7 +83,7 @@ func kuzzle_wrapper_collection_mapping_set_headers(cm *C.collection_mapping, con
 		r = true
 	}
 
-	(*kuzzle.Kuzzle)(cm.instance).SetHeaders(jp.GetContent(), r)
+	(*collection.CollectionMapping)(cm.instance).SetHeaders(jp.GetContent(), r)
 
 	return
 }
