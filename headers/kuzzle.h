@@ -301,6 +301,7 @@ extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 // collection object functions
 extern void kuzzle_wrapper_collection_count(collection*, int_response*, filters*, query_options*);
 extern void kuzzle_wrapper_collection_create(collection*, ack_response*, query_options*);
+extern void kuzzle_wrapper_collection_create_document(collection*, document*, char*, document*, query_options*);
 extern int kuzzle_wrapper_collection_delete_document(collection*, char*, char*, query_options*);
 extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_response*, query_options*);
 extern int kuzzle_wrapper_collection_document_exists(collection*, bool_response*, char*, query_options*);
@@ -309,6 +310,7 @@ extern void kuzzle_wrapper_collection_get_mapping(collection*, collection_mappin
 extern void kuzzle_wrapper_collection_get_specifications(collection*, kuzzle_response*, query_options*);
 extern int kuzzle_wrapper_collection_m_delete_document(collection*, string_array_result*, char**, query_options*);
 extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_response*, search_filters*, query_options*);
+extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
 extern void kuzzle_wrapper_collection_truncate(collection*, ack_response*, query_options*);
 
 //collection_mapping object functions

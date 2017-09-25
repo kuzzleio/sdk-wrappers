@@ -21,6 +21,7 @@ import (
 	"unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/collection"
 )
 
 //export kuzzle_wrapper_query
@@ -115,4 +116,18 @@ func goStrings(argv **C.char) []string {
 		gostrings[i] = C.GoString(s)
 	}
 	return gostrings
+}
+
+// Helper to convert a C document** to a go array of documents
+func goDocuments(argv **C.document) []collection.Document {
+	length := C.sizeArray(argv)
+	if length == 0 {
+		return nil
+	}
+	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(argv))[:length:length]
+	godocuments := make([]collection.Document, length)
+	for i, s := range tmpslice {
+		godocuments[i] = *(*C.document)(s).instance
+	}
+	return godocuments
 }
