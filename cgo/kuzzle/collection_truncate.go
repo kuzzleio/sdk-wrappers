@@ -6,9 +6,9 @@ package main
 */
 import "C"
 import (
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/collection"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_collection_truncate
