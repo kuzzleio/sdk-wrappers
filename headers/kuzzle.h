@@ -13,6 +13,11 @@ typedef struct {
   void* instance;
 } collection;
 
+typedef struct {
+    void* instance;
+    char error[2048];
+} collection_mapping;
+
 enum {
     CONNECTED,
     DISCARDED,
@@ -223,11 +228,6 @@ typedef struct {
 } document;
 
 typedef struct {
-    void* instance;
-    char error[2048];
-} collection_mapping;
-
-typedef struct {
     char* type;
     json_object* fields;
 } field_mapping;
@@ -292,6 +292,26 @@ extern void kuzzle_wrapper_replay_queue(Kuzzle*);
 extern void kuzzle_wrapper_set_jwt(Kuzzle*, char*);
 extern void kuzzle_wrapper_start_queuing(Kuzzle*);
 extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
+
+// collection object functions
+extern void kuzzle_wrapper_collection_count(collection*, int_response*, filters*, query_options*);
+extern void kuzzle_wrapper_collection_create(collection*, ack_response*, query_options*);
+extern int kuzzle_wrapper_collection_delete_document(collection*, char*, char*, query_options*);
+extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_response*, query_options*);
+extern int kuzzle_wrapper_collection_document_exists(collection*, bool_response*, char*, query_options*);
+extern int kuzzle_wrapper_collection_fetch_document(collection*, kuzzle_response*, char*, query_options*);
+extern void kuzzle_wrapper_collection_get_mapping(collection*, collection_mapping*, query_options*);
+extern void kuzzle_wrapper_collection_get_specifications(collection*, kuzzle_response*, query_options*);
+extern int kuzzle_wrapper_collection_m_delete_document(collection*, string_array_result*, char**, query_options*);
+extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_response*, search_filters*, query_options*);
+extern void kuzzle_wrapper_collection_truncate(collection*, ack_response*, query_options*);
+
+//collection_mapping object functions
+extern void kuzzle_wrapper_new_collection_mapping(collection_mapping*, collection*);
+extern int kuzzle_wrapper_collection_mapping_apply(collection_mapping*,query_options*);
+extern int kuzzle_wrapper_collection_mapping_refresh(collection_mapping*, query_options*);
+extern void kuzzle_wrapper_collection_mapping_set(collection_mapping*, json_object*);
+extern void kuzzle_wrapper_collection_mapping_set_headers(collection_mapping*, json_object*, uint);
 
 //Options
 extern void kuzzle_wrapper_new_options(Options*);

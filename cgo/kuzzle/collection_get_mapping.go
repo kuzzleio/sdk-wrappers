@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_get_mapping
-func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection_mapping, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection_mapping, options *C.query_options) {
   var opts types.QueryOptions
   if options != nil {
     opts = SetQueryOptions(options)
@@ -21,10 +21,8 @@ func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection
   res, err := (*collection.Collection)(c.instance).GetMapping(opts)
   if err != nil {
     result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-    return 0
+    return
   }
 
   result.instance = unsafe.Pointer(&res)
-
-  return 0
 }

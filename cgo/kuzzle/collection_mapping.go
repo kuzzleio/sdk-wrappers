@@ -12,8 +12,8 @@ import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
-//export CollectionMapping
-func CollectionMapping(cm *C.collection_mapping, c *C.collection) {
+//export kuzzle_wrapper_new_collection_mapping
+func kuzzle_wrapper_new_collection_mapping(cm *C.collection_mapping, c *C.collection) {
 	instance := collection.NewCollectionMapping((*collection.Collection)(c.instance))
 
 	cm.instance = unsafe.Pointer(instance)

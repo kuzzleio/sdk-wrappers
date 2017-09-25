@@ -25,7 +25,7 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
   res, err := (*collection.Collection)(c.instance).Search(filters, opts)
   if err != nil {
     result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-    return 0
+    return
   }
 
   var jsonRes *C.json_object
@@ -34,6 +34,4 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
   jsonRes = C.json_tokener_parse(C.CString(string(r)))
   result.result.hits = jsonRes
   result.result.total = C.int(res.Total)
-
-  return 0
 }

@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_count
-func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, filters *C.filters, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, filters *C.filters, options *C.query_options) {
   var opts types.QueryOptions
   if options != nil {
     opts = SetQueryOptions(options)
@@ -21,10 +21,8 @@ func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, fi
   res, err := (*collection.Collection)(c.instance).Count(filters, opts)
   if err != nil {
     result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-    return 0
+    return
   }
 
   result.result = C.int(res)
-
-  return 0
 }

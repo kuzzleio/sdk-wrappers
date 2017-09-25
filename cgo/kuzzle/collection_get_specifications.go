@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_get_specifications
-func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_response, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_response, options *C.query_options) {
   var opts types.QueryOptions
   if options != nil {
     opts = SetQueryOptions(options)
@@ -22,7 +22,7 @@ func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuz
   res, err := (*collection.Collection)(c.instance).GetSpecifications(opts)
   if err != nil {
     result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-    return 0
+    return
   }
 
   var jsonRes *C.json_object
@@ -30,6 +30,4 @@ func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuz
 
   jsonRes = C.json_tokener_parse(C.CString(string(r)))
   result.result = jsonRes
-
-  return 0
 }

@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_truncate
-func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -21,7 +21,7 @@ func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response,
 	res, err := (*collection.Collection)(c.instance).Truncate(opts)
 	if err != nil {
 		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-		return 0
+		return
 	}
 
 	var ack, shardsAck C.uint
@@ -42,6 +42,4 @@ func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response,
 		acknowledged:       ack,
 		shardsAcknowledged: shardsAck,
 	}
-
-	return 0
 }
