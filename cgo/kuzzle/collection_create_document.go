@@ -8,8 +8,8 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"regexp"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_collection_create_document

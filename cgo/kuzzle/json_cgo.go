@@ -4,7 +4,7 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
 	#include <kuzzle.h>
- */
+*/
 import "C"
 
 type JsonParser struct {
@@ -47,7 +47,7 @@ func (parser *JsonParser) get_json_value(key string, jobj *C.json_object, conten
 			arr = append(arr, C.GoString(C.json_object_get_string(jobj)))
 			content[key] = arr
 		} else {
-			 content[key] = C.GoString(C.json_object_get_string(jobj))
+			content[key] = C.GoString(C.json_object_get_string(jobj))
 		}
 		break
 	case C.json_type_double:

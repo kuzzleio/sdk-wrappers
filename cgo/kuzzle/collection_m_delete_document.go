@@ -24,10 +24,9 @@ func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.stri
 	if err != nil {
 		if err.Error() == "Collection.MDeleteDocument: please provide at least one id of document to delete" {
 			return C.int(C.EINVAL)
-		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-			return 0
 		}
+		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		return 0
 	}
 
 	cArray := C.malloc(C.size_t(len(res)) * C.size_t(unsafe.Sizeof(uintptr(0))))

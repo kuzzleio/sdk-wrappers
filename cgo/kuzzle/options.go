@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"encoding/json"
 )
 
 /*

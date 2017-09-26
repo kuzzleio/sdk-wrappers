@@ -21,4 +21,3 @@ func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_obje
 
 	return
 }
-

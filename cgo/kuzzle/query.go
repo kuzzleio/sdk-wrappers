@@ -17,11 +17,11 @@ package main
 */
 import "C"
 import (
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/collection"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"encoding/json"
-	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/collection"
 )
 
 //export kuzzle_wrapper_query

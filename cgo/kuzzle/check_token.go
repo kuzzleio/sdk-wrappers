@@ -3,11 +3,11 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <kuzzle.h>
- */
+*/
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_check_token
@@ -32,7 +32,7 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.
 
 	*result = C.token_validity{
 		valid:     valid,
-		state: *(*[512]C.char)(unsafe.Pointer(C.CString(res.State))),
+		state:     *(*[512]C.char)(unsafe.Pointer(C.CString(res.State))),
 		expiresAt: C.int(res.ExpiresAt),
 	}
 

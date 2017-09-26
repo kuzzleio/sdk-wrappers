@@ -7,12 +7,12 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/kuzzle"
-	"unsafe"
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/connection"
 	"github.com/kuzzleio/sdk-go/connection/websocket"
-	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_new_kuzzle

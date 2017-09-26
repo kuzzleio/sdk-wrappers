@@ -7,9 +7,9 @@ package main
 */
 import "C"
 import (
+	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_delete_my_credentials

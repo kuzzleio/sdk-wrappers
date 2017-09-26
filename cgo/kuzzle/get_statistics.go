@@ -7,12 +7,12 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
-	"unsafe"
-	"time"
-	"strconv"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"strconv"
+	"time"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_statistics

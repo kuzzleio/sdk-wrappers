@@ -3,12 +3,12 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <kuzzle.h>
- */
+*/
 import "C"
 import (
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_auto_refresh

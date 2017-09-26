@@ -7,9 +7,9 @@ package main
 */
 import "C"
 import (
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_list_indexes

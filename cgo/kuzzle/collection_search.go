@@ -27,17 +27,5 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
 		return
 	}
 
-	result.result.total = C.int(res.Total)
-
-	if len(res.Hits) > 0 {
-		var hits *[len(res.Hits)]C.document
-
-		for i := 0; i < len(res.Hits); i++ {
-			var doc *C.document
-			*doc.instance = unsafe.Pointer(res.Hits[i])
-			hits[i] = doc
-		}
-
-		result.result.hits = hits
-	}
+	go_to_c_search_result(unsafe.Pointer(res), result)
 }
