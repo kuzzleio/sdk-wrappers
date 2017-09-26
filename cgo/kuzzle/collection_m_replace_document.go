@@ -8,7 +8,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"regexp"
 	"unsafe"
 )
 
