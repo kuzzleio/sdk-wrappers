@@ -28,8 +28,6 @@ func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
 
 	if res.Meta.Active {
 		active = 1
-	} else {
-		active = 0
 	}
 	meta.active = active
 	meta.deleted_at = C.int(res.Meta.DeletedAt)
