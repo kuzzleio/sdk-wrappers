@@ -11,6 +11,7 @@ import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
+	"fmt"
 )
 
 //export kuzzle_wrapper_create_my_credentials
@@ -29,6 +30,7 @@ func kuzzle_wrapper_create_my_credentials(k *C.Kuzzle, result *C.json_result, st
 			return C.int(C.EINVAL)
 		} else {
 			result.error = ToCString_2048(err.Error())
+			fmt.Printf("%s\n", err.Error())
 			return 0
 		}
 	}

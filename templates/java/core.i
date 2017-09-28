@@ -79,7 +79,7 @@
     }
 
     JsonObject getJsonObject(char* key) {
-        kuzzle_wrapper_json_get_json_object($self->jobj, key);
+        return kuzzle_wrapper_json_get_json_object($self->jobj, key);
     }
 }
 
@@ -168,7 +168,7 @@
         $action
         if (result == $null) {
             jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
+            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CreateMyCredentials: strategy is required");
             return $null;
         }
     }
@@ -180,7 +180,7 @@
         if (err == 0) {
             ret.jobj = res.result;
         } else {
-
+            ret.jobj = json_tokener_parse(res.error);
         }
         return &ret;
     }
@@ -192,7 +192,7 @@
         if (err == 0) {
             ret.jobj = res.result;
         } else {
-
+            ret.jobj = json_tokener_parse(res.error);
         }
         return &ret;
     }
