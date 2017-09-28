@@ -21,7 +21,7 @@ func kuzzle_wrapper_list_indexes(k *C.Kuzzle, result *C.string_array_result, opt
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListIndexes(opts)
 	if err != nil {
-		(*result).error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 	}
 
 	cArray := C.malloc(C.size_t(len(res)) * C.size_t(unsafe.Sizeof(uintptr(0))))

@@ -25,6 +25,64 @@
     }
 }
 
+%ignore JsonObject_struct::jobj;
+%extend JsonObject_struct {
+    JsonObject_struct() {
+        JsonObject* j = malloc(sizeof(JsonObject));
+        kuzzle_wrapper_json_new(j);
+        return j;
+    }
+
+    ~JsonObject_struct() {
+        free($self);
+    }
+
+    JsonObject* put(char* key, char* content) {
+        kuzzle_wrapper_json_put($self->jobj, key, content, 0);
+        return $self;
+    }
+
+    JsonObject* put(char* key, int content) {
+        kuzzle_wrapper_json_put($self->jobj, key, &content, 1);
+        return $self;
+    }
+
+    JsonObject* put(char* key, double content) {
+        kuzzle_wrapper_json_put($self->jobj, key, &content, 2);
+        return $self;
+    }
+
+    JsonObject* put(char* key, bool content) {
+        kuzzle_wrapper_json_put($self->jobj, key, &content, 3);
+        return $self;
+    }
+
+    JsonObject* put(char* key, JsonObject* content) {
+        kuzzle_wrapper_json_put($self->jobj, key, content, 4);
+        return $self;
+    }
+
+    char* getString(char* key) {
+        return kuzzle_wrapper_json_get_string($self->jobj, key);
+    }
+
+    int getInt(char* key) {
+        return kuzzle_wrapper_json_get_int($self->jobj, key);
+    }
+
+    double getDouble(char* key) {
+        return kuzzle_wrapper_json_get_double($self->jobj, key);
+    }
+
+    bool getBoolean(char* key) {
+        return kuzzle_wrapper_json_get_bool($self->jobj, key);
+    }
+
+    JsonObject getJsonObject(char* key) {
+        kuzzle_wrapper_json_get_json_object($self->jobj, key);
+    }
+}
+
 %typemap(javaimports) Kuzzle "
 /* The type Kuzzle. */"
 
@@ -42,6 +100,7 @@
         return k;
     }
     ~Kuzzle() {
+        unregisterKuzzle($self);
         free($self);
     }
 
@@ -102,6 +161,40 @@
             return &res;
         }
         return (void*)0;
+    }
+
+    // createMyCredentials
+    %exception createMyCredentials {
+        $action
+        if (result == $null) {
+            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
+            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
+            return $null;
+        }
+    }
+    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials, query_options* options) {
+        static json_result res;
+        static JsonObject ret;
+        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, options);
+
+        if (err == 0) {
+            ret.jobj = res.result;
+        } else {
+
+        }
+        return &ret;
+    }
+    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials) {
+        static json_result res;
+        static JsonObject ret;
+        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, (void*)0);
+
+        if (err == 0) {
+            ret.jobj = res.result;
+        } else {
+
+        }
+        return &ret;
     }
 }
 

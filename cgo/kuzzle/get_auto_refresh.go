@@ -6,7 +6,6 @@ package main
  */
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
@@ -23,7 +22,7 @@ func kuzzle_wrapper_get_auto_refresh(k *C.Kuzzle, result *C.bool_result, index *
 		if err.Error() == "Kuzzle.CheckToken: token required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}

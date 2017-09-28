@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
@@ -21,7 +20,7 @@ func kuzzle_wrapper_refresh_index(k *C.Kuzzle, res *C.shards, index *C.char, opt
 
 	shards, err := (*kuzzle.Kuzzle)(k.instance).RefreshIndex(C.GoString(index), opts)
 	if err != nil {
-		res.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		res.error = ToCString_2048(err.Error())
 	}
 
 	res.total = C.int(shards.Total)

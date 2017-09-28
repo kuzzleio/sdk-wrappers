@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
@@ -22,7 +21,7 @@ func kuzzle_wrapper_get_my_rights(k *C.Kuzzle, result *C.json_result, options *C
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetMyRights(opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return
 	}
 

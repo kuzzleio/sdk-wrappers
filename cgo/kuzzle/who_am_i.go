@@ -15,15 +15,16 @@ import (
 func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
 	res, err := (*kuzzle.Kuzzle)(k.instance).WhoAmI()
 	if err != nil {
-		user.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		user.error = ToCString_2048(err.Error())
+
 	}
 
 	var meta C.kuzzle_meta
 	var active C.uint
-	meta.author = *(*[512]C.char)(unsafe.Pointer(C.CString(res.Meta.Author)))
+	meta.author = ToCString_512(res.Meta.Author)
 	meta.created_at = C.int(res.Meta.CreatedAt)
 	meta.updated_at = C.int(res.Meta.UpdatedAt)
-	meta.updater = *(*[512]C.char)(unsafe.Pointer(C.CString(res.Meta.Updater)))
+	meta.updater = ToCString_512(res.Meta.Updater)
 
 	if res.Meta.Active {
 		active = 1
@@ -45,7 +46,7 @@ func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
 	}
 	a[idx] = nil
 
-	user.id = *(*[512]C.char)(unsafe.Pointer(C.CString(res.Id)))
+	user.id = ToCString_512(res.Id)
 	user.source = source
 	user.meta = &meta
 	user.strategies = (**C.char)(cArray)
