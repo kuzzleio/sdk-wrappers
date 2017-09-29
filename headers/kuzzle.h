@@ -5,8 +5,6 @@
 #include <time.h>
 #include <errno.h>
 
-typedef void* myvoid;
-
 typedef struct {
     void* instance;
 } Kuzzle;
