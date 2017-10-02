@@ -21,20 +21,40 @@ func kuzzle_wrapper_new_collection(c *C.collection, k *C.Kuzzle, colName *C.char
 	return c
 }
 
-func go_to_c_search_result(goRes *C.void, cRes *C.kuzzle_search_response) {
-	res := (*collection.SearchResult)(goRes)
+func go_to_c_search_result(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {
+	cRes.result.total = C.int(goRes.Total)
 
-	cRes.result.total = C.int(res.Total)
+	if len(goRes.Hits) > 0 {
+		hits := make([]*C.document, len(goRes.Hits))
 
-	if len(res.Hits) > 0 {
-		var hits *[len(res.Hits)]C.document
-
-		for i := 0; i < len(res.Hits); i++ {
+		for i := 0; i < len(goRes.Hits); i++ {
 			var doc *C.document
-			*doc.instance = unsafe.Pointer(res.Hits[i])
+			// TODO register it in global
+			t := goRes.Hits[i]
+			doc.instance = unsafe.Pointer(&t)
 			hits[i] = doc
 		}
 
 		cRes.result.hits = hits
 	}
 }
+
+/* TODO
+func go_to_c_specification_search_result(goRes *C.void, cRes *C.kuzzle_specification_search_response) {
+	res := (*types.KuzzleSpecificationSearchResult)(goRes)
+
+	cRes.result.total = C.int(res.Total)
+
+	if len(res.Hits) > 0 {
+		var hits *[len(res.Hits)]C.json_object
+
+		for i := 0; i < len(res.Hits); i++ {
+			var spec *C.document
+			*spec.instance = unsafe.Pointer(res.Hits[i])
+			hits[i] = spec
+		}
+
+		cRes.result.hits = hits
+	}
+}
+*/

@@ -217,6 +217,11 @@ typedef struct {
 } kuzzle_response;
 
 typedef struct {
+    char result[2048];
+    char error[2048];
+} string_response;
+
+typedef struct {
     uint result;
     char error[2048];
 } bool_response;
@@ -226,11 +231,12 @@ typedef struct {
     char error[2048];
 } int_response;
 
+// TODO Ah
 typedef struct {
     char id[512];
     json_object* source;
     kuzzle_meta* meta;
-} document;
+} document_blabla;
 
 typedef struct {
     char* type;
@@ -250,15 +256,27 @@ typedef struct {
 typedef struct {
     document* hits;
     int total;
-} search_response;
+    char scrollId[128];
+} search_result;
 
 typedef struct {
     char request_id[36];
-    search_response result;
+    search_result result;
     char room_id[36];
     char channel[128];
     char error[2048];
 } kuzzle_search_response;
+
+typedef struct {
+    json_object* hits;
+    int total;
+    char scrollId[128];
+} specification_search_result;
+
+typedef struct {
+    specification_search_result result;
+    char error[2048];
+} kuzzle_specification_search_response;
 
 // Kuzzle main object functions
 extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
@@ -301,22 +319,26 @@ extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 // collection object functions
 extern void kuzzle_wrapper_collection_count(collection*, int_response*, filters*, query_options*);
 extern void kuzzle_wrapper_collection_create(collection*, ack_response*, query_options*);
-extern void kuzzle_wrapper_collection_create_document(collection*, document*, char*, document*, query_options*);
-extern int kuzzle_wrapper_collection_delete_document(collection*, char*, char*, query_options*);
+extern int kuzzle_wrapper_collection_create_document(collection*, document*, char*, document*, query_options*);
+extern int kuzzle_wrapper_collection_delete_document(collection*, string_response*, char*, query_options*);
 extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_response*, query_options*);
 extern int kuzzle_wrapper_collection_document_exists(collection*, bool_response*, char*, query_options*);
-extern int kuzzle_wrapper_collection_fetch_document(collection*, kuzzle_response*, char*, query_options*);
+extern int kuzzle_wrapper_collection_fetch_document(collection*, document*, char*, query_options*);
 extern void kuzzle_wrapper_collection_get_mapping(collection*, collection_mapping*, query_options*);
 extern void kuzzle_wrapper_collection_get_specifications(collection*, kuzzle_response*, query_options*);
 extern int kuzzle_wrapper_collection_m_delete_document(collection*, string_array_result*, char**, query_options*);
-extern int kuzzle_wrapper_collection_m_create_document(collection*, kuzzle_search_response*, document**, query_options*);
-extern int kuzzle_wrapper_collection_m_create_or_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
+extern void kuzzle_wrapper_collection_m_create_document(collection*, kuzzle_search_response*, document**, query_options*);
+extern void kuzzle_wrapper_collection_m_create_or_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
 extern int kuzzle_wrapper_collection_m_get_document(collection*, kuzzle_search_response*, char**, query_options*);
 extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
 extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
+extern int kuzzle_wrapper_collection_m_update_document(collection*, kuzzle_search_response*, document**, query_options*);
+extern int kuzzle_wrapper_collection_replace_document(collection*, document*, char*, document*, query_options*);
 extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_response*, search_filters*, query_options*);
+extern int kuzzle_wrapper_collection_scroll(collection*, kuzzle_search_response*, char*, query_options*);
 extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
 extern void kuzzle_wrapper_collection_truncate(collection*, ack_response*, query_options*);
+extern int kuzzle_wrapper_collection_update_document(collection*, document*, char*, document*, query_options*);
 
 //collection_mapping object functions
 extern void kuzzle_wrapper_new_collection_mapping(collection_mapping*, collection*);

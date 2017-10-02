@@ -14,14 +14,26 @@ package main
 
 		return i;
 	}
+
+	static int sizeDocumentArray(document** arr) {
+		int i = 0;
+
+		if (!arr || !arr[0])
+			return 0;
+		while (arr[i])
+			i++;
+
+		return i;
+	}
 */
 import "C"
 import (
 	"encoding/json"
-	"github.com/kuzzleio/sdk-go/collection"
+	//"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/collection"
 )
 
 //export kuzzle_wrapper_query
@@ -118,16 +130,17 @@ func goStrings(argv **C.char) []string {
 	return gostrings
 }
 
-// Helper to convert a C document** to a go array of documents
+// Helper to convert a C document** to a go array of document pointers
 func goDocuments(argv **C.document) []collection.Document {
-	length := C.sizeArray(argv)
+	length := C.sizeDocumentArray(argv)
 	if length == 0 {
 		return nil
 	}
 	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(argv))[:length:length]
 	godocuments := make([]collection.Document, length)
 	for i, s := range tmpslice {
-		godocuments[i] = *(*C.document)(s).instance
+		instance := (*C.document)(s).instance
+		godocuments[i] = *(*collection.Document)(instance)
 	}
 	return godocuments
 }
