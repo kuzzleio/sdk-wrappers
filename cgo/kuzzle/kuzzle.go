@@ -15,9 +15,19 @@ import (
 	"unsafe"
 )
 
+// unregister an instance from the instances map
+//export unregisterKuzzle
+func unregisterKuzzle(k *C.Kuzzle) {
+	delete(instances, (*kuzzle.Kuzzle)(k.instance))
+}
+
 //export kuzzle_wrapper_new_kuzzle
 func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.Options) {
 	var c connection.Connection
+
+	if instances == nil {
+		instances = make(map[interface{}]interface{})
+	}
 
 	var opts types.Options
 	if options != nil {
@@ -28,8 +38,10 @@ func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.O
 		c = websocket.NewWebSocket(C.GoString(host), opts)
 	}
 
-	instance, _ := kuzzle.NewKuzzle(c, opts)
-	k.instance = unsafe.Pointer(instance)
+	inst, _ := kuzzle.NewKuzzle(c, opts)
+	registerInstance(inst)
+
+	k.instance = unsafe.Pointer(inst)
 }
 
 //export kuzzle_wrapper_connect
@@ -56,7 +68,7 @@ func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
 	for _, queryObject := range *offlineQueue {
 		qo := C.query_object{}
 		qo.timestamp = C.ulonglong(queryObject.Timestamp.Unix())
-		qo.request_id = *(*[36]C.char)(unsafe.Pointer(C.CString(queryObject.RequestId)))
+		qo.request_id = ToCString_36(queryObject.RequestId)
 		mquery, _ := json.Marshal(queryObject.Query)
 		qo.query = C.json_tokener_parse(C.CString(string(mquery)))
 		query_objects[idx] = &qo

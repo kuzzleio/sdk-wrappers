@@ -25,12 +25,18 @@ func kuzzle_wrapper_login(k *C.Kuzzle, result *C.login_result, strategy *C.char,
 		if err.Error() == "Kuzzle.Login: cannot authenticate to Kuzzle without an authentication strategy" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}
 
-	result.jwt = *(*[512]C.char)(unsafe.Pointer(C.CString(res)))
+	var arr [512]C.char
+
+	for i, v := range res {
+		arr[i] = (C.char)(v)
+	}
+
+	result.jwt = arr
 
 	return 0
 }

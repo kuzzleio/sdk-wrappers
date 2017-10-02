@@ -7,7 +7,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_check_token
@@ -17,7 +16,7 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.
 		if err.Error() == "Kuzzle.CheckToken: token required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}
@@ -32,7 +31,7 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.
 
 	*result = C.token_validity{
 		valid:     valid,
-		state:     *(*[512]C.char)(unsafe.Pointer(C.CString(res.State))),
+		state:     ToCString_512(res.State),
 		expiresAt: C.int(res.ExpiresAt),
 	}
 

@@ -74,6 +74,7 @@ func SetOptions(options *C.Options) (opts types.Options) {
 
 	p := JsonParser{}
 	p.Parse(options.headers)
+
 	opts.SetHeaders(p.GetContent())
 
 	return

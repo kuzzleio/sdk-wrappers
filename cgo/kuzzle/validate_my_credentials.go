@@ -9,7 +9,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_validate_my_credentials
@@ -24,7 +23,7 @@ func kuzzle_wrapper_validate_my_credentials(k *C.Kuzzle, result *C.bool_result, 
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ValidateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 	}
 
 	var r C.uint

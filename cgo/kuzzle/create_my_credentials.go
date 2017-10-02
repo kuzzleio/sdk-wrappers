@@ -4,13 +4,13 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
 	#include <kuzzle.h>
+	#include <string.h>
 */
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
+	"encoding/json"
 )
 
 //export kuzzle_wrapper_create_my_credentials
@@ -28,7 +28,7 @@ func kuzzle_wrapper_create_my_credentials(k *C.Kuzzle, result *C.json_result, st
 		if err.Error() == "Kuzzle.CreateMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}

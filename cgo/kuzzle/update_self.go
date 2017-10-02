@@ -25,7 +25,7 @@ func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials 
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(jp.GetContent(), opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 	}
 
 	var jsonRes *C.json_object

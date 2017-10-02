@@ -25,7 +25,7 @@ func kuzzle_wrapper_list_collections(k *C.Kuzzle, result *C.json_result, index *
 		if err.Error() == "Kuzzle.ListCollections: index required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}

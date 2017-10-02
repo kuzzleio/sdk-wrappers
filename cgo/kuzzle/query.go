@@ -105,13 +105,13 @@ func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuz
 	res := <-resC
 
 	if res.Error.Message != "" {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(res.Error.Message)))
+		result.error = ToCString_2048(res.Error.Message)
 		return
 	}
 
-	result.request_id = *(*[36]C.char)(unsafe.Pointer(C.CString(res.RequestId)))
-	result.room_id = *(*[36]C.char)(unsafe.Pointer(C.CString(res.RoomId)))
-	result.channel = *(*[128]C.char)(unsafe.Pointer(C.CString(res.Channel)))
+	result.request_id = ToCString_36(res.RequestId)
+	result.room_id = ToCString_36(res.RoomId)
+	result.channel = ToCString_128(res.Channel)
 	r, _ := json.Marshal(res)
 	result.result = C.json_tokener_parse(C.CString(string(r)))
 }

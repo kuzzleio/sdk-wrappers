@@ -28,7 +28,7 @@ func kuzzle_wrapper_update_my_credentials(k *C.Kuzzle, result *C.json_result, st
 		if err.Error() == "Kuzzle.UpdateMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}
