@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_login
