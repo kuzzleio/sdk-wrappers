@@ -4,7 +4,6 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <kuzzle.h>
 */
-/* TODO
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
@@ -28,14 +27,15 @@ func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_r
 		return
 	}
 
-	var r uint
+	var r C.uint
 
 	if res.Published {
 		r = 1
+	} else {
+		r = 0
 	}
 
 	result.result = r
 
 	return
 }
-*/

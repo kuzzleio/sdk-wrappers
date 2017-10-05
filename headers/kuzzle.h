@@ -231,13 +231,6 @@ typedef struct {
     char error[2048];
 } int_response;
 
-// TODO Ah
-typedef struct {
-    char id[512];
-    json_object* source;
-    kuzzle_meta* meta;
-} document_blabla;
-
 typedef struct {
     char* type;
     json_object* fields;
@@ -254,7 +247,7 @@ typedef struct {
 } search_filters;
 
 typedef struct {
-    document* hits;
+    document** hits;
     int total;
     char scrollId[128];
 } search_result;

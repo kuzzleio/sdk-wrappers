@@ -25,17 +25,18 @@ func go_to_c_search_result(goRes *collection.SearchResult, cRes *C.kuzzle_search
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
-		hits := make([]*C.document, len(goRes.Hits))
+		hits := make([]*C.document, len(goRes.Hits) + 1)
 
 		for i := 0; i < len(goRes.Hits); i++ {
-			var doc *C.document
+			var doc C.document
 			// TODO register it in global
 			t := goRes.Hits[i]
 			doc.instance = unsafe.Pointer(&t)
-			hits[i] = doc
+			hits[i] = &doc
 		}
+		hits[len(goRes.Hits)] = nil
 
-		cRes.result.hits = hits
+		cRes.result.hits = &hits[0]
 	}
 }
 

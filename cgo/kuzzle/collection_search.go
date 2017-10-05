@@ -4,7 +4,6 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <kuzzle.h>
 */
-/* TODO
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
@@ -28,6 +27,5 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
 		return
 	}
 
-	go_to_c_search_result(unsafe.Pointer(res), result)
+	go_to_c_search_result(&res, result)
 }
-*/
