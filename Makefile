@@ -1,12 +1,13 @@
 CC = gcc
 CFLAGS = -fPIC -I/home/kblondel/Downloads/android-studio/jre/include/linux -I/home/kblondel/Downloads/android-studio/jre/include/ -I./headers
 LDFLAGS = -L./
-LIBS = -lgokcore
+LIBS = -lgokcore -ljson-c
 SRCS = kcore_wrap.c
 OBJS = $(SRCS:.c=.o)
 TARGET = libkcore.so
 
-GOCC = /usr/local/bin/go
+GOROOT ?= /usr/local
+GOCC = $(GOROOT)/bin/go
 GOFLAGS = -buildmode=c-shared
 GOSRC = ./cgo/kuzzle/
 GOTARGET = libgokcore.so
@@ -19,6 +20,9 @@ kcore_wrap.o: kcore_wrap.c
 	$(CC) -ggdb -c $< -o $@ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 core:
+ifeq ($(wildcard $(GOCC)),)
+	$(error "Unable to find go compiler")
+endif
 	$(GOCC) build -o $(GOTARGET) $(GOFLAGS) $(GOSRC)
 
 wrapper: $(OBJS)
