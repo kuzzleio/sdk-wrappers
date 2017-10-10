@@ -27,7 +27,7 @@ func kuzzle_wrapper_collection_mapping_apply(cm *C.collection_mapping, options *
 
 	_, err := (*collection.CollectionMapping)(cm.instance).Apply(opts)
 	if err != nil {
-		cm.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		cm.error = ToCString_2048(err.Error())
 		return 0
 	}
 
@@ -43,7 +43,7 @@ func kuzzle_wrapper_collection_mapping_refresh(cm *C.collection_mapping, options
 
 	_, err := (*collection.CollectionMapping)(cm.instance).Refresh(opts)
 	if err != nil {
-		cm.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		cm.error = ToCString_2048(err.Error())
 		return 0
 	}
 

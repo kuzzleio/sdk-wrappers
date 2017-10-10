@@ -25,7 +25,7 @@ func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.stri
 		if err.Error() == "Collection.MDeleteDocument: please provide at least one id of document to delete" {
 			return C.int(C.EINVAL)
 		}
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return 0
 	}
 

@@ -8,7 +8,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_collection_m_get_document
@@ -23,7 +22,7 @@ func kuzzle_wrapper_collection_m_get_document(c *C.collection, result *C.kuzzle_
 		if err.Error() == "Collection.MGetDocument: please provide at least one id of document to retrieve" {
 			return C.int(C.EINVAL)
 		}
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return 0
 	}
 

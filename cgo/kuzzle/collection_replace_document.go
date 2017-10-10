@@ -23,7 +23,7 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, result *C.docum
 		if err.Error() == "Collection.ReplaceDocument: document id required" {
 			return C.int(C.EINVAL)
 		}
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return 0
 	}
 

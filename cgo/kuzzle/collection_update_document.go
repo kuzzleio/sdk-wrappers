@@ -23,7 +23,7 @@ func kuzzle_wrapper_collection_update_document(c *C.collection, result *C.docume
 		if err.Error() == "Collection.UpdateDocument: document id required" {
 			return C.int(C.EINVAL)
 		}
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return 0
 	}
 

@@ -8,7 +8,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_collection_document_exists
@@ -23,7 +22,7 @@ func kuzzle_wrapper_collection_document_exists(c *C.collection, result *C.bool_r
 		if err.Error() == "Collection.DocumentExists: document id required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}

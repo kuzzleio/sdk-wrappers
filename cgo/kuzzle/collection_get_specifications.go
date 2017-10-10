@@ -20,7 +20,7 @@ func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuz
 
 	res, err := (*collection.Collection)(c.instance).GetSpecifications(opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return
 	}
 

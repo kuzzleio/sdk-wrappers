@@ -23,7 +23,7 @@ func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.documen
 		if err.Error() == "Collection.FetchDocument: document id required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = ToCString_2048(err.Error())
 			return 0
 		}
 	}

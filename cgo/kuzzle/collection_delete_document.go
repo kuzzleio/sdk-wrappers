@@ -8,7 +8,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_collection_delete_document
@@ -23,11 +22,11 @@ func kuzzle_wrapper_collection_delete_document(c *C.collection, result *C.string
 		if err.Error() == "Collection.DeleteDocument: document id required" {
 			return C.int(C.EINVAL)
 		}
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return 0
 	}
 
-	result.result = *(*[2048]C.char)(unsafe.Pointer(C.CString(res)))
+	result.result = ToCString_2048(res)
 
 	return 0
 }
