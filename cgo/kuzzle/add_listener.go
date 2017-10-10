@@ -19,7 +19,7 @@ import (
 func kuzzle_wrapper_add_listener(k *C.Kuzzle, e C.int, cb unsafe.Pointer) {
 	c := make(chan interface{})
 
-	kuzzle.AddListener(*(*kuzzle.Kuzzle)(k.instance), int(e), c)
+	kuzzle.AddListener((*kuzzle.Kuzzle)(k.instance), int(e), c)
 	go func() {
 		res := <-c
 
