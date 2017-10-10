@@ -6,14 +6,13 @@ package main
 */
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 )
-
+// TODO
 //export kuzzle_wrapper_collection_get_specifications
-func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_response, options *C.query_options) {
+func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_specification, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -25,9 +24,5 @@ func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuz
 		return
 	}
 
-	var jsonRes *C.json_object
-	r, _ := json.Marshal(res)
-
-	jsonRes = C.json_tokener_parse(C.CString(string(r)))
-	result.result = jsonRes
+	result.instance = unsafe.Pointer(&res)
 }

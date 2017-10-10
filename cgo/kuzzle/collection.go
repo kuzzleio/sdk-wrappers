@@ -10,6 +10,7 @@ import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_new_collection
@@ -40,22 +41,21 @@ func go_to_c_search_result(goRes *collection.SearchResult, cRes *C.kuzzle_search
 	}
 }
 
-/* TODO
-func go_to_c_specification_search_result(goRes *C.void, cRes *C.kuzzle_specification_search_response) {
-	res := (*types.KuzzleSpecificationSearchResult)(goRes)
+func go_to_c_specification_search_result(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
+	cRes.result.total = C.int(goRes.Total)
 
-	cRes.result.total = C.int(res.Total)
+	if len(goRes.Hits) > 0 {
+		hits := make([]*C.document, len(goRes.Hits) + 1)
 
-	if len(res.Hits) > 0 {
-		var hits *[len(res.Hits)]C.json_object
-
-		for i := 0; i < len(res.Hits); i++ {
-			var spec *C.document
-			*spec.instance = unsafe.Pointer(res.Hits[i])
-			hits[i] = spec
+		for i := 0; i < len(goRes.Hits); i++ {
+			var spec *C.kuzzle_specification
+			// TODO register it in global
+			t := goRes.Hits[i]
+			spec.instance = unsafe.Pointer(&t)
+			hits[i] = &spec
 		}
+		hits[len(goRes.Hits)] = nil
 
-		cRes.result.hits = hits
+		cRes.result.hits = &hits[0]
 	}
 }
-*/

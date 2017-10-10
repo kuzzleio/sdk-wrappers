@@ -4,7 +4,6 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <kuzzle.h>
 */
-/*
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
@@ -13,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_scroll_specifications
-func kuzzle_wrapper_collection_scroll_specifications(c *C.collection, result *C.kuzzle_search_response, scrollId *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_scroll_specifications(c *C.collection, result *C.kuzzle_specification_search_response, scrollId *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -28,8 +27,7 @@ func kuzzle_wrapper_collection_scroll_specifications(c *C.collection, result *C.
 		return 0
 	}
 
-	go_to_c_specification_search_result(unsafe.Pointer(res), result)
+	go_to_c_specification_search_result(&res, result)
 
 	return 0
 }
-*/
