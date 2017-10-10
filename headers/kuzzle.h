@@ -253,6 +253,11 @@ typedef struct {
 } search_result;
 
 typedef struct {
+    void *instance;
+    char error[2048];
+} kuzzle_specification;
+
+typedef struct {
     char request_id[36];
     search_result result;
     char room_id[36];
@@ -261,7 +266,7 @@ typedef struct {
 } kuzzle_search_response;
 
 typedef struct {
-    json_object* hits;
+    kuzzle_specification** hits;
     int total;
     char scrollId[128];
 } specification_search_result;
@@ -327,7 +332,9 @@ extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_sear
 extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
 extern int kuzzle_wrapper_collection_m_update_document(collection*, kuzzle_search_response*, document**, query_options*);
 extern int kuzzle_wrapper_collection_replace_document(collection*, document*, char*, document*, query_options*);
+extern void kuzzle_wrapper_collection_scroll_specifications(collection*, kuzzle_specification_search_response*, char*, query_options*);
 extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_response*, search_filters*, query_options*);
+extern void kuzzle_wrapper_collection_search_specifications(collection*, kuzzle_specification_search_response*, search_filters*, query_options*);
 extern int kuzzle_wrapper_collection_scroll(collection*, kuzzle_search_response*, char*, query_options*);
 extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
 extern void kuzzle_wrapper_collection_truncate(collection*, ack_response*, query_options*);
