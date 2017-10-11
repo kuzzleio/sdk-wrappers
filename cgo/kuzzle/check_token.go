@@ -3,7 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
-	#include <kuzzle.h>
+	#include "kuzzle.h"
  */
 import "C"
 import (
@@ -16,8 +16,8 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
 
 	if err != nil {
-			result.error = C.CString(err.Error())
-			return result
+		result.error = C.CString(err.Error())
+		return result
 	}
 
 	if res.Valid {
