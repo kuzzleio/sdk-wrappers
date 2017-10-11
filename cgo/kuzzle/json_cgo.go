@@ -11,7 +11,7 @@ import (
 )
 
 type JsonParser struct {
-	content map[string]interface{}
+	content interface{}
 }
 
 func (parser *JsonParser) get_json_value(key string, jobj *C.json_object, content map[string]interface{}, isArray bool) {
@@ -85,10 +85,32 @@ func (parser *JsonParser) get_json_value(key string, jobj *C.json_object, conten
 }
 
 func (parser *JsonParser) Parse(jobj *C.json_object) {
-	if parser.content == nil {
-		parser.content = make(map[string]interface{})
+	parser.parse_root(jobj)
+}
+
+func (parser *JsonParser) parse_root(jobj *C.json_object, content interface{}) {
+	if jobj == nil {
+		return
 	}
-	parser.parse_cjson(jobj, parser.content)
+
+	objType := C.json_object_get_type(jobj)
+
+	if objType != C.json_type_object && objType != C.json_type_array {
+		return
+	}
+
+	if objType == C.json_type_object {
+		if parser.content == nil {
+			parser.content = make(map[string]interface{})
+		}
+		parser.parse_cjson(jobj, parser.content.(map[string]interface{}))
+	}
+	if objType == C.json_type_array {
+		if parser.content == nil {
+			parser.content = make([]interface{}, C.json_object_array_length(jobj))
+		}
+		parser.parseArray(jobj, nil, parser.content.(map[string]interface{}))
+	}
 }
 
 func (parser *JsonParser) parse_cjson(jobj *C.json_object, content map[string]interface{}) {
@@ -149,6 +171,7 @@ func (parser *JsonParser) parseArray(jobj *C.json_object, key *C.char, content m
 	}
 }
 
+// TODO It may not be a map[string]
 func (parser JsonParser) GetContent() map[string]interface{} {
 	return parser.content
 }

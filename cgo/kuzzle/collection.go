@@ -45,10 +45,10 @@ func go_to_c_specification_search_result(goRes *types.KuzzleSpecificationSearchR
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
-		hits := make([]*C.document, len(goRes.Hits) + 1)
+		hits := make([]*C.kuzzle_specification, len(goRes.Hits) + 1)
 
 		for i := 0; i < len(goRes.Hits); i++ {
-			var spec *C.kuzzle_specification
+			var spec C.kuzzle_specification
 			// TODO register it in global
 			t := goRes.Hits[i]
 			spec.instance = unsafe.Pointer(&t)
