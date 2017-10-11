@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
@@ -24,28 +23,21 @@ func kuzzle_wrapper_create_index(k *C.Kuzzle, result *C.ack_response, index *C.c
 		if err.Error() == "Collection.createIndex: index required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = C.CString(err.Error())
 			return 0
 		}
 	}
 
-	var ack, shardsAck C.uint
-
 	if res.Acknowledged {
-		ack = 1
+		result.acknowledged = 1
 	} else {
-		ack = 0
+		result.acknowledged = 0
 	}
 
 	if res.ShardsAcknowledged {
-		shardsAck = 1
+		result.shardsAcknowledged = 1
 	} else {
-		shardsAck = 0
-	}
-
-	*result = C.ack_response{
-		acknowledged:       ack,
-		shardsAcknowledged: shardsAck,
+		result.shardsAcknowledged = 0
 	}
 
 	return 0

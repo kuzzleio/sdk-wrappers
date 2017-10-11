@@ -26,7 +26,10 @@ func kuzzle_wrapper_add_listener(k *C.Kuzzle, e C.int, cb unsafe.Pointer) {
 		var jsonRes *C.json_object
 		r, _ := json.Marshal(res)
 
-		jsonRes = C.json_tokener_parse(C.CString(string(r)))
+		buffer := C.CString(string(r))
+		defer C.free(unsafe.Pointer(buffer))
+
+		jsonRes = C.json_tokener_parse(buffer)
 
 		C.call(cb, jsonRes)
 	}()

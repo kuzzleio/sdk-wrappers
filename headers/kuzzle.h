@@ -6,7 +6,7 @@
 #include <errno.h>
 
 typedef struct {
-    void* instance;
+    void *instance;
 } Kuzzle;
 
 enum {
@@ -25,75 +25,75 @@ enum {
 
 //define a request
 typedef struct {
-    char request_id[36];
-    char controller[128];
-    char action[128];
-    char index[128];
-    char collection[128];
+    char *request_id;
+    char *controller;
+    char *action;
+    char *index;
+    char *collection;
     json_object *body;
-    char id[128];
+    char *id;
     int from;
     int size;
-    char scroll[32];
-    char scroll_id[128];
-    char strategy[128];
+    char *scroll;
+    char *scroll_id;
+    char *strategy;
     int expires_in;
-    json_object* volatiles;
-    char scope[512];
-    char state[512];
-    char user[512];
+    json_object *volatiles;
+    char *scope;
+    char *state;
+    char *user;
     int start;
     int stop;
     int end;
     int bit;
-    char member[512];
-    char member1[512];
-    char member2[512];
+    char *member;
+    char *member1;
+    char *member2;
     char **members;
     float lon;
     float lat;
     float distance;
-    char unit[128];
-    json_object* options;
+    char *unit;
+    json_object *options;
     char **keys;
     int cursor;
     int offset;
-    char field[512];
+    char *field;
     char **fields;
-    char subcommand[1024];
-    char pattern[1024];
+    char *subcommand;
+    char *pattern;
     int idx;
-    char min[512];
-    char max[512];
-    char limit[512];
+    char *min;
+    char *max;
+    char *limit;
     int count;
-    char match[512];
+    char *match;
 } kuzzle_request;
 
 //query object used by query()
 typedef struct {
     json_object *query;
     unsigned long long   timestamp;
-    char   request_id[36];
+    char   *request_id;
 } query_object;
 
 typedef struct {
-    query_object** query;
+    query_object **query;
 } offline_queue;
 
 //response of check_token()
 typedef struct token_validity_struct {
     unsigned valid;
-    char state[512];
+    char *state;
     int expiresAt;
-    char error[2048];
+    char *error;
 } token_validity;
 
 //response for any delete* function
 typedef struct ack_response_struct {
     unsigned acknowledged;
     unsigned shardsAcknowledged;
-    char error[2048];
+    char *error;
 } ack_response;
 
 //options passed to query()
@@ -101,11 +101,11 @@ typedef struct {
     unsigned queuable;
     int from;
     int size;
-    char scroll[16];
-    char scrollId[128];
-    char refresh[32];
-    char ifExist[32];
-    int retryOnConflict;
+    char *scroll;
+    char *scroll_id;
+    char *refresh;
+    char *if_exist;
+    int retry_on_conflict;
     json_object *volatiles;
 } query_options;
 
@@ -122,33 +122,33 @@ typedef struct {
     double reconnection_delay;
     double replay_interval;
     enum Mode connect;
-    char refresh[64];
-    char default_index[128];
+    char *refresh;
+    char *default_index;
     json_object    *headers;
 } Options;
 
 //result of login()
 typedef struct {
-    char jwt[512];
-    char error[2048];
+    char *jwt;
+    char *error;
 } login_result;
 
 //any json result
 typedef struct {
     json_object *result;
-    char error[2048];
+    char *error;
 } json_result;
 
 //used for any boolean result
 typedef struct {
     unsigned result;
-    char error[2048];
+    char *error;
 } bool_result;
 
 //used for now result
 typedef struct {
     double result;
-    char error[2048];
+    char *error;
 } now_result;
 
 //used for get_statistics
@@ -158,13 +158,13 @@ typedef struct {
     json_object* failed_requests;
     json_object* ongoing_requests;
     double timestamp;
-    char error[2048];
+    char *error;
 } statistics;
 
 //used for string array result
 typedef struct {
     char **result;
-    char error[2048];
+    char *error;
 } string_array_result;
 
 //used for refresh_index
@@ -172,34 +172,34 @@ typedef struct {
     int total;
     int successful;
     int failed;
-    char error[2048];
+    char *error;
 } shards;
 
 //meta of a document
 typedef struct {
-    char author[512];
+    char *author;
     int created_at;
     int updated_at;
-    char updater[512];
+    char *updater;
     unsigned active;
     int deleted_at;
 } kuzzle_meta;
 
 //kuzzle user
 typedef struct {
-    char id[512];
+    char *id;
     json_object* source;
     kuzzle_meta* meta;
     char **strategies;
-    char error[2048];
+    char *error;
 } user;
 
 typedef struct {
-    char request_id[36];
-    json_object* result;
-    char room_id[36];
-    char channel[128];
-    char error[2048];
+    char *request_id;
+    json_object *result;
+    char *room_id;
+    char *channel;
+    char *error;
 } kuzzle_response;
 
 // Kuzzle main object functions
@@ -207,7 +207,7 @@ extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
 extern char* kuzzle_wrapper_connect(Kuzzle*);
 extern void kuzzle_wrapper_get_offline_queue(Kuzzle*, offline_queue*);
 extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
-extern int kuzzle_wrapper_check_token(Kuzzle*, token_validity*, char*);
+extern token_validity* kuzzle_wrapper_check_token(Kuzzle*, char*);
 extern int kuzzle_wrapper_create_index(Kuzzle*, ack_response*, char*, query_options*);
 extern int kuzzle_wrapper_login(Kuzzle*, login_result*, char*, json_object*, int*);
 extern int kuzzle_wrapper_create_my_credentials(Kuzzle*, json_result*, char*, json_object*, query_options*);

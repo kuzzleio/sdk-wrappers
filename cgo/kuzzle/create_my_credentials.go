@@ -28,7 +28,7 @@ func kuzzle_wrapper_create_my_credentials(k *C.Kuzzle, result *C.json_result, st
 		if err.Error() == "Kuzzle.CreateMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
 		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+			result.error = C.CString(err.Error())
 			return 0
 		}
 	}

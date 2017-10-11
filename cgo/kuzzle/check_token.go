@@ -2,39 +2,32 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
+	#include <stdlib.h>
 	#include <kuzzle.h>
  */
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_check_token
-func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.char) C.int {
+func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
-	if err != nil {
-		if err.Error() == "Kuzzle.CheckToken: token required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-			return 0
-		}
-	}
+	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
 
-	var valid C.uint
+	if err != nil {
+			result.error = C.CString(err.Error())
+			return result
+	}
 
 	if res.Valid {
-		valid = 1
+		result.valid = 1
 	} else {
-		valid = 0
+		result.valid = 0
 	}
 
-	*result = C.token_validity{
-		valid:     valid,
-		state: *(*[512]C.char)(unsafe.Pointer(C.CString(res.State))),
-		expiresAt: C.int(res.ExpiresAt),
-	}
+	result.state = C.CString(res.State)
+	result.expiresAt = C.int(res.ExpiresAt)
 
-	return 0
+	return result
 }
