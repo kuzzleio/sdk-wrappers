@@ -2,8 +2,7 @@
 .idea
 
 # Libgokcore
-libgokcore.h
-libgokcore.so
+libgokcore.*
 
 # .out files
 *.out

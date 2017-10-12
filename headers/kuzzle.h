@@ -1,7 +1,7 @@
 #ifndef _KUZZLE_H_
 #define _KUZZLE_H_
 
-#include <json/json.h>
+#include <json-c/json.h>
 #include <time.h>
 #include <errno.h>
 
