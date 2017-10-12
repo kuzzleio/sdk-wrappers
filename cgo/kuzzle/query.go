@@ -77,17 +77,17 @@ func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuz
 	req.Volatile = jp.GetContent()
 
 	start := int(request.start)
-	req.Start = &start
+	req.Start = start
 
 	cursor := int(request.cursor)
-	req.Cursor = &cursor
+	req.Cursor = cursor
 
 	req.Members = goStrings(request.members)
 	req.Keys = goStrings(request.keys)
 	req.Fields = goStrings(request.fields)
 
-	resC := make(chan types.KuzzleResponse)
-	(*kuzzle.Kuzzle)(k.instance).Query(req, opts, resC)
+	resC := make(chan *types.KuzzleResponse)
+	(*kuzzle.Kuzzle)(k.instance).Query(&req, opts, resC)
 
 	res := <-resC
 

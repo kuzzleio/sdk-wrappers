@@ -136,7 +136,7 @@ func (parser *JsonParser) parseArray(jobj *C.json_object, key *C.char, content m
 	var jvalue *C.json_object
 
 	for i := 0; i < int(arraylen); i++ {
-		jvalue = C.json_object_array_get_idx(jarray, C.int(i))
+		jvalue = C.json_object_array_get_idx(jarray, C.size_t(i))
 		jtype := C.json_object_get_type(jvalue)
 		if jtype == C.json_type_array {
 			parser.parseArray(jvalue, nil, content)

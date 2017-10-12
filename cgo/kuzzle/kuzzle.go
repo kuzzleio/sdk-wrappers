@@ -57,8 +57,7 @@ func kuzzle_wrapper_connect(k *C.Kuzzle) *C.char {
 //export kuzzle_wrapper_get_offline_queue
 func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
 	offlineQueue := (*kuzzle.Kuzzle)(k.instance).GetOfflineQueue()
-	qooo := types.QueryObject{RequestId: "test"}
-	*offlineQueue = append(*offlineQueue, qooo)
+	*offlineQueue = append(*offlineQueue, &types.QueryObject{RequestId: "test"})
 
 	cArray := C.malloc(C.size_t(len(*offlineQueue)) * C.size_t(unsafe.Sizeof(uintptr(0))))
 
