@@ -243,4 +243,19 @@ extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 //Options
 extern void kuzzle_wrapper_new_options(Options*);
 
+//JsonObject
+typedef struct JsonObject_struct {
+    json_object* jobj;
+} JsonObject;
+
+extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
+extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
+extern int kuzzle_wrapper_json_get_int(json_object*, char*);
+extern double kuzzle_wrapper_json_get_double(json_object*, char*);
+extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
+extern JsonObject kuzzle_wrapper_json_get_json_object(json_object*, char*);
+
+//gc management
+extern void unregisterKuzzle(Kuzzle*);
+
 #endif

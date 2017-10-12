@@ -9,7 +9,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
@@ -22,7 +21,7 @@ func kuzzle_wrapper_get_all_statistics(k *C.Kuzzle, result *C.json_result, optio
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		result.error = ToCString_2048(err.Error())
 		return
 	}
 
