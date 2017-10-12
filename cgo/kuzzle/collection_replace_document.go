@@ -18,7 +18,7 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, result *C.docum
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).ReplaceDocument(C.GoString(id), *(*collection.Document)(document.instance), opts)
+	res, err := (*collection.Collection)(c.instance).ReplaceDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
 	if err != nil {
 		if err.Error() == "Collection.ReplaceDocument: document id required" {
 			return C.int(C.EINVAL)

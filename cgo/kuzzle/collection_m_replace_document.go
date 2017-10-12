@@ -26,7 +26,7 @@ func kuzzle_wrapper_collection_m_replace_document(c *C.collection, result *C.kuz
 		return 0
 	}
 
-	go_to_c_search_result(&res, result)
+	go_to_c_search_result(res, result)
 
 	return 0
 }

@@ -8,7 +8,6 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"fmt"
 )
 
 //export kuzzle_wrapper_collection_count
@@ -32,25 +31,14 @@ func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, se
 
 func go_to_c_search_filter (cSf *C.search_filters) *types.SearchFilters {
 	filters := types.SearchFilters{}
-	jp := JsonParser{}
 
 	if cSf.query != nil {
-		jp.Parse(cSf.query)
-		filters.Query = jp.GetContent()
+		filters.Query = JsonCConvert(cSf.query)
 	}
 
-	if cSf.sort != nil {
-		jp.Parse(cSf.sort)
-		//filters.Sort = jp.GetContent()
+	if cSf.sort != nil && JsonCType(cSf.sort) == C.json_type_array {
+		filters.Sort = JsonCConvert(cSf.sort).([]interface{})
 	}
 
 	return &filters
-}
-
-//export test_me
-func test_me (filter *C.json_object) {
-	jp := JsonParser{}
-	jp.Parse(filter)
-
-	fmt.Println(jp.GetContent())
 }

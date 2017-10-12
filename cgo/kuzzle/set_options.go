@@ -71,11 +71,7 @@ func SetOptions(options *C.Options) (opts types.Options) {
 	opts.SetConnect(int(options.connect))
 	opts.SetRefresh(C.GoString(&options.refresh[0]))
 	opts.SetDefaultIndex(C.GoString(&options.default_index[0]))
-
-	p := JsonParser{}
-	p.Parse(options.headers)
-
-	opts.SetHeaders(p.GetContent())
+	opts.SetHeaders(JsonCConvert(options.headers).(map[string]interface{}))
 
 	return
 }

@@ -17,10 +17,7 @@ func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_r
 		opts = SetQueryOptions(options)
 	}
 
-	jp := JsonParser{}
-	jp.Parse(message)
-
-	res, err := (*collection.Collection)(c.instance).PublishMessage(jp.GetContent(), opts)
+	res, err := (*collection.Collection)(c.instance).PublishMessage(JsonCConvert(message).(map[string]interface{}), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

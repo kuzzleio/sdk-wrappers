@@ -54,36 +54,34 @@ func kuzzle_wrapper_collection_mapping_refresh(cm *C.collection_mapping, options
 func kuzzle_wrapper_collection_mapping_set(cm *C.collection_mapping, jMap *C.json_object) {
 	mappings := make(types.KuzzleFieldsMapping)
 
-	jp := JsonParser{}
-	jp.Parse(jMap)
+	if JsonCType(jMap) == C.json_type_object {
+		for field, mapping := range JsonCConvert(jMap).(map[string]interface{}) {
+			f := &types.KuzzleFieldMapping{}
+			if mapping.(map[string]interface{})["type"] != nil {
+				f.Type = mapping.(map[string]interface{})["type"].(string)
+			}
+			if mapping.(map[string]interface{})["properties"] != nil {
+				f.Properties = mapping.(map[string]interface{})["properties"].(map[string]interface{})
+			}
+			mappings[field] = f
+		}
 
-	for field, mapping := range jp.GetContent() {
-		f := types.KuzzleFieldMapping{}
-		if mapping.(map[string]interface{})["type"] != nil {
-			f.Type = mapping.(map[string]interface{})["type"].(string)
-		}
-		if mapping.(map[string]interface{})["properties"] != nil {
-			f.Properties = mapping.(map[string]interface{})["properties"].(map[string]interface{})
-		}
-		mappings[field] = f
+		(*collection.CollectionMapping)(cm.instance).Set(&mappings)
 	}
-
-	(*collection.CollectionMapping)(cm.instance).Set(mappings)
 
 	return
 }
 
 //export kuzzle_wrapper_collection_mapping_set_headers
 func kuzzle_wrapper_collection_mapping_set_headers(cm *C.collection_mapping, content *C.json_object, replace C.uint) {
-	jp := JsonParser{}
-	jp.Parse(content)
+	if JsonCType(content) == C.json_type_object {
+		var r bool
+		if replace == 1 {
+			r = true
+		}
 
-	var r bool
-	if replace == 1 {
-		r = true
+		(*collection.CollectionMapping)(cm.instance).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
 	}
-
-	(*collection.CollectionMapping)(cm.instance).SetHeaders(jp.GetContent(), r)
 
 	return
 }

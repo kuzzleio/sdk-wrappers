@@ -19,7 +19,7 @@ func kuzzle_wrapper_collection_create_document(c *C.collection, result *C.docume
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).CreateDocument(C.GoString(id), *(*collection.Document)(document.instance), opts)
+	res, err := (*collection.Collection)(c.instance).CreateDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
 	if err != nil {
 		match, _ := regexp.MatchString("Invalid value for the 'ifExist' option: '.*'", err.Error())
 		if match {

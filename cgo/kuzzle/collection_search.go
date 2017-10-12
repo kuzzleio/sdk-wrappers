@@ -20,11 +20,11 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
 	// TODO: Initialize Search Filters from C to Go
 	filters := types.SearchFilters{}
 
-	res, err := (*collection.Collection)(c.instance).Search(filters, opts)
+	res, err := (*collection.Collection)(c.instance).Search(&filters, opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return
 	}
 
-	go_to_c_search_result(&res, result)
+	go_to_c_search_result(res, result)
 }

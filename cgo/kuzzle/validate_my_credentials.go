@@ -18,10 +18,7 @@ func kuzzle_wrapper_validate_my_credentials(k *C.Kuzzle, result *C.bool_result, 
 		opts = SetQueryOptions(options)
 	}
 
-	jp := JsonParser{}
-	jp.Parse(credentials)
-
-	res, err := (*kuzzle.Kuzzle)(k.instance).ValidateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).ValidateMyCredentials(C.GoString(strategy), JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 	}

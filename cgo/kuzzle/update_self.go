@@ -19,10 +19,7 @@ func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials 
 		opts = SetQueryOptions(options)
 	}
 
-	jp := JsonParser{}
-	jp.Parse(credentials)
-
-	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 	}

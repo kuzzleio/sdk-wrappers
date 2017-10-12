@@ -81,13 +81,8 @@ func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuz
 		Match:      C.GoString(&request.match[0]),
 	}
 
-	jp := JsonParser{}
-
-	jp.Parse(request.body)
-	req.Body = jp.GetContent()
-
-	jp.Parse(request.volatiles)
-	req.Volatile = jp.GetContent()
+	req.Body = JsonCConvert(request.body)
+	req.Volatile = JsonCConvert(request.volatiles).(map[string]interface{})
 
 	start := int(request.start)
 	req.Start = start
@@ -131,16 +126,16 @@ func goStrings(argv **C.char) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func goDocuments(argv **C.document) []collection.Document {
+func goDocuments(argv **C.document) []*collection.Document {
 	length := C.sizeDocumentArray(argv)
 	if length == 0 {
 		return nil
 	}
 	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(argv))[:length:length]
-	godocuments := make([]collection.Document, length)
+	godocuments := make([]*collection.Document, length)
 	for i, s := range tmpslice {
 		instance := (*C.document)(s).instance
-		godocuments[i] = *(*collection.Document)(instance)
+		godocuments[i] = (*collection.Document)(instance)
 	}
 	return godocuments
 }

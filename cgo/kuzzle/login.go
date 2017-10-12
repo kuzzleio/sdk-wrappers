@@ -12,14 +12,12 @@ import (
 
 //export kuzzle_wrapper_login
 func kuzzle_wrapper_login(k *C.Kuzzle, result *C.login_result, strategy *C.char, credentials *C.json_object, expires_in *C.int) C.int {
-	jp := JsonParser{}
-	jp.Parse(credentials)
 
 	var expire int
 	if expires_in != nil {
 		expire = int(*expires_in)
 	}
-	res, err := (*kuzzle.Kuzzle)(k.instance).Login(C.GoString(strategy), jp.GetContent(), &expire)
+	res, err := (*kuzzle.Kuzzle)(k.instance).Login(C.GoString(strategy), JsonCConvert(credentials).(map[string]interface{}), &expire)
 	if err != nil {
 		if err.Error() == "Kuzzle.Login: cannot authenticate to Kuzzle without an authentication strategy" {
 			return C.int(C.EINVAL)

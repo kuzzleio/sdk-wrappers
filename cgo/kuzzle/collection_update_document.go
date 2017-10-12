@@ -18,7 +18,7 @@ func kuzzle_wrapper_collection_update_document(c *C.collection, result *C.docume
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).UpdateDocument(C.GoString(id), *(*collection.Document)(document.instance), opts)
+	res, err := (*collection.Collection)(c.instance).UpdateDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
 	if err != nil {
 		if err.Error() == "Collection.UpdateDocument: document id required" {
 			return C.int(C.EINVAL)

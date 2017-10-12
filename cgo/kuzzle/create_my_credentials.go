@@ -20,10 +20,7 @@ func kuzzle_wrapper_create_my_credentials(k *C.Kuzzle, result *C.json_result, st
 		opts = SetQueryOptions(options)
 	}
 
-	jp := JsonParser{}
-	jp.Parse(credentials)
-
-	res, err := (*kuzzle.Kuzzle)(k.instance).CreateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).CreateMyCredentials(C.GoString(strategy),JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
 		if err.Error() == "Kuzzle.CreateMyCredentials: strategy is required" {
 			return C.int(C.EINVAL)
