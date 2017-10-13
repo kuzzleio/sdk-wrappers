@@ -10,7 +10,7 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 )
-// TODO
+
 //export kuzzle_wrapper_collection_get_specifications
 func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_specification, options *C.query_options) {
 	var opts types.QueryOptions

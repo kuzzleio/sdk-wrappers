@@ -23,7 +23,7 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzz
 		return
 	}
 
-	go_to_c_search_result(res, result)
+	goToCSearchResult(res, result)
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
@@ -39,5 +39,5 @@ func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, res
 		return
 	}
 
-	go_to_c_search_result(res, result)
+	goToCSearchResult(res, result)
 }

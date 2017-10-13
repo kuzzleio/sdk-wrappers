@@ -17,10 +17,9 @@ func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, se
 		opts = SetQueryOptions(options)
 	}
 
-	// TODO: Initialize Search Filters from C to Go
-	filters := types.SearchFilters{}
 
-	res, err := (*collection.Collection)(c.instance).Count(&filters, opts)
+
+	res, err := (*collection.Collection)(c.instance).Count(goToCSearchFilters(searchFilters), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

@@ -22,7 +22,7 @@ func kuzzle_wrapper_new_collection(c *C.collection, k *C.Kuzzle, colName *C.char
 	return c
 }
 
-func go_to_c_search_result(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {
+func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
@@ -41,7 +41,7 @@ func go_to_c_search_result(goRes *collection.SearchResult, cRes *C.kuzzle_search
 	}
 }
 
-func go_to_c_specification_search_result(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
+func gotToCSpecificationSearchResult (goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
@@ -57,5 +57,14 @@ func go_to_c_specification_search_result(goRes *types.KuzzleSpecificationSearchR
 		hits[len(goRes.Hits)] = nil
 
 		cRes.result.hits = &hits[0]
+	}
+}
+
+func goToCSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
+	return &types.SearchFilters{
+		Query: JsonCConvert(searchFilters.query),
+		Sort: JsonCConvert(searchFilters.sort).([]interface{}),
+		Aggregations: JsonCConvert(searchFilters.aggregations),
+		SearchAfter: JsonCConvert(searchFilters.search_after).([]interface{}),
 	}
 }
