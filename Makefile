@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -fPIC -I/home/kblondel/Downloads/android-studio/jre/include/linux -I/home/kblondel/Downloads/android-studio/jre/include/ -I./headers
+CFLAGS = -fPIC -I$(PWD)/headers
 LDFLAGS = -L./
 LIBS = -lgokcore -ljson-c
 SRCS = kcore_wrap.c

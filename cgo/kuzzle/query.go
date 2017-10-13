@@ -2,15 +2,14 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 
 	static int sizeArray(char** arr) {
-		int i = 0;
+		if (!arr) return 0;
 
-		if (!arr || !arr[0])
-			return 0;
-		while (arr[i])
-			i++;
+		int i = 0;
+		while(arr[i])i++;
 
 		return i;
 	}
@@ -24,7 +23,13 @@ import (
 )
 
 //export kuzzle_wrapper_query
-func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
+func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
+	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
+
+	if result == nil {
+		return result
+	}
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -91,16 +96,35 @@ func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuz
 
 	res := <-resC
 
-	if res.Error.Message != "" {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(res.Error.Message)))
-		return
+	if res.Error != nil {
+		err := res.Error.(*types.KuzzleError)
+		result.error = C.CString(err.Message)
+		result.status = C.int(err.Status)
+
+		if len(res.Stack) > 0 {
+			result.stack = C.CString(err.Stack)
+		}
+
+		return result
 	}
 
-	result.request_id = *(*[36]C.char)(unsafe.Pointer(C.CString(res.RequestId)))
-	result.room_id = *(*[36]C.char)(unsafe.Pointer(C.CString(res.RoomId)))
-	result.channel = *(*[128]C.char)(unsafe.Pointer(C.CString(res.Channel)))
+	result.request_id = C.CString(res.RequestId)
+
+	if len(res.RoomId) > 0 {
+		result.room_id = C.CString(res.RoomId)
+	}
+
+	if len(res.Channel) > 0 {
+		result.channel = C.CString(res.Channel)
+	}
+
 	r, _ := json.Marshal(res)
-	result.result = C.json_tokener_parse(C.CString(string(r)))
+	buffer := C.CString(string(r))
+	defer C.free(unsafe.Pointer(buffer))
+
+	result.result = C.json_tokener_parse(buffer)
+
+	return result
 }
 
 // Helper to convert a C char** to a go array of string

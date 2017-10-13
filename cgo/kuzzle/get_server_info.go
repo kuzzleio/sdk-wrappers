@@ -14,18 +14,30 @@ import (
 )
 
 //export kuzzle_wrapper_get_server_info
-func kuzzle_wrapper_get_server_info(k *C.Kuzzle, result *C.json_result, options *C.query_options) {
+func kuzzle_wrapper_get_server_info(k *C.Kuzzle, options *C.query_options) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
+	if result == nil {
+		return result
+	}
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetServerInfo(opts)
+
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
-		return
+		Set_json_result_error(result, err)
+		return result
 	}
 
 	r, _ := json.Marshal(res)
-	result.result = C.json_tokener_parse(C.CString(string(r)))
+	buffer := C.CString(string(r))
+	defer C.free(unsafe.Pointer(buffer))
+
+	result.result = C.json_tokener_parse(buffer)
+
+	return result
 }

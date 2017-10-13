@@ -2,7 +2,8 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+  #include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -15,5 +16,8 @@ func kuzzle_wrapper_get_headers(k *C.Kuzzle) *C.json_object {
 	res := (*kuzzle.Kuzzle)(k.instance).GetHeaders()
 	r, _ := json.Marshal(res)
 
-	return C.json_tokener_parse(C.CString(string(r)))
+  buffer := C.CString(string(r))
+  defer C.free(unsafe.Pointer(buffer))
+	
+  return C.json_tokener_parse(buffer)
 }

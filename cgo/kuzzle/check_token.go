@@ -14,13 +14,14 @@ import (
 func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
 
-	if result == nil:
+	if result == nil {
 		return result
+	}
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
 
 	if err != nil {
-		result.error = C.CString(err.Error())
+		Set_token_validity_error(result, err)
 		return result
 	}
 
@@ -30,8 +31,9 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 		result.valid = 0
 	}
 
+	result.status = 200
 	result.state = C.CString(res.State)
-	result.expiresAt = C.int(res.ExpiresAt)
+	result.expiresAt = C.longlong(res.ExpiresAt)
 
 	return result
 }

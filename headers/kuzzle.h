@@ -73,7 +73,7 @@ typedef struct {
 //query object used by query()
 typedef struct {
     json_object *query;
-    unsigned long long   timestamp;
+    unsigned long long timestamp;
     char   *request_id;
 } query_object;
 
@@ -81,20 +81,6 @@ typedef struct {
     query_object **query;
 } offline_queue;
 
-//response of check_token()
-typedef struct token_validity_struct {
-    unsigned valid;
-    char *state;
-    int expiresAt;
-    char *error;
-} token_validity;
-
-//response for any delete* function
-typedef struct ack_response_struct {
-    unsigned acknowledged;
-    unsigned shardsAcknowledged;
-    char *error;
-} ack_response;
 
 //options passed to query()
 typedef struct {
@@ -127,54 +113,6 @@ typedef struct {
     json_object    *headers;
 } Options;
 
-//result of login()
-typedef struct {
-    char *jwt;
-    char *error;
-} login_result;
-
-//any json result
-typedef struct {
-    json_object *result;
-    char *error;
-} json_result;
-
-//used for any boolean result
-typedef struct {
-    unsigned result;
-    char *error;
-} bool_result;
-
-//used for now result
-typedef struct {
-    double result;
-    char *error;
-} now_result;
-
-//used for get_statistics
-typedef struct {
-    json_object* completed_requests;
-    json_object* connections;
-    json_object* failed_requests;
-    json_object* ongoing_requests;
-    double timestamp;
-    char *error;
-} statistics;
-
-//used for string array result
-typedef struct {
-    char **result;
-    char *error;
-} string_array_result;
-
-//used for refresh_index
-typedef struct {
-    int total;
-    int successful;
-    int failed;
-    char *error;
-} shards;
-
 //meta of a document
 typedef struct {
     char *author;
@@ -191,16 +129,101 @@ typedef struct {
     json_object* source;
     kuzzle_meta* meta;
     char **strategies;
+    int status;
     char *error;
 } user;
 
+/* === Dedicated response structures === */
+
+//statistics
+typedef struct {
+    json_object* completed_requests;
+    json_object* connections;
+    json_object* failed_requests;
+    json_object* ongoing_requests;
+    unsigned long long timestamp;
+    int status;
+    char *error;
+} statistics;
+
+//check_token
+typedef struct {
+    unsigned valid;
+    char *state;
+    long long expiresAt;
+    int status;
+    char *error;
+    char *stack;
+} token_validity;
+
+//any delete* function
+typedef struct {
+    unsigned acknowledged;
+    unsigned shardsAcknowledged;
+    int status;
+    char *error;
+    char *stack;
+} ack_response;
+
+//login
+typedef struct {
+    char *jwt;
+    int status;
+    char *error;
+} login_result;
+
+//refresh_index
+typedef struct {
+    int total;
+    int successful;
+    int failed;
+    int status;
+    char *error;
+} shards;
+
+/* === Generic response structures === */
+
+// raw Kuzzle response
 typedef struct {
     char *request_id;
     json_object *result;
     char *room_id;
     char *channel;
+    int status;
     char *error;
+    char *stack;
 } kuzzle_response;
+
+//any json result
+typedef struct {
+    json_object *result;
+    int status;
+    char *error;
+    char *stack;
+} json_result;
+
+//any boolean result
+typedef struct {
+    unsigned result;
+    int status;
+    char *error;
+    char *stack;
+} bool_result;
+
+//any integer result
+typedef struct {
+    long long result;
+    int status;
+    char *error;
+} now_result;
+
+//used for string array result
+typedef struct {
+    char **result;
+    int status;
+    char *error;
+} string_array_result;
+
 
 // Kuzzle main object functions
 extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
@@ -208,16 +231,16 @@ extern char* kuzzle_wrapper_connect(Kuzzle*);
 extern void kuzzle_wrapper_get_offline_queue(Kuzzle*, offline_queue*);
 extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
 extern token_validity* kuzzle_wrapper_check_token(Kuzzle*, char*);
-extern int kuzzle_wrapper_create_index(Kuzzle*, ack_response*, char*, query_options*);
+extern ack_response* kuzzle_wrapper_create_index(Kuzzle*, char*, query_options*);
 extern int kuzzle_wrapper_login(Kuzzle*, login_result*, char*, json_object*, int*);
-extern int kuzzle_wrapper_create_my_credentials(Kuzzle*, json_result*, char*, json_object*, query_options*);
+extern json_result* kuzzle_wrapper_create_my_credentials(Kuzzle*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect(Kuzzle*);
 extern void kuzzle_wrapper_flush_queue(Kuzzle*);
-extern void kuzzle_wrapper_get_all_statistics(Kuzzle*, json_result*, query_options*);
-extern int kuzzle_wrapper_get_auto_refresh(Kuzzle*, bool_result*, char*, query_options*);
-extern int kuzzle_wrapper_get_my_credentials(Kuzzle*, json_result*, char*, query_options*);
-extern void kuzzle_wrapper_get_my_rights(Kuzzle*, json_result*, query_options*);
-extern void kuzzle_wrapper_get_server_info(Kuzzle*, json_result*, query_options*);
+extern json_result* kuzzle_wrapper_get_all_statistics(Kuzzle*, query_options*);
+extern bool_result* kuzzle_wrapper_get_auto_refresh(Kuzzle*, char*, query_options*);
+extern json_result* kuzzle_wrapper_get_my_credentials(Kuzzle*, char*, query_options*);
+extern json_result kuzzle_wrapper_get_my_rights(Kuzzle*, query_options*);
+extern json_result* kuzzle_wrapper_get_server_info(Kuzzle*, query_options*);
 extern void kuzzle_wrapper_get_statistics(Kuzzle*, statistics*, time_t, query_options*);
 extern int kuzzle_wrapper_list_collections(Kuzzle*, json_result*, char*, query_options*);
 extern void kuzzle_wrapper_list_indexes(Kuzzle*, string_array_result*, query_options*);
@@ -230,7 +253,7 @@ extern void kuzzle_wrapper_unset_jwt(Kuzzle*);
 extern void kuzzle_wrapper_update_self(Kuzzle*, json_result*, json_object*, query_options*);
 extern void kuzzle_wrapper_validate_my_credentials(Kuzzle*, bool_result*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_who_am_i(Kuzzle*, user*);
-extern void kuzzle_wrapper_query(Kuzzle*, kuzzle_response*, kuzzle_request*, query_options*);
+extern kuzzle_response* kuzzle_wrapper_query(Kuzzle*, kuzzle_request*, query_options*);
 extern void kuzzle_wrapper_set_headers(Kuzzle*, json_object*, unsigned);
 extern json_object* kuzzle_wrapper_get_headers(Kuzzle*);
 extern void kuzzle_wrapper_add_listener(Kuzzle*, int, void*);
@@ -239,6 +262,7 @@ extern void kuzzle_wrapper_replay_queue(Kuzzle*);
 extern void kuzzle_wrapper_set_jwt(Kuzzle*, char*);
 extern void kuzzle_wrapper_start_queuing(Kuzzle*);
 extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
+extern ack_response* kuzzle_wrapper_delete_my_credentials(Kuzzle*, char*, query_options*);
 
 //Options
 extern void kuzzle_wrapper_new_options(Options*);

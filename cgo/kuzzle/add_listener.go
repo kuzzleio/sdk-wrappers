@@ -2,7 +2,9 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+
+	#include <stdlib.h>
+	#include "kuzzle.h"
 
 	static void call(void* f, json_object* res) {
 		((void(*)(json_object*))f)(res);
