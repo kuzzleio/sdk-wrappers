@@ -41,7 +41,7 @@ func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_res
 	}
 }
 
-func gotToCSpecificationSearchResult (goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
+func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
@@ -60,7 +60,7 @@ func gotToCSpecificationSearchResult (goRes *types.KuzzleSpecificationSearchResu
 	}
 }
 
-func goToCSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
+func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
 	return &types.SearchFilters{
 		Query: JsonCConvert(searchFilters.query),
 		Sort: JsonCConvert(searchFilters.sort).([]interface{}),

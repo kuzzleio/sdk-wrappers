@@ -26,7 +26,7 @@ func kuzzle_wrapper_collection_scroll_specifications(c *C.collection, result *C.
 		return 0
 	}
 
-	gotToCSpecificationSearchResult(res, result)
+	goToCSpecificationSearchResult(res, result)
 
 	return 0
 }

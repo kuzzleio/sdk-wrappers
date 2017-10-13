@@ -17,11 +17,11 @@ func kuzzle_wrapper_collection_search_specifications(c *C.collection, result *C.
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).SearchSpecifications(goToCSearchFilters(searchFilters), opts)
+	res, err := (*collection.Collection)(c.instance).SearchSpecifications(cToGoSearchFilters(searchFilters), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return
 	}
 
-	gotToCSpecificationSearchResult(res, result)
+	goToCSpecificationSearchResult(res, result)
 }

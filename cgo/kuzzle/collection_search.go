@@ -17,7 +17,7 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).Search(goToCSearchFilters(searchFilters), opts)
+	res, err := (*collection.Collection)(c.instance).Search(cToGoSearchFilters(searchFilters), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

@@ -19,7 +19,7 @@ func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, se
 
 
 
-	res, err := (*collection.Collection)(c.instance).Count(goToCSearchFilters(searchFilters), opts)
+	res, err := (*collection.Collection)(c.instance).Count(cToGoSearchFilters(searchFilters), opts)
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return
