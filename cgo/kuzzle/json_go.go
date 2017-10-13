@@ -6,7 +6,6 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
-import "fmt"
 
 func JsonCType(jobj *C.json_object) C.json_type {
 	switch C.json_object_get_type(jobj) {
@@ -58,7 +57,6 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 
 			key := (*C.char)(field.k)
 			value := (*C.json_object)(field.v)
-			fmt.Println(key, value)
 
 			content[C.GoString(key)] = JsonCConvert(value)
 		}
@@ -69,7 +67,7 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 		content := make([]interface{}, length)
 
 		for i := 0; i < length ; i++ {
-			content[i] = JsonCConvert(C.json_object_array_get_idx(jobj, C.size_t(i)))
+			content[i] = JsonCConvert(C.json_object_array_get_idx(jobj, C.int(i)))
 		}
 
 		return content
