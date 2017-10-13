@@ -97,14 +97,7 @@ func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.que
 	res := <-resC
 
 	if res.Error != nil {
-		err := res.Error.(*types.KuzzleError)
-		result.error = C.CString(err.Message)
-		result.status = C.int(err.Status)
-
-		if len(res.Stack) > 0 {
-			result.stack = C.CString(err.Stack)
-		}
-
+		Set_kuzzle_response_error(result, res.Error)
 		return result
 	}
 

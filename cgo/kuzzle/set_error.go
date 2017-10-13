@@ -45,8 +45,19 @@ func Set_ack_response_error(s *C.ack_response, err error) {
   }
 }
 
-// apply a types.KuzzleError on a ack_response* C struct
+// apply a types.KuzzleError on a bool_result* C struct
 func Set_bool_result_error(s *C.bool_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+// apply a types.KuzzleError on a kuzzle_response* C struct
+func Set_kuzzle_response_error(s *C.kuzzle_response, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
