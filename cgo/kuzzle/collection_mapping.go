@@ -56,7 +56,7 @@ func kuzzle_wrapper_collection_mapping_set(cm *C.collection_mapping, jMap *C.jso
 	mappings := make(types.KuzzleFieldsMapping)
 
 	if JsonCType(jMap) == C.json_type_object {
-		jsonString := []byte(C.GoString(C.json_object_get_string(jMap)))
+		jsonString := []byte(C.GoString(C.json_object_to_json_string(jMap)))
 		json.Unmarshal(jsonString, &mappings)
 	}
 
