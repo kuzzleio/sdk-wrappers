@@ -6,7 +6,6 @@ package main
 */
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/types"
 	"time"
 )
@@ -26,11 +25,7 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts.SetRefresh(C.GoString(&options.refresh[0]))
 	opts.SetIfExist(C.GoString(&options.ifExist[0]))
 	opts.SetRetryOnConflict(int(options.retryOnConflict))
-
-	out, _ := json.Marshal(opts.GetVolatile())
-	vols := make(map[string]interface{})
-	json.Unmarshal(out, &vols)
-	opts.SetVolatile(vols)
+	opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
 
 	return
 }
@@ -72,6 +67,28 @@ func SetOptions(options *C.Options) (opts types.Options) {
 	opts.SetRefresh(C.GoString(&options.refresh[0]))
 	opts.SetDefaultIndex(C.GoString(&options.default_index[0]))
 	opts.SetHeaders(JsonCConvert(options.headers).(map[string]interface{}))
+
+	return
+}
+
+func SetRoomOptions(options *C.room_options) (opts types.RoomOptions) {
+	opts = types.NewRoomOptions()
+
+	if options.scope != nil {
+		opts.SetScope(C.GoString(&options.scope[0]))
+	}
+	if options.state != nil {
+		opts.SetState(C.GoString(&options.state[0]))
+	}
+	if options.user != nil {
+		opts.SetUser(C.GoString(&options.user[0]))
+	}
+
+	opts.SetSubscribeToSelf(options.subscribe_to_self == 1)
+
+	if options.volatiles != nil {
+		opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
+	}
 
 	return
 }

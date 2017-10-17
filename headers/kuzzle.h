@@ -123,6 +123,15 @@ typedef struct {
     json_object *volatiles;
 } query_options;
 
+//options passed to room constructor
+typedef struct {
+    char scope[512];
+    char state[512];
+    char user[512];
+    int subscribe_to_self;
+    json_object *volatiles;
+} query_options;
+
 enum Mode {AUTO, MANUAL};
 //options passed to the Kuzzle() fct
 typedef struct {
