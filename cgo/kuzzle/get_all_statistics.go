@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_all_statistics
@@ -26,5 +27,7 @@ func kuzzle_wrapper_get_all_statistics(k *C.Kuzzle, result *C.json_result, optio
 	}
 
 	r, _ := json.Marshal(res)
-	result.result = C.json_tokener_parse(C.CString(string(r)))
+	cString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(cString))
+	result.result = C.json_tokener_parse(cString)
 }

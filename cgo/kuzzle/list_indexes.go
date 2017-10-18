@@ -30,6 +30,7 @@ func kuzzle_wrapper_list_indexes(k *C.Kuzzle, result *C.string_array_result, opt
 
 	idx := 0
 	for _, substring := range res {
+		// TODO Must be freed in C
 		a[idx] = C.CString(substring)
 		idx += 1
 	}

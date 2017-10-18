@@ -11,6 +11,7 @@ import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_create_my_credentials
@@ -33,7 +34,9 @@ func kuzzle_wrapper_create_my_credentials(k *C.Kuzzle, result *C.json_result, st
 	var jsonRes *C.json_object
 	r, _ := json.Marshal(res)
 
-	jsonRes = C.json_tokener_parse(C.CString(string(r)))
+	cString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(cString))
+	jsonRes = C.json_tokener_parse(cString)
 	result.result = jsonRes
 
 	return 0

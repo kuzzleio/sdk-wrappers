@@ -108,7 +108,9 @@ func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuz
 	result.room_id = ToCString_36(res.RoomId)
 	result.channel = ToCString_128(res.Channel)
 	r, _ := json.Marshal(res)
-	result.result = C.json_tokener_parse(C.CString(string(r)))
+	cString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(cString))
+	result.result = C.json_tokener_parse(cString)
 }
 
 // Helper to convert a C char** to a go array of string

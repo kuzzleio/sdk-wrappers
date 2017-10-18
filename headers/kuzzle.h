@@ -174,6 +174,22 @@ typedef struct {
     char error[2048];
 } now_result;
 
+typedef struct {
+    char result[2048];
+    char error[2048];
+} string_result;
+
+//used for string array result
+typedef struct {
+    char **result;
+    char error[2048];
+} string_array_result;
+
+typedef struct {
+    int result;
+    char error[2048];
+} int_result;
+
 //used for get_statistics
 typedef struct {
     json_object* completed_requests;
@@ -183,12 +199,6 @@ typedef struct {
     double timestamp;
     char error[2048];
 } statistics;
-
-//used for string array result
-typedef struct {
-    char **result;
-    char error[2048];
-} string_array_result;
 
 //used for refresh_index
 typedef struct {
@@ -224,21 +234,6 @@ typedef struct {
     char channel[128];
     char error[2048];
 } kuzzle_response;
-
-typedef struct {
-    char result[2048];
-    char error[2048];
-} string_response;
-
-typedef struct {
-    uint result;
-    char error[2048];
-} bool_response;
-
-typedef struct {
-    int result;
-    char error[2048];
-} int_response;
 
 typedef struct {
     char* type;
@@ -322,12 +317,12 @@ extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 extern void test_me(json_object*);
 
 // collection object functions
-extern void kuzzle_wrapper_collection_count(collection*, int_response*, search_filters*, query_options*);
+extern void kuzzle_wrapper_collection_count(collection*, int_result*, search_filters*, query_options*);
 extern void kuzzle_wrapper_collection_create(collection*, ack_response*, query_options*);
 extern int kuzzle_wrapper_collection_create_document(collection*, document*, char*, document*, query_options*);
-extern int kuzzle_wrapper_collection_delete_document(collection*, string_response*, char*, query_options*);
+extern int kuzzle_wrapper_collection_delete_document(collection*, string_result*, char*, query_options*);
 extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_response*, query_options*);
-extern int kuzzle_wrapper_collection_document_exists(collection*, bool_response*, char*, query_options*);
+extern int kuzzle_wrapper_collection_document_exists(collection*, bool_result*, char*, query_options*);
 extern int kuzzle_wrapper_collection_fetch_document(collection*, document*, char*, query_options*);
 extern void kuzzle_wrapper_collection_get_mapping(collection*, collection_mapping*, query_options*);
 extern void kuzzle_wrapper_collection_get_specifications(collection*, kuzzle_specification*, query_options*);

@@ -33,12 +33,15 @@ func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
 	meta.deleted_at = C.int(res.Meta.DeletedAt)
 
 	var source *C.json_object
-	source = C.json_tokener_parse(C.CString(string(res.Source)))
+	cString := C.Cstring(string(res.Source))
+	defer C.free(unsafe.Pointer(cString))
+	source = C.json_tokener_parse(cString)
 
 	cArray := C.malloc(C.size_t(len(res.Strategies)) * C.size_t(unsafe.Sizeof(uintptr(0))))
 	a := (*[1<<30 - 1]*C.char)(cArray)
 	idx := 0
 	for _, substring := range res.Strategies {
+		// TODO Must be freed in C
 		a[idx] = C.CString(substring)
 		idx += 1
 	}

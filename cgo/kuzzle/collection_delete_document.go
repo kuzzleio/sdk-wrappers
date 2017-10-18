@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_delete_document
-func kuzzle_wrapper_collection_delete_document(c *C.collection, result *C.string_response, id *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_delete_document(c *C.collection, result *C.string_result, id *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

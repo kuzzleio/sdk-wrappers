@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_update_my_credentials
@@ -29,11 +30,11 @@ func kuzzle_wrapper_update_my_credentials(k *C.Kuzzle, result *C.json_result, st
 		}
 	}
 
-	var jsonRes *C.json_object
 	r, _ := json.Marshal(res)
 
-	jsonRes = C.json_tokener_parse(C.CString(string(r)))
-	result.result = jsonRes
+	cString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(cString))
+	result.result = C.json_tokener_parse(cString)
 
 	return 0
 }

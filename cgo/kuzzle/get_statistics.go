@@ -12,6 +12,7 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"strconv"
 	"time"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_statistics
@@ -35,9 +36,18 @@ func kuzzle_wrapper_get_statistics(k *C.Kuzzle, result *C.statistics, timestamp 
 	connections, _ := json.Marshal(res.Connections)
 	failedRequests, _ := json.Marshal(res.FailedRequests)
 
-	result.ongoing_requests = C.json_tokener_parse(C.CString(string(ongoing)))
-	result.completed_requests = C.json_tokener_parse(C.CString(string(completedRequests)))
-	result.completed_requests = C.json_tokener_parse(C.CString(string(connections)))
-	result.completed_requests = C.json_tokener_parse(C.CString(string(failedRequests)))
+	ongoingString := C.CString(string(ongoing))
+	defer C.free(unsafe.Pointer(ongoingString))
+	completedRequestsString := C.CString(string(completedRequests))
+	defer C.free(unsafe.Pointer(completedRequestsString))
+	connectionsString := C.CString(string(connections))
+	defer C.free(unsafe.Pointer(connectionsString))
+	failedRequestsString := C.CString(string(failedRequests))
+	defer C.free(unsafe.Pointer(failedRequestsString))
+
+	result.ongoing_requests = C.json_tokener_parse(ongoingString)
+	result.completed_requests = C.json_tokener_parse(completedRequestsString)
+	result.completed_requests = C.json_tokener_parse(connectionsString)
+	result.completed_requests = C.json_tokener_parse(failedRequestsString)
 	result.timestamp = C.double(res.Timestamp)
 }

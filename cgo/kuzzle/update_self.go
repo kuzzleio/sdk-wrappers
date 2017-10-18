@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_update_self
@@ -27,6 +28,8 @@ func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials 
 	var jsonRes *C.json_object
 	r, _ := json.Marshal(res)
 
-	jsonRes = C.json_tokener_parse(C.CString(string(r)))
+	cString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(cString))
+	jsonRes = C.json_tokener_parse(cString)
 	result.result = jsonRes
 }

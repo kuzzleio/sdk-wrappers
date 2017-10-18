@@ -31,10 +31,12 @@ func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.stri
 
 	cArray := C.malloc(C.size_t(len(res)) * C.size_t(unsafe.Sizeof(uintptr(0))))
 
+	// TODO Bad assign
 	a := (*[1<<30 - 1]*C.char)(cArray)
 
 	idx := 0
 	for _, substring := range res {
+		// TODO Must be freed in C
 		a[idx] = C.CString(substring)
 		idx += 1
 	}

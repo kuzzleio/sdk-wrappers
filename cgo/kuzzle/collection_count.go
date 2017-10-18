@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_count
-func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_response, searchFilters *C.search_filters, options *C.query_options) {
+func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_result, searchFilters *C.search_filters, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

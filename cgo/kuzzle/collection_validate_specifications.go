@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_validate_specifications
-func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.bool_response, options *C.query_options) {
+func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.bool_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

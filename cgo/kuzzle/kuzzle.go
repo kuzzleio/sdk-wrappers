@@ -48,6 +48,7 @@ func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.O
 func kuzzle_wrapper_connect(k *C.Kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Connect()
 	if err != nil {
+		// TODO Must be freed in C
 		return C.CString(err.Error())
 	}
 
@@ -69,7 +70,9 @@ func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
 		qo.timestamp = C.ulonglong(queryObject.Timestamp.Unix())
 		qo.request_id = ToCString_36(queryObject.RequestId)
 		mquery, _ := json.Marshal(queryObject.Query)
-		qo.query = C.json_tokener_parse(C.CString(string(mquery)))
+		cString := C.CString(string(mquery))
+		qo.query = C.json_tokener_parse(cString)
+		C.free(unsafe.Pointer(cString))
 		query_objects[idx] = &qo
 		idx += 1
 	}
@@ -80,6 +83,7 @@ func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
 
 //export kuzzle_wrapper_get_jwt
 func kuzzle_wrapper_get_jwt(k *C.Kuzzle) *C.char {
+	// TODO Must be freed in C
 	return C.CString((*kuzzle.Kuzzle)(k.instance).GetJwt())
 }
 

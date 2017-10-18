@@ -54,11 +54,16 @@ func kuzzle_wrapper_new_options(o *C.Options) {
 		mode = uint32(C.AUTO)
 	}
 	copts.connect = mode
+
+	// TODO Must be freed in C
 	copts.refresh = *(*[64]C.char)(unsafe.Pointer(C.CString(opts.GetRefresh())))
+	// TODO Must be freed in C
 	copts.default_index = *(*[128]C.char)(unsafe.Pointer(C.CString(opts.GetDefaultIndex())))
 
 	r, _ := json.Marshal(opts.GetHeaders())
-	copts.headers = C.json_tokener_parse(C.CString(string(r)))
+	headersString := C.CString(string(r))
+	defer C.free(unsafe.Pointer(headersString))
+	copts.headers = C.json_tokener_parse(headersString)
 
 	*o = copts
 }

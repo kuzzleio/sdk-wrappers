@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_document_exists
-func kuzzle_wrapper_collection_document_exists(c *C.collection, result *C.bool_response, id *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_document_exists(c *C.collection, result *C.bool_result, id *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
