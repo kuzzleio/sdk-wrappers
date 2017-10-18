@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_m_update_document
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_m_update_document(c *C.collection, result *C.kuzz
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).MUpdateDocument(goDocuments(documents), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.MUpdateDocument(goDocuments(documents), opts)
+
 	if err != nil {
 		if err.Error() == "Collection.MUpdateDocument: please provide at least one document to update" {
 			return C.int(C.EINVAL)

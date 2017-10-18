@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_scroll
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_scroll(c *C.collection, result *C.kuzzle_search_r
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).Scroll(C.GoString(scrollId), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.Scroll(C.GoString(scrollId), opts)
+
 	if err != nil {
 		if err.Error() == "Collection.Scroll: scroll id required" {
 			return C.int(C.EINVAL)

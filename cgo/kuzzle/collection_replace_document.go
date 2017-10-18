@@ -9,6 +9,7 @@ import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_replace_document
@@ -18,7 +19,9 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, result *C.docum
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).ReplaceDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.ReplaceDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
+
 	if err != nil {
 		if err.Error() == "Collection.ReplaceDocument: document id required" {
 			return C.int(C.EINVAL)

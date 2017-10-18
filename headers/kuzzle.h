@@ -10,13 +10,15 @@ typedef struct {
 } Kuzzle;
 
 typedef struct {
-  void* instance;
-} collection;
-
-typedef struct {
     void* instance;
     char error[2048];
 } collection_mapping;
+
+typdef struct {
+    char* index;
+    char* collection;
+    void* kuzzle;
+}
 
 typedef struct {
     void* instance;

@@ -10,11 +10,14 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_new_collection_mapping
+// TODO refactor
 func kuzzle_wrapper_new_collection_mapping(cm *C.collection_mapping, c *C.collection) {
-	instance := collection.NewMapping((*collection.Collection)(c.instance))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	instance := collection.NewMapping(col)
 
 	cm.instance = unsafe.Pointer(instance)
 }

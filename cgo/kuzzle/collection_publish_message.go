@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_publish_message
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_r
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).PublishMessage(JsonCConvert(message).(map[string]interface{}), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.PublishMessage(JsonCConvert(message).(map[string]interface{}), opts)
+
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

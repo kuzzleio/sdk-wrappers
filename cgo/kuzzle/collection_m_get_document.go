@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_m_get_document
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_m_get_document(c *C.collection, result *C.kuzzle_
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).MGetDocument(goStrings(ids), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.MGetDocument(goStrings(ids), opts)
+
 	if err != nil {
 		if err.Error() == "Collection.MGetDocument: please provide at least one id of document to retrieve" {
 			return C.int(C.EINVAL)

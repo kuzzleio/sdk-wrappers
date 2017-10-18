@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_validate_specifications
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specific
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).ValidateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.ValidateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
+
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

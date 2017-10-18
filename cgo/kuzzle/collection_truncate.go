@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_truncate
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response,
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).Truncate(opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.Truncate(opts)
+
 	if err != nil {
 		result.error = ToCString_2048(err.Error())
 		return

@@ -5,7 +5,10 @@ package main
 	#include <kuzzle.h>
 */
 import "C"
-import "github.com/kuzzleio/sdk-go/collection"
+import (
+	"github.com/kuzzleio/sdk-go/collection"
+	"github.com/kuzzleio/sdk-go/kuzzle"
+)
 
 //export kuzzle_wrapper_collection_set_headers
 func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_object, replace C.uint) {
@@ -15,7 +18,8 @@ func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_obje
 			r = true
 		}
 
-		(*collection.Collection)(c.instance).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
+		col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+		col.SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
 	}
 
 	return

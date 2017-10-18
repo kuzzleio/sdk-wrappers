@@ -9,6 +9,7 @@ import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_m_delete_document
@@ -19,8 +20,9 @@ func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.stri
 	}
 
 	gIds := goStrings(ids)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.MDeleteDocument(gIds, opts)
 
-	res, err := (*collection.Collection)(c.instance).MDeleteDocument(gIds, opts)
 	if err != nil {
 		if err.Error() == "Collection.MDeleteDocument: please provide at least one id of document to delete" {
 			return C.int(C.EINVAL)

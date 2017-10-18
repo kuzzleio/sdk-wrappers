@@ -8,6 +8,7 @@ package main
 import "C"
 
 func JsonCType(jobj *C.json_object) C.json_type {
+	// Returning the value directly results in a type mismatch
 	switch C.json_object_get_type(jobj) {
 	case C.json_type_null:
 		return C.json_type_null

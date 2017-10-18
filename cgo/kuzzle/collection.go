@@ -8,18 +8,23 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_new_collection
-func kuzzle_wrapper_new_collection(c *C.collection, k *C.Kuzzle, colName *C.char, index *C.char) *C.collection {
-	instance := collection.NewCollection((*kuzzle.Kuzzle)(k.instance), C.GoString(colName), C.GoString(index))
+func kuzzle_wrapper_new_collection(k *C.Kuzzle, colName *C.char, index *C.char) *C.collection {
+	// TODO Must be freed in C
+	col := C.malloc(C.sizeof_collection)
+	// TODO Must be freed in C
+	C.strcpy(col.index, index)
+	// TODO Must be freed in C
+	C.strcpy(col.collection, colName)
 
-	c.instance = unsafe.Pointer(instance)
+	// TODO Must be freed by the Kuzzle destructor
+	col.kuzzle = unsafe.Pointer(k)
 
-	return c
+	return col
 }
 
 func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {

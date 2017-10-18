@@ -8,6 +8,7 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_m_replace_document
@@ -17,7 +18,9 @@ func kuzzle_wrapper_collection_m_replace_document(c *C.collection, result *C.kuz
 		opts = SetQueryOptions(options)
 	}
 
-	res, err := (*collection.Collection)(c.instance).MReplaceDocument(goDocuments(documents), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	res, err := col.MReplaceDocument(goDocuments(documents), opts)
+
 	if err != nil {
 		if err.Error() == "Collection.MReplaceDocument: please provide at least one document to replace" {
 			return C.int(C.EINVAL)

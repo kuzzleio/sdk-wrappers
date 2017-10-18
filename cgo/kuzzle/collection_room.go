@@ -10,21 +10,25 @@ import (
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_new_room
+// Todo Refactor
 func kuzzle_wrapper_collection_new_room(room *C.room, c *C.collection, options *C.room_options) {
 	var opts types.RoomOptions
 	if options != nil {
 		opts = SetRoomOptions(options)
 	}
 
-	instance := collection.NewRoom((*collection.Collection)(c.instance), opts)
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	instance := collection.NewRoom(col, opts)
 
 	room.instance = unsafe.Pointer(instance)
 }
 
 //export kuzzle_wrapper_collection_get_room_id
+// TODO refactor
 func kuzzle_wrapper_collection_get_room_id(room *C.room, result *C.string_result) {
 	res := (*collection.Room)(room.instance).GetRoomId()
 	result.result = ToCString_2048(res)
