@@ -18,9 +18,19 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 )
 
+// unregister an instance from the instances map
+//export unregisterKuzzle
+func unregisterKuzzle(k *C.Kuzzle) {
+	delete(instances, (*kuzzle.Kuzzle)(k.instance))
+}
+
 //export kuzzle_wrapper_new_kuzzle
 func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.Options) {
 	var c connection.Connection
+
+	if instances == nil {
+		instances = make(map[interface{}]interface{})
+	}
 
 	var opts types.Options
 	if options != nil {
@@ -31,8 +41,10 @@ func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.O
 		c = websocket.NewWebSocket(C.GoString(host), opts)
 	}
 
-	instance, _ := kuzzle.NewKuzzle(c, opts)
-	k.instance = unsafe.Pointer(instance)
+	inst, _ := kuzzle.NewKuzzle(c, opts)
+	registerInstance(inst)
+
+	k.instance = unsafe.Pointer(inst)
 }
 
 //export kuzzle_wrapper_connect

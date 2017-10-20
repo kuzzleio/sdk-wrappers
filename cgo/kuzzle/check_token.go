@@ -15,7 +15,6 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
-
 	if err != nil {
 		Set_token_validity_error(result, err)
 		return result
