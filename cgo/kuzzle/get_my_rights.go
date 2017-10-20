@@ -30,7 +30,7 @@ func kuzzle_wrapper_get_my_rights(k *C.Kuzzle, options *C.query_options) *C.json
 	}
 
 	r, _ := json.Marshal(res)
-  buffer := C.CString(string(r))
+	buffer := C.CString(string(r))
 	result.result = C.json_tokener_parse(buffer)
 
 	C.free(unsafe.Pointer(buffer))
