@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -14,7 +15,9 @@ import (
 )
 
 //export kuzzle_wrapper_update_my_credentials
-func kuzzle_wrapper_update_my_credentials(k *C.Kuzzle, result *C.json_result, strategy *C.char, credentials *C.json_object, options *C.query_options) C.int {
+func kuzzle_wrapper_update_my_credentials(k *C.Kuzzle, strategy *C.char, credentials *C.json_object, options *C.query_options) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,19 +25,14 @@ func kuzzle_wrapper_update_my_credentials(k *C.Kuzzle, result *C.json_result, st
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateMyCredentials(C.GoString(strategy), JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
-		if err.Error() == "Kuzzle.UpdateMyCredentials: strategy is required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_json_result_error(result, err)
+		return result
 	}
 
 	r, _ := json.Marshal(res)
+	buffer := C.CString(string(r))
+	result.result = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
-	cString := C.CString(string(r))
-	defer C.free(unsafe.Pointer(cString))
-	result.result = C.json_tokener_parse(cString)
-
-	return 0
+	return result
 }

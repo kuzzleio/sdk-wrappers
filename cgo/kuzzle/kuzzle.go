@@ -2,8 +2,11 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
 	#include <string.h>
+	#include "kuzzle.h"
+
+	typedef query_object *query_object_ptr;
 */
 import "C"
 import (
@@ -56,29 +59,30 @@ func kuzzle_wrapper_connect(k *C.Kuzzle) *C.char {
 }
 
 //export kuzzle_wrapper_get_offline_queue
-func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle, result *C.offline_queue) {
-	offlineQueue := (*kuzzle.Kuzzle)(k.instance).GetOfflineQueue()
-	*offlineQueue = append(*offlineQueue, &types.QueryObject{RequestId: "test"})
+func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle) *C.offline_queue {
+	result := (*C.offline_queue)(C.calloc(1, C.sizeof_offline_queue))
 
-	cArray := C.malloc(C.size_t(len(*offlineQueue)) * C.size_t(unsafe.Sizeof(uintptr(0))))
+	offlineQueue := *(*kuzzle.Kuzzle)(k.instance).GetOfflineQueue()
+	result.length = C.ulong(len(offlineQueue))
 
-	query_objects := (*[1<<30 - 1]*C.query_object)(cArray)
+	result.queries = (**C.query_object)(C.calloc(C.size_t(len(offlineQueue)), C.sizeof_query_object_ptr))
+	queryObjects := (*[1<<30 - 1]*C.query_object)(unsafe.Pointer(result.queries))[:result.length:result.length]
 
 	idx := 0
-	for _, queryObject := range *offlineQueue {
-		qo := C.query_object{}
-		qo.timestamp = C.ulonglong(queryObject.Timestamp.Unix())
-		qo.request_id = ToCString_36(queryObject.RequestId)
+	for _, queryObject := range offlineQueue {
+		queryObjects[idx] = (*C.query_object)(C.calloc(1, C.sizeof_query_object))
+		queryObjects[idx].timestamp = C.ulonglong(queryObject.Timestamp.Unix())
+		queryObjects[idx].request_id = C.CString(queryObject.RequestId)
 		mquery, _ := json.Marshal(queryObject.Query)
-		cString := C.CString(string(mquery))
-		qo.query = C.json_tokener_parse(cString)
-		C.free(unsafe.Pointer(cString))
-		query_objects[idx] = &qo
+
+		buffer := C.CString(string(mquery))
+		queryObjects[idx].query = C.json_tokener_parse(buffer)
+		C.free(unsafe.Pointer(buffer))
+
 		idx += 1
 	}
-	query_objects[idx] = nil
 
-	*result = C.offline_queue{(**C.query_object)(cArray)}
+	return result
 }
 
 //export kuzzle_wrapper_get_jwt

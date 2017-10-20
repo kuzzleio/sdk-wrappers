@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -14,7 +15,9 @@ import (
 )
 
 //export kuzzle_wrapper_update_self
-func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials *C.json_object, options *C.query_options) {
+func kuzzle_wrapper_update_self(k *C.Kuzzle, credentials *C.json_object, options *C.query_options) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,14 +25,14 @@ func kuzzle_wrapper_update_self(k *C.Kuzzle, result *C.json_result, credentials 
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
+		Set_json_result_error(result, err)
+		return result
 	}
 
-	var jsonRes *C.json_object
 	r, _ := json.Marshal(res)
+	buffer := C.CString(string(r))
+	result.result = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
-	cString := C.CString(string(r))
-	defer C.free(unsafe.Pointer(cString))
-	jsonRes = C.json_tokener_parse(cString)
-	result.result = jsonRes
+	return result
 }

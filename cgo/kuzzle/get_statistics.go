@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -16,7 +17,9 @@ import (
 )
 
 //export kuzzle_wrapper_get_statistics
-func kuzzle_wrapper_get_statistics(k *C.Kuzzle, result *C.statistics, timestamp C.time_t, options *C.query_options) {
+func kuzzle_wrapper_get_statistics(k *C.Kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics {
+	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -26,9 +29,10 @@ func kuzzle_wrapper_get_statistics(k *C.Kuzzle, result *C.statistics, timestamp 
 	tm := time.Unix(t, 0)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetStatistics(&tm, opts)
+
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
+		Set_statistics_error(result, err)
+		return result
 	}
 
 	ongoing, _ := json.Marshal(res.OngoingRequests)
@@ -36,18 +40,21 @@ func kuzzle_wrapper_get_statistics(k *C.Kuzzle, result *C.statistics, timestamp 
 	connections, _ := json.Marshal(res.Connections)
 	failedRequests, _ := json.Marshal(res.FailedRequests)
 
-	ongoingString := C.CString(string(ongoing))
-	defer C.free(unsafe.Pointer(ongoingString))
-	completedRequestsString := C.CString(string(completedRequests))
-	defer C.free(unsafe.Pointer(completedRequestsString))
-	connectionsString := C.CString(string(connections))
-	defer C.free(unsafe.Pointer(connectionsString))
-	failedRequestsString := C.CString(string(failedRequests))
-	defer C.free(unsafe.Pointer(failedRequestsString))
+	cOnGoing := C.CString(string(ongoing))
+	cCompleteRequest := C.CString(string(completedRequests))
+	cConnections := C.CString(string(connections))
+	cFailedRequests := C.CString(string(failedRequests))
 
-	result.ongoing_requests = C.json_tokener_parse(ongoingString)
-	result.completed_requests = C.json_tokener_parse(completedRequestsString)
-	result.completed_requests = C.json_tokener_parse(connectionsString)
-	result.completed_requests = C.json_tokener_parse(failedRequestsString)
-	result.timestamp = C.double(res.Timestamp)
+	result.ongoing_requests = C.json_tokener_parse(cOnGoing)
+	result.completed_requests = C.json_tokener_parse(cCompleteRequest)
+	result.connections = C.json_tokener_parse(cConnections)
+	result.failed_requests = C.json_tokener_parse(cFailedRequests)
+	result.timestamp = C.ulonglong(res.Timestamp)
+
+	C.free(unsafe.Pointer(cOnGoing))
+	C.free(unsafe.Pointer(cCompleteRequest))
+	C.free(unsafe.Pointer(cConnections))
+	C.free(unsafe.Pointer(cFailedRequests))
+
+	return result
 }

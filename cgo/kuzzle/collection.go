@@ -15,7 +15,7 @@ import (
 //export kuzzle_wrapper_new_collection
 func kuzzle_wrapper_new_collection(k *C.Kuzzle, colName *C.char, index *C.char) *C.collection {
 	// TODO Must be freed in C
-	col := C.malloc(C.sizeof_collection)
+	col := (*C.collection)(C.calloc(1, C.sizeof_collection))
 	// TODO Must be freed in C
 	C.strcpy(col.index, index)
 	// TODO Must be freed in C
@@ -27,6 +27,7 @@ func kuzzle_wrapper_new_collection(k *C.Kuzzle, colName *C.char, index *C.char) 
 	return col
 }
 
+// TODO check if it is still legit
 func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {
 	cRes.result.total = C.int(goRes.Total)
 
@@ -46,6 +47,7 @@ func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_res
 	}
 }
 
+// TODO check if it is still legit
 func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
 	cRes.result.total = C.int(goRes.Total)
 

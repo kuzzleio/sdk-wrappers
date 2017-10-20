@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -12,7 +13,9 @@ import (
 )
 
 //export kuzzle_wrapper_refresh_index
-func kuzzle_wrapper_refresh_index(k *C.Kuzzle, res *C.shards, index *C.char, options *C.query_options) {
+func kuzzle_wrapper_refresh_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.shards {
+	result := (*C.shards)(C.calloc(1, C.sizeof_shards))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -20,10 +23,12 @@ func kuzzle_wrapper_refresh_index(k *C.Kuzzle, res *C.shards, index *C.char, opt
 
 	shards, err := (*kuzzle.Kuzzle)(k.instance).RefreshIndex(C.GoString(index), opts)
 	if err != nil {
-		res.error = ToCString_2048(err.Error())
+		Set_shards_error(result, err)
+		return result
 	}
 
-	res.total = C.int(shards.Total)
-	res.successful = C.int(shards.Successful)
-	res.failed = C.int(shards.Failed)
+	result.total = C.int(shards.Total)
+	result.successful = C.int(shards.Successful)
+	result.failed = C.int(shards.Failed)
+	return result
 }

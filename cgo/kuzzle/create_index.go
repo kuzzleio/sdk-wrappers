@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -12,40 +13,32 @@ import (
 )
 
 //export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(k *C.Kuzzle, result *C.ack_response, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.ack_response {
+	result := (*C.ack_response)(C.calloc(1, C.sizeof_ack_response))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CreateIndex(C.GoString(index), opts)
+
 	if err != nil {
-		if err.Error() == "Kuzzle.createIndex: index required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_ack_response_error(result, err)
+		return result
 	}
 
-	var ack, shardsAck C.uint
-
 	if res.Acknowledged {
-		ack = 1
+		result.acknowledged = 1
 	} else {
-		ack = 0
+		result.acknowledged = 0
 	}
 
 	if res.ShardsAcknowledged {
-		shardsAck = 1
+		result.shardsAcknowledged = 1
 	} else {
-		shardsAck = 0
+		result.shardsAcknowledged = 0
 	}
 
-	*result = C.ack_response{
-		acknowledged:       ack,
-		shardsAcknowledged: shardsAck,
-	}
-
-	return 0
+	return result
 }

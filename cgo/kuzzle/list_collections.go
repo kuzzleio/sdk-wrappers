@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -14,7 +15,9 @@ import (
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.Kuzzle, result *C.json_result, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_list_collections(k *C.Kuzzle, index *C.char, options *C.query_options) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,21 +25,15 @@ func kuzzle_wrapper_list_collections(k *C.Kuzzle, result *C.json_result, index *
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(C.GoString(index), opts)
 	if err != nil {
-		if err.Error() == "Kuzzle.ListCollections: index required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_json_result_error(result, err)
+		return result
 	}
 
-	var jsonRes *C.json_object
 	r, _ := json.Marshal(res)
 
-	cString := C.CString(string(r))
-	defer C.free(unsafe.Pointer(cString))
-	jsonRes = C.json_tokener_parse(cString)
-	result.result = jsonRes
+	buffer := C.CString(string(r))
+	result.result = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
-	return 0
+	return result
 }

@@ -3,7 +3,9 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
+	#include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
@@ -12,43 +14,41 @@ import (
 )
 
 //export kuzzle_wrapper_who_am_i
-func kuzzle_wrapper_who_am_i(k *C.Kuzzle, user *C.user) {
+func kuzzle_wrapper_who_am_i(k *C.Kuzzle) *C.user {
+	user := (*C.user)(C.calloc(1, C.sizeof_user))
+
 	res, err := (*kuzzle.Kuzzle)(k.instance).WhoAmI()
 	if err != nil {
-		user.error = ToCString_2048(err.Error())
-
+		Set_user_error(user, err)
+		return user
 	}
 
-	var meta C.kuzzle_meta
-	var active C.uint
-	meta.author = ToCString_512(res.Meta.Author)
-	meta.created_at = C.int(res.Meta.CreatedAt)
-	meta.updated_at = C.int(res.Meta.UpdatedAt)
-	meta.updater = ToCString_512(res.Meta.Updater)
+	user.meta = (*C.kuzzle_meta)(C.calloc(1, C.sizeof_kuzzle_meta))
+	user.meta.author = C.CString(res.Meta.Author)
+	user.meta.created_at = C.ulonglong(res.Meta.CreatedAt)
+	user.meta.updated_at = C.ulonglong(res.Meta.UpdatedAt)
+	user.meta.deleted_at = C.ulonglong(res.Meta.DeletedAt)
+	user.meta.updater = C.CString(res.Meta.Updater)
 
 	if res.Meta.Active {
-		active = 1
+		user.meta.active = 1
+	} else {
+		user.meta.active = 0
 	}
-	meta.active = active
-	meta.deleted_at = C.int(res.Meta.DeletedAt)
 
-	var source *C.json_object
-	cString := C.Cstring(string(res.Source))
-	defer C.free(unsafe.Pointer(cString))
-	source = C.json_tokener_parse(cString)
+	buffer := C.CString(string(res.Source))
+	user.source = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
-	cArray := C.malloc(C.size_t(len(res.Strategies)) * C.size_t(unsafe.Sizeof(uintptr(0))))
-	a := (*[1<<30 - 1]*C.char)(cArray)
-	idx := 0
-	for _, substring := range res.Strategies {
-		// TODO Must be freed in C
-		a[idx] = C.CString(substring)
-		idx += 1
+	user.strategies_length = C.ulong(len(res.Strategies))
+	user.strategies = (**C.char)(C.calloc(C.size_t(user.strategies_length), C.sizeof_char_ptr))
+	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(user.strategies))[:len(res.Strategies):len(res.Strategies)]
+
+	for i, substring := range res.Strategies {
+		cArray[i] = C.CString(substring)
 	}
-	a[idx] = nil
 
-	user.id = ToCString_512(res.Id)
-	user.source = source
-	user.meta = &meta
-	user.strategies = (**C.char)(cArray)
+	user.id = C.CString(res.Id)
+
+	return user
 }

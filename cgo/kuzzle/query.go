@@ -2,6 +2,7 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
+<<<<<<< HEAD
 	#include <kuzzle.h>
 
 	static int sizeArray(char** arr) {
@@ -25,6 +26,10 @@ package main
 
 		return i;
 	}
+=======
+	#include <stdlib.h>
+	#include "kuzzle.h"
+>>>>>>> origin/dynamic_structs
 */
 import "C"
 import (
@@ -37,93 +42,113 @@ import (
 )
 
 //export kuzzle_wrapper_query
-func kuzzle_wrapper_query(k *C.Kuzzle, result *C.kuzzle_response, request *C.kuzzle_request, options *C.query_options) {
+func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
+	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
+
+	if result == nil {
+		return result
+	}
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
 	req := types.KuzzleRequest{
-		RequestId:  C.GoString(&request.request_id[0]),
-		Controller: C.GoString(&request.controller[0]),
-		Action:     C.GoString(&request.action[0]),
-		Index:      C.GoString(&request.index[0]),
-		Collection: C.GoString(&request.collection[0]),
-		Id:         C.GoString(&request.id[0]),
+		RequestId:  C.GoString(request.request_id),
+		Controller: C.GoString(request.controller),
+		Action:     C.GoString(request.action),
+		Index:      C.GoString(request.index),
+		Collection: C.GoString(request.collection),
+		Id:         C.GoString(request.id),
 		From:       int(request.from),
 		Size:       int(request.size),
-		Scroll:     C.GoString(&request.scroll[0]),
-		ScrollId:   C.GoString(&request.scroll_id[0]),
-		Strategy:   C.GoString(&request.strategy[0]),
+		Scroll:     C.GoString(request.scroll),
+		ScrollId:   C.GoString(request.scroll_id),
+		Strategy:   C.GoString(request.strategy),
 		ExpiresIn:  int(request.expires_in),
-		Scope:      C.GoString(&request.scope[0]),
-		State:      C.GoString(&request.state[0]),
-		User:       C.GoString(&request.user[0]),
+		Scope:      C.GoString(request.scope),
+		State:      C.GoString(request.state),
+		User:       C.GoString(request.user),
+		Start:      int(request.start),
 		Stop:       int(request.stop),
 		End:        int(request.end),
 		Bit:        int(request.bit),
-		Member:     C.GoString(&request.member[0]),
-		Member1:    C.GoString(&request.member1[0]),
-		Member2:    C.GoString(&request.member2[0]),
+		Member:     C.GoString(request.member),
+		Member1:    C.GoString(request.member1),
+		Member2:    C.GoString(request.member2),
 		Lon:        float64(request.lon),
 		Lat:        float64(request.lat),
 		Distance:   float64(request.distance),
-		Unit:       C.GoString(&request.unit[0]),
+		Unit:       C.GoString(request.unit),
+		Cursor:     int(request.cursor),
 		Offset:     int(request.offset),
-		Field:      C.GoString(&request.field[0]),
-		Subcommand: C.GoString(&request.subcommand[0]),
-		Pattern:    C.GoString(&request.pattern[0]),
+		Field:      C.GoString(request.field),
+		Subcommand: C.GoString(request.subcommand),
+		Pattern:    C.GoString(request.pattern),
 		Idx:        int(request.idx),
-		Min:        C.GoString(&request.min[0]),
-		Max:        C.GoString(&request.max[0]),
-		Limit:      C.GoString(&request.limit[0]),
+		Min:        C.GoString(request.min),
+		Max:        C.GoString(request.max),
+		Limit:      C.GoString(request.limit),
 		Count:      int(request.count),
-		Match:      C.GoString(&request.match[0]),
+		Match:      C.GoString(request.match),
 	}
 
-	req.Body = JsonCConvert(request.body)
-	req.Volatile = JsonCConvert(request.volatiles).(map[string]interface{})
+	if request.body != nil {
+		req.Body = JsonCConvert(request.body)
+	}
+
+	if request.volatiles != nil {
+		req.Volatile = JsonCConvert(request.volatiles).(map[string]interface{})
+	}
 
 	start := int(request.start)
 	req.Start = start
-
-	cursor := int(request.cursor)
-	req.Cursor = cursor
-
-	req.Members = goStrings(request.members)
-	req.Keys = goStrings(request.keys)
-	req.Fields = goStrings(request.fields)
+	req.Members = goStrings(request.members, request.members_length)
+	req.Keys = goStrings(request.keys, request.keys_length)
+	req.Fields = goStrings(request.fields, request.fields_length)
 
 	resC := make(chan *types.KuzzleResponse)
 	(*kuzzle.Kuzzle)(k.instance).Query(&req, opts, resC)
 
 	res := <-resC
 
-	if res.Error.Message != "" {
-		result.error = ToCString_2048(res.Error.Message)
-		return
+	if res.Error != nil {
+		Set_kuzzle_response_error(result, res.Error)
+		return result
 	}
 
-	result.request_id = ToCString_36(res.RequestId)
-	result.room_id = ToCString_36(res.RoomId)
-	result.channel = ToCString_128(res.Channel)
+	result.request_id = C.CString(res.RequestId)
+
+	if len(res.RoomId) > 0 {
+		result.room_id = C.CString(res.RoomId)
+	}
+
+	if len(res.Channel) > 0 {
+		result.channel = C.CString(res.Channel)
+	}
+
 	r, _ := json.Marshal(res)
-	cString := C.CString(string(r))
-	defer C.free(unsafe.Pointer(cString))
-	result.result = C.json_tokener_parse(cString)
+
+	buffer := C.CString(string(r))
+	result.result = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
+
+	return result
 }
 
-// Helper to convert a C char** to a go array of string
-func goStrings(argv **C.char) []string {
-	length := C.sizeArray(argv)
-	if length == 0 {
+// convert a C char** to a go array of string
+func goStrings(arr **C.char, len C.uint) []string {
+	if len == 0 {
 		return nil
 	}
-	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(argv))[:length:length]
-	gostrings := make([]string, length)
+
+	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(arr))[:len:len]
+	gostrings := make([]string, len)
 	for i, s := range tmpslice {
 		gostrings[i] = C.GoString(s)
 	}
+
 	return gostrings
 }
 
