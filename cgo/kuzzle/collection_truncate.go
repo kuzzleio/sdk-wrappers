@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_truncate
-func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response, options *C.query_options) {
+func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -40,7 +40,7 @@ func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_response,
 		shardsAck = 0
 	}
 
-	*result = C.ack_response{
+	*result = C.ack_result{
 		acknowledged:       ack,
 		shardsAcknowledged: shardsAck,
 	}

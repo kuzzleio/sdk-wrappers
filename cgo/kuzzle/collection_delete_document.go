@@ -12,7 +12,9 @@ import (
 )
 
 //export kuzzle_wrapper_collection_delete_document
-func kuzzle_wrapper_collection_delete_document(c *C.collection, result *C.string_result, id *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_delete_document(c *C.collection, id *C.char, options *C.query_options) *C.string_result {
+	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,14 +24,11 @@ func kuzzle_wrapper_collection_delete_document(c *C.collection, result *C.string
 	res, err := col.DeleteDocument(C.GoString(id), opts)
 
 	if err != nil {
-		if err.Error() == "Collection.DeleteDocument: document id required" {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
+		Set_string_result_error(result, err)
+		return result
 	}
 
-	result.result = ToCString_2048(res)
+	result.result = C.CString(res)
 
-	return 0
+	return result
 }

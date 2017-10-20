@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_create_document
-func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzzle_search_response, documents **C.document, options *C.query_options) {
+func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -30,7 +30,7 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzz
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
-func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, result *C.kuzzle_search_response, documents **C.document, options *C.query_options) {
+func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_search_specifications
-func kuzzle_wrapper_collection_search_specifications(c *C.collection, result *C.kuzzle_specification_search_response, searchFilters *C.search_filters, options *C.query_options) {
+func kuzzle_wrapper_collection_search_specifications(c *C.collection, result *C.kuzzle_specification_search_result, searchFilters *C.search_filters, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

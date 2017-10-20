@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_replace_document
-func kuzzle_wrapper_collection_m_replace_document(c *C.collection, result *C.kuzzle_search_response, documents **C.document, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_m_replace_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

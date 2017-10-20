@@ -12,7 +12,9 @@ import (
 )
 
 //export kuzzle_wrapper_collection_create
-func kuzzle_wrapper_collection_create(c *C.collection, result *C.ack_response, options *C.query_options) {
+func kuzzle_wrapper_collection_create(c *C.collection, options *C.query_options) *C.ack_result {
+	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,26 +24,21 @@ func kuzzle_wrapper_collection_create(c *C.collection, result *C.ack_response, o
 	res, err := col.Create(opts)
 
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
+		Set_ack_result_error(result, err)
+		return result
 	}
 
-	var ack, shardsAck C.uint
-
 	if res.Acknowledged {
-		ack = 1
+		result.acknowledged = 1
 	} else {
-		ack = 0
+		result.acknowledged = 0
 	}
 
 	if res.ShardsAcknowledged {
-		shardsAck = 1
+		result.shardsAcknowledged = 1
 	} else {
-		shardsAck = 0
+		result.shardsAcknowledged = 0
 	}
 
-	*result = C.ack_response{
-		acknowledged:       ack,
-		shardsAcknowledged: shardsAck,
-	}
+	return result
 }

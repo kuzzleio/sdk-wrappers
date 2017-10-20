@@ -12,7 +12,8 @@ import (
 )
 
 //export kuzzle_wrapper_collection_count
-func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_result, searchFilters *C.search_filters, options *C.query_options) {
+func kuzzle_wrapper_collection_count(c *C.collection, searchFilters *C.search_filters, options *C.query_options) *C.int_result {
+	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,9 +23,11 @@ func kuzzle_wrapper_collection_count(c *C.collection, result *C.int_result, sear
 	res, err := col.Count(cToGoSearchFilters(searchFilters), opts)
 
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
+		Set_int_result_error(result, err)
+		return result
 	}
 
 	result.result = C.int(res)
+
+	return result
 }

@@ -13,8 +13,8 @@ import (
 )
 
 //export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.ack_response {
-	result := (*C.ack_response)(C.calloc(1, C.sizeof_ack_response))
+func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.ack_result {
+	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
 
 	var opts types.QueryOptions
 	if options != nil {
@@ -24,7 +24,7 @@ func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_op
 	res, err := (*kuzzle.Kuzzle)(k.instance).CreateIndex(C.GoString(index), opts)
 
 	if err != nil {
-		Set_ack_response_error(result, err)
+		Set_ack_result_error(result, err)
 		return result
 	}
 

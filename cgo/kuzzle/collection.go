@@ -27,8 +27,8 @@ func kuzzle_wrapper_new_collection(k *C.Kuzzle, colName *C.char, index *C.char) 
 	return col
 }
 
-// TODO check if it is still legit
-func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_response) {
+// TODO check if it is still legit - refactor
+func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_result) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
@@ -47,8 +47,8 @@ func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_res
 	}
 }
 
-// TODO check if it is still legit
-func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_response) {
+// TODO check if it is still legit - refactor
+func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_result) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
@@ -67,6 +67,7 @@ func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult
 	}
 }
 
+// TODO check if it is still legit - refactor
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
 	return &types.SearchFilters{
 		Query: JsonCConvert(searchFilters.query),

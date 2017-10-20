@@ -204,15 +204,6 @@ typedef struct {
     char *stack;
 } token_validity;
 
-//any delete* function
-typedef struct {
-    unsigned acknowledged;
-    unsigned shardsAcknowledged;
-    int status;
-    char *error;
-    char *stack;
-} ack_response;
-
 //login
 typedef struct {
     char *jwt;
@@ -295,6 +286,15 @@ typedef struct {
     char scrollId[128];
 } search_result;
 
+//any delete* function
+typedef struct {
+    unsigned acknowledged;
+    unsigned shardsAcknowledged;
+    int status;
+    char *error;
+    char *stack;
+} ack_result;
+
 typedef struct {
     void *instance;
     char error[2048];
@@ -306,7 +306,7 @@ typedef struct {
     char room_id[36];
     char channel[128];
     char error[2048];
-} kuzzle_search_response;
+} kuzzle_search_result;
 
 typedef struct {
     kuzzle_specification** hits;
@@ -317,7 +317,7 @@ typedef struct {
 typedef struct {
     specification_search_result result;
     char error[2048];
-} kuzzle_specification_search_response;
+} kuzzle_specification_search_result;
 
 // Kuzzle main object functions
 extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
@@ -325,7 +325,7 @@ extern char* kuzzle_wrapper_connect(Kuzzle*);
 extern offline_queue* kuzzle_wrapper_get_offline_queue(Kuzzle*);
 extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
 extern token_validity* kuzzle_wrapper_check_token(Kuzzle*, char*);
-extern ack_response* kuzzle_wrapper_create_index(Kuzzle*, char*, query_options*);
+extern ack_result* kuzzle_wrapper_create_index(Kuzzle*, char*, query_options*);
 extern login_result* kuzzle_wrapper_login(Kuzzle*, char*, json_object*, int*);
 extern json_result* kuzzle_wrapper_create_my_credentials(Kuzzle*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect(Kuzzle*);
@@ -359,28 +359,28 @@ extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 
 // collection object functions
 extern void kuzzle_wrapper_collection_count(collection*, int_result*, search_filters*, query_options*);
-extern void kuzzle_wrapper_collection_create(collection*, ack_response*, query_options*);
+extern void kuzzle_wrapper_collection_create(collection*, ack_result*, query_options*);
 extern int kuzzle_wrapper_collection_create_document(collection*, document*, char*, document*, query_options*);
 extern int kuzzle_wrapper_collection_delete_document(collection*, string_result*, char*, query_options*);
-extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_response*, query_options*);
+extern void kuzzle_wrapper_collection_delete_specifications(collection*, ack_result*, query_options*);
 extern int kuzzle_wrapper_collection_document_exists(collection*, bool_result*, char*, query_options*);
 extern int kuzzle_wrapper_collection_fetch_document(collection*, document*, char*, query_options*);
 extern void kuzzle_wrapper_collection_get_mapping(collection*, collection_mapping*, query_options*);
 extern void kuzzle_wrapper_collection_get_specifications(collection*, kuzzle_specification*, query_options*);
 extern int kuzzle_wrapper_collection_m_delete_document(collection*, string_array_result*, char**, query_options*);
-extern void kuzzle_wrapper_collection_m_create_document(collection*, kuzzle_search_response*, document**, query_options*);
-extern void kuzzle_wrapper_collection_m_create_or_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
-extern int kuzzle_wrapper_collection_m_get_document(collection*, kuzzle_search_response*, char**, query_options*);
-extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
-extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_response*, document**, query_options*);
-extern int kuzzle_wrapper_collection_m_update_document(collection*, kuzzle_search_response*, document**, query_options*);
+extern void kuzzle_wrapper_collection_m_create_document(collection*, kuzzle_search_result*, document**, query_options*);
+extern void kuzzle_wrapper_collection_m_create_or_replace_document(collection*, kuzzle_search_result*, document**, query_options*);
+extern int kuzzle_wrapper_collection_m_get_document(collection*, kuzzle_search_result*, char**, query_options*);
+extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_result*, document**, query_options*);
+extern int kuzzle_wrapper_collection_m_replace_document(collection*, kuzzle_search_result*, document**, query_options*);
+extern int kuzzle_wrapper_collection_m_update_document(collection*, kuzzle_search_result*, document**, query_options*);
 extern int kuzzle_wrapper_collection_replace_document(collection*, document*, char*, document*, query_options*);
-extern int kuzzle_wrapper_collection_scroll_specifications(collection*, kuzzle_specification_search_response*, char*, query_options*);
-extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_response*, search_filters*, query_options*);
-extern void kuzzle_wrapper_collection_search_specifications(collection*, kuzzle_specification_search_response*, search_filters*, query_options*);
-extern int kuzzle_wrapper_collection_scroll(collection*, kuzzle_search_response*, char*, query_options*);
+extern int kuzzle_wrapper_collection_scroll_specifications(collection*, kuzzle_specification_search_result*, char*, query_options*);
+extern void kuzzle_wrapper_collection_search(collection*, kuzzle_search_result*, search_filters*, query_options*);
+extern void kuzzle_wrapper_collection_search_specifications(collection*, kuzzle_specification_search_result*, search_filters*, query_options*);
+extern int kuzzle_wrapper_collection_scroll(collection*, kuzzle_search_result*, char*, query_options*);
 extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
-extern void kuzzle_wrapper_collection_truncate(collection*, ack_response*, query_options*);
+extern void kuzzle_wrapper_collection_truncate(collection*, ack_result*, query_options*);
 extern int kuzzle_wrapper_collection_update_document(collection*, document*, char*, document*, query_options*);
 
 //collection_mapping object functions
@@ -390,7 +390,7 @@ extern int kuzzle_wrapper_collection_mapping_refresh(collection_mapping*, query_
 extern void kuzzle_wrapper_collection_mapping_set(collection_mapping*, json_object*);
 extern void kuzzle_wrapper_collection_mapping_set_headers(collection_mapping*, json_object*, uint);
 
-extern ack_response* kuzzle_wrapper_delete_my_credentials(Kuzzle*, char*, query_options*);
+extern ack_result* kuzzle_wrapper_delete_my_credentials(Kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_update_my_credentials(Kuzzle*, char*, json_object*, query_options*);
 //Options
 extern Options* kuzzle_wrapper_new_options(void);
