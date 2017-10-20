@@ -17,10 +17,6 @@ import (
 func kuzzle_wrapper_get_server_info(k *C.Kuzzle, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 
-	if result == nil {
-		return result
-	}
-
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

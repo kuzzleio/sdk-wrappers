@@ -2,17 +2,18 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_now
-func kuzzle_wrapper_now(k *C.Kuzzle, res *C.now_result, options *C.query_options) {
+func kuzzle_wrapper_now(k *C.Kuzzle, options *C.query_options) *C.int_result {
+	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -20,8 +21,10 @@ func kuzzle_wrapper_now(k *C.Kuzzle, res *C.now_result, options *C.query_options
 
 	time, err := (*kuzzle.Kuzzle)(k.instance).Now(opts)
 	if err != nil {
-		res.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		Set_int_result_error(result, err)
+		return result
 	}
 
-	res.result = C.double(time)
+	result.result = C.longlong(time)
+	return result
 }

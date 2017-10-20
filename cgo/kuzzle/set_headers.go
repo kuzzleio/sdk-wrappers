@@ -14,9 +14,6 @@ func kuzzle_wrapper_set_headers(k *C.Kuzzle, content *C.json_object, replace C.u
 	jp := JsonParser{}
 	jp.Parse(content)
 
-	var r bool
-	if replace == 1 {
-		r = true
-	}
+	r := replace != 0
 	(*kuzzle.Kuzzle)(k.instance).SetHeaders(jp.GetContent(), r)
 }

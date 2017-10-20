@@ -8,57 +8,59 @@ import (
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 
 //export kuzzle_wrapper_new_options
-func kuzzle_wrapper_new_options(o *C.Options) {
+func kuzzle_wrapper_new_options() *C.Options {
+	copts := (*C.Options)(C.calloc(1, C.sizeof_Options))
 	opts := types.NewOptions()
-	copts := C.Options{}
 
-	copts.queue_ttl = C.double(opts.GetQueueTTL())
-	copts.queue_max_size = C.int(opts.GetQueueMaxSize())
-	copts.offline_mode = C.int(opts.GetOfflineMode())
+	copts.queue_ttl = C.uint(opts.GetQueueTTL())
+	copts.queue_max_size = C.ulong(opts.GetQueueMaxSize())
+	copts.offline_mode = C.uchar(opts.GetOfflineMode())
 
-	var auto_queue uint
 	if opts.GetAutoQueue() {
-		auto_queue = 1
+		copts.auto_queue = 1
 	}
-	copts.auto_queue = C.uint(auto_queue)
 
-	var auto_reconnect uint
 	if opts.GetAutoReconnect() {
-		auto_reconnect = 1
+		copts.auto_reconnect = 1
 	}
-	copts.auto_reconnect = C.uint(auto_reconnect)
 
-	var auto_replay uint
 	if opts.GetAutoReplay() {
-		auto_replay = 1
+		copts.auto_replay = 1
 	}
-	copts.auto_replay = C.uint(auto_replay)
 
-	var auto_resubscribe uint
 	if opts.GetAutoResubscribe() {
-		auto_resubscribe = 1
+		copts.auto_resubscribe = 1
 	}
-	copts.auto_resubscribe = C.uint(auto_resubscribe)
 
-	copts.reconnection_delay = C.double(opts.GetReconnectionDelay())
-	copts.replay_interval = C.double(opts.GetReplayInterval())
-	var mode uint32
+	copts.reconnection_delay = C.ulong(opts.GetReconnectionDelay())
+	copts.replay_interval = C.ulong(opts.GetReplayInterval())
+
 	if opts.GetConnect() == 1 {
-		mode = uint32(C.MANUAL)
+		copts.connect = C.MANUAL
 	} else {
-		mode = uint32(C.AUTO)
+		copts.connect = C.AUTO
 	}
-	copts.connect = mode
-	copts.refresh = *(*[64]C.char)(unsafe.Pointer(C.CString(opts.GetRefresh())))
-	copts.default_index = *(*[128]C.char)(unsafe.Pointer(C.CString(opts.GetDefaultIndex())))
+
+	refresh := opts.GetRefresh()
+	if len(refresh) > 0 {
+		copts.refresh = C.CString(refresh)
+	}
+
+	default_index := opts.GetDefaultIndex()
+	if len(default_index) > 0 {
+		copts.default_index = C.CString(default_index)
+	}	
 
 	r, _ := json.Marshal(opts.GetHeaders())
-	copts.headers = C.json_tokener_parse(C.CString(string(r)))
+	buffer := C.CString(string(r))
+	copts.headers = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
-	*o = copts
+	return copts
 }

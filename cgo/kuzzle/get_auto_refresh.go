@@ -15,10 +15,6 @@ import (
 func kuzzle_wrapper_get_auto_refresh(k *C.Kuzzle, index *C.char, options *C.query_options) *C.bool_result {
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 
-	if result == nil {
-		return result
-	}
-
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)

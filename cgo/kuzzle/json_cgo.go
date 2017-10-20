@@ -15,69 +15,64 @@ func (parser *JsonParser) get_json_value(key string, jobj *C.json_object, conten
 	jtype := C.json_object_get_type(jobj)
 
 	switch jtype {
-	case C.json_type_boolean:
-		var v bool
-		if int(C.json_object_get_boolean(jobj)) == 1 {
-			v = true
-		} else {
-			v = false
-		}
+		case C.json_type_boolean:
+			v := int(C.json_object_get_boolean(jobj)) == 1 
 
-		if isArray {
-			arr := make([]interface{}, 0)
-			if content[key] != nil {
-				for _, v := range content[key].([]interface{}) {
-					arr = append(arr, v)
+			if isArray {
+				arr := make([]interface{}, 0)
+				if content[key] != nil {
+					for _, v := range content[key].([]interface{}) {
+						arr = append(arr, v)
+					}
 				}
+				arr = append(arr, v)
+				content[key] = arr
+			} else {
+				content[key] = v
 			}
-			arr = append(arr, v)
-			content[key] = arr
-		} else {
-			content[key] = v
-		}
-		break
-	case C.json_type_string:
-		if isArray {
-			arr := make([]interface{}, 0)
-			if content[key] != nil {
-				for _, v := range content[key].([]interface{}) {
-					arr = append(arr, v)
+			break
+		case C.json_type_string:
+			if isArray {
+				arr := make([]interface{}, 0)
+				if content[key] != nil {
+					for _, v := range content[key].([]interface{}) {
+						arr = append(arr, v)
+					}
 				}
+				arr = append(arr, C.GoString(C.json_object_get_string(jobj)))
+				content[key] = arr
+			} else {
+				 content[key] = C.GoString(C.json_object_get_string(jobj))
 			}
-			arr = append(arr, C.GoString(C.json_object_get_string(jobj)))
-			content[key] = arr
-		} else {
-			 content[key] = C.GoString(C.json_object_get_string(jobj))
-		}
-		break
-	case C.json_type_double:
-		if isArray {
-			arr := make([]interface{}, 0)
-			if content[key] != nil {
-				for _, v := range content[key].([]interface{}) {
-					arr = append(arr, v)
+			break
+		case C.json_type_double:
+			if isArray {
+				arr := make([]interface{}, 0)
+				if content[key] != nil {
+					for _, v := range content[key].([]interface{}) {
+						arr = append(arr, v)
+					}
 				}
+				arr = append(arr, float64(C.json_object_get_double(jobj)))
+				content[key] = arr
+			} else {
+				content[key] = float64(C.json_object_get_double(jobj))
 			}
-			arr = append(arr, float64(C.json_object_get_double(jobj)))
-			content[key] = arr
-		} else {
-			content[key] = float64(C.json_object_get_double(jobj))
-		}
-		break
-	case C.json_type_int:
-		if isArray {
-			arr := make([]interface{}, 0)
-			if content[key] != nil {
-				for _, v := range content[key].([]interface{}) {
-					arr = append(arr, v)
+			break
+		case C.json_type_int:
+			if isArray {
+				arr := make([]interface{}, 0)
+				if content[key] != nil {
+					for _, v := range content[key].([]interface{}) {
+						arr = append(arr, v)
+					}
 				}
+				arr = append(arr, int(C.json_object_get_int(jobj)))
+				content[key] = arr
+			} else {
+				content[key] = int(C.json_object_get_int(jobj))
 			}
-			arr = append(arr, int(C.json_object_get_int(jobj)))
-			content[key] = arr
-		} else {
-			content[key] = int(C.json_object_get_int(jobj))
-		}
-		break
+			break
 	}
 }
 

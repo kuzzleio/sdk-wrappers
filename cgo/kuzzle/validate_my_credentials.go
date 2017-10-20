@@ -3,17 +3,19 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_validate_my_credentials
-func kuzzle_wrapper_validate_my_credentials(k *C.Kuzzle, result *C.bool_result, strategy *C.char, credentials *C.json_object, options *C.query_options) {
+func kuzzle_wrapper_validate_my_credentials(k *C.Kuzzle, strategy *C.char, credentials *C.json_object, options *C.query_options) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -24,14 +26,15 @@ func kuzzle_wrapper_validate_my_credentials(k *C.Kuzzle, result *C.bool_result, 
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ValidateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
 	if err != nil {
-		result.error = *(*[2048]C.char)(unsafe.Pointer(C.CString(err.Error())))
+		Set_bool_result_error(result, err)
+		return result
 	}
 
-	var r C.uint
 	if res {
-		r = 1
+		result.result = 1
 	} else {
-		r = 0
+		result.result = 0
 	}
-	result.result = r
+	
+	return result
 }
