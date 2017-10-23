@@ -23,18 +23,7 @@ func kuzzle_wrapper_who_am_i(k *C.Kuzzle) *C.user {
 		return user
 	}
 
-	user.meta = (*C.kuzzle_meta)(C.calloc(1, C.sizeof_kuzzle_meta))
-	user.meta.author = C.CString(res.Meta.Author)
-	user.meta.created_at = C.ulonglong(res.Meta.CreatedAt)
-	user.meta.updated_at = C.ulonglong(res.Meta.UpdatedAt)
-	user.meta.deleted_at = C.ulonglong(res.Meta.DeletedAt)
-	user.meta.updater = C.CString(res.Meta.Updater)
-
-	if res.Meta.Active {
-		user.meta.active = 1
-	} else {
-		user.meta.active = 0
-	}
+	user.meta = goToCKuzzleMeta(res.Meta)
 
 	buffer := C.CString(string(res.Source))
 	user.source = C.json_tokener_parse(buffer)

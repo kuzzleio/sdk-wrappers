@@ -10,7 +10,7 @@
 %}
 
 %rename(TokenValidity) token_validity_struct;
-%rename(AckResponse) ack_response_struct;
+%rename(AckResponse) ack_result_struct;
 %rename(queueTTL) queue_ttl;
 
 %extend Options {
@@ -144,8 +144,8 @@
             return $null;
         }
     }
-    ack_response* createIndex(char* index, query_options* options) {
-        static ack_response res;
+    ack_result* createIndex(char* index, query_options* options) {
+        static ack_result res;
         int err = kuzzle_wrapper_create_index($self, &res, index, options);
 
         if (err == 0) {
@@ -153,8 +153,8 @@
         }
         return (void*)0;
     }
-    ack_response* createIndex(char* index) {
-        static ack_response res;
+    ack_result* createIndex(char* index) {
+        static ack_result res;
         int err = kuzzle_wrapper_create_index($self, &res, index, (void*)0);
 
         if (err == 0) {

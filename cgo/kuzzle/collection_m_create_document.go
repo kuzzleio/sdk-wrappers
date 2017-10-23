@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_create_document
+// TODO Refactor document
 func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {
@@ -30,6 +31,7 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzz
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
+// TODO Refactor document
 func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

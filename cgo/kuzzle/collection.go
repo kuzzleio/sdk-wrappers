@@ -32,6 +32,7 @@ func goToCSearchResult(goRes *collection.SearchResult, cRes *C.kuzzle_search_res
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
+		// TODO Refactor
 		hits := make([]*C.document, len(goRes.Hits) + 1)
 
 		for i := 0; i < len(goRes.Hits); i++ {

@@ -20,11 +20,6 @@ typdef struct {
     void* kuzzle;
 }
 
-typedef struct {
-    void* instance;
-    char error[2048];
-} document;
-
 enum {
     CONNECTED,
     DISCARDED,
@@ -167,15 +162,34 @@ typedef struct {
 /* === Dedicated response structures === */
 
 typedef struct {
+  int failed;
+  int successful;
+  int total;
+} shards;
+
+typedef struct {
+    char *id;
+    char *index;
+    kuzzle_meta *meta;
+    shards *shards;
+    json_object *content;
+    int version;
+    char *result;
+    uint created;
+    char *collection;
+} document;
+
+typedef struct {
+    document *result;
+    int status;
+    char *error;
+    char *stack;
+} document_result;
+
+typedef struct {
     char result[2048];
     char error[2048];
 } string_result;
-
-//used for string array result
-typedef struct {
-    char **result;
-    char error[2048];
-} string_array_result;
 
 typedef struct {
     int result;
@@ -266,7 +280,6 @@ typedef struct {
     char *error;
     char *stack;
 } string_array_result;
-
 
 typedef struct {
     char* type;

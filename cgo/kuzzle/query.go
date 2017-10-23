@@ -153,6 +153,7 @@ func goStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
+// TODO Refactor document
 func goDocuments(argv **C.document) []*collection.Document {
 	length := C.sizeDocumentArray(argv)
 	if length == 0 {

@@ -144,3 +144,14 @@ func Set_user_error(s *C.user, err error) {
   }
 }
 
+// apply a types.KuzzleError on a document* C struct
+// TODO Refactor document
+func Set_document_error(s *C.document, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}

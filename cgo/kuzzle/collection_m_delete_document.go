@@ -13,37 +13,30 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_delete_document
-func kuzzle_wrapper_collection_m_delete_document(c *C.collection, result *C.string_array_result, ids **C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_m_delete_document(c *C.collection , ids **C.char, idsCount C.uint, options *C.query_options) *C.string_array_result {
+	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
-	gIds := goStrings(ids)
+	gIds := goStrings(ids, idsCount)
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.MDeleteDocument(gIds, opts)
 
 	if err != nil {
-		if err.Error() == "Collection.MDeleteDocument: please provide at least one id of document to delete" {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
+		Set_string_array_result_error(result, err)
+		return result
 	}
 
-	cArray := C.malloc(C.size_t(len(res)) * C.size_t(unsafe.Sizeof(uintptr(0))))
+	result.result = (**C.char)(C.calloc(C.size_t(len(res)), C.sizeof_char_ptr))
+	result.length = C.ulong(len(res))
 
-	// TODO Bad assign
-	a := (*[1<<30 - 1]*C.char)(cArray)
+	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(res):len(res)]
 
-	idx := 0
-	for _, substring := range res {
-		// TODO Must be freed in C
-		a[idx] = C.CString(substring)
-		idx += 1
+	for i, substring := range res {
+		cArray[i] = C.CString(substring)
 	}
-	a[idx] = nil
 
-	(*result).result = (**C.char)(cArray)
-	return 0
+	return result
 }

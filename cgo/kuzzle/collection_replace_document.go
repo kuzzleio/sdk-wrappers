@@ -13,6 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_replace_document
+// TODO Refactor document
 func kuzzle_wrapper_collection_replace_document(c *C.collection, result *C.document, id *C.char, document *C.document, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {

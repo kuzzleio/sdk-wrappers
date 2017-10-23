@@ -8,14 +8,13 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"regexp"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_create_document
-// TODO
-func kuzzle_wrapper_collection_create_document(c *C.collection, result *C.document, id *C.char, document *C.document, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_create_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document_result {
+	result := (*C.string_result)(C.calloc(1, C.sizeof_document_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -25,15 +24,11 @@ func kuzzle_wrapper_collection_create_document(c *C.collection, result *C.docume
 	res, err := col.CreateDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
 
 	if err != nil {
-		match, _ := regexp.MatchString("Invalid value for the 'ifExist' option: '.*'", err.Error())
-		if match {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
+		Set_document_error(result, err)
+		return result
 	}
 
-	result.instance = unsafe.Pointer(&res)
+	result.result = goToCDocument(res)
 
-	return 0
+	return result
 }
