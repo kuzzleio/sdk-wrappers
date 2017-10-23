@@ -2,7 +2,8 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
  */
 import "C"
 import (
@@ -11,7 +12,9 @@ import (
 )
 
 //export kuzzle_wrapper_get_auto_refresh
-func kuzzle_wrapper_get_auto_refresh(k *C.Kuzzle, result *C.bool_result, index *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_get_auto_refresh(k *C.Kuzzle, index *C.char, options *C.query_options) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -19,23 +22,15 @@ func kuzzle_wrapper_get_auto_refresh(k *C.Kuzzle, result *C.bool_result, index *
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetAutoRefresh(C.GoString(index), opts)
 	if err != nil {
-		if err.Error() == "Kuzzle.CheckToken: token required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_bool_result_error(result, err)
+		return result
 	}
-
-	var valid C.uint
 
 	if res {
-		valid = 1
+		result.result = 1
 	} else {
-		valid = 0
+		result.result = 0
 	}
 
-	result.result = valid
-
-	return 0
+	return result
 }

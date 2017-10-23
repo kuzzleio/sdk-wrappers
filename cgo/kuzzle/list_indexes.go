@@ -3,7 +3,9 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
+	#include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
@@ -13,7 +15,9 @@ import (
 )
 
 //export kuzzle_wrapper_list_indexes
-func kuzzle_wrapper_list_indexes(k *C.Kuzzle, result *C.string_array_result, options *C.query_options) {
+func kuzzle_wrapper_list_indexes(k *C.Kuzzle, options *C.query_options) *C.string_array_result {
+	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -21,19 +25,18 @@ func kuzzle_wrapper_list_indexes(k *C.Kuzzle, result *C.string_array_result, opt
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListIndexes(opts)
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
+		Set_string_array_result_error(result, err)
+		return result
 	}
 
-	cArray := C.malloc(C.size_t(len(res)) * C.size_t(unsafe.Sizeof(uintptr(0))))
+	result.result = (**C.char)(C.calloc(C.size_t(len(res)), C.sizeof_char_ptr))
+	result.length = C.ulong(len(res))
+	
+	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(res):len(res)]
 
-	a := (*[1<<30 - 1]*C.char)(cArray)
-
-	idx := 0
-	for _, substring := range res {
-		a[idx] = C.CString(substring)
-		idx += 1
+	for i, substring := range res {
+		cArray[i] = C.CString(substring)
 	}
-	a[idx] = nil
 
-	(*result).result = (**C.char)(cArray)
+	return result
 }

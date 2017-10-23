@@ -2,7 +2,8 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
  */
 import "C"
 import (
@@ -10,30 +11,24 @@ import (
 )
 
 //export kuzzle_wrapper_check_token
-func kuzzle_wrapper_check_token(k *C.Kuzzle, result *C.token_validity, token *C.char) C.int {
+func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
+	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
+
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
 	if err != nil {
-		if err.Error() == "Kuzzle.CheckToken: token required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_token_validity_error(result, err)
+		return result
 	}
-
-	var valid C.uint
 
 	if res.Valid {
-		valid = 1
+		result.valid = 1
 	} else {
-		valid = 0
+		result.valid = 0
 	}
 
-	*result = C.token_validity{
-		valid:     valid,
-		state:     ToCString_512(res.State),
-		expiresAt: C.int(res.ExpiresAt),
-	}
+	result.status = 200
+	result.state = C.CString(res.State)
+	result.expiresAt = C.longlong(res.ExpiresAt)
 
-	return 0
+	return result
 }

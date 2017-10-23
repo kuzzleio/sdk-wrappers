@@ -3,7 +3,8 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include <stdlib.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -11,7 +12,9 @@ import (
 )
 
 //export kuzzle_wrapper_login
-func kuzzle_wrapper_login(k *C.Kuzzle, result *C.login_result, strategy *C.char, credentials *C.json_object, expires_in *C.int) C.int {
+func kuzzle_wrapper_login(k *C.Kuzzle, strategy *C.char, credentials *C.json_object, expires_in *C.int) *C.login_result {
+	result := (*C.login_result)(C.calloc(1, C.sizeof_login_result))
+
 	jp := JsonParser{}
 	jp.Parse(credentials)
 
@@ -19,23 +22,14 @@ func kuzzle_wrapper_login(k *C.Kuzzle, result *C.login_result, strategy *C.char,
 	if expires_in != nil {
 		expire = int(*expires_in)
 	}
+
 	res, err := (*kuzzle.Kuzzle)(k.instance).Login(C.GoString(strategy), jp.GetContent(), &expire)
 	if err != nil {
-		if err.Error() == "Kuzzle.Login: cannot authenticate to Kuzzle without an authentication strategy" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_login_result_error(result, err)
+		return result
 	}
 
-	var arr [512]C.char
+	result.jwt = C.CString(res)
 
-	for i, v := range res {
-		arr[i] = (C.char)(v)
-	}
-
-	result.jwt = arr
-
-	return 0
+	return result
 }

@@ -2,7 +2,9 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+
+	#include <stdlib.h>
+	#include "kuzzle.h"
 
 	static void call(void* f, json_object* res) {
 		((void(*)(json_object*))f)(res);
@@ -26,7 +28,10 @@ func kuzzle_wrapper_add_listener(k *C.Kuzzle, e C.int, cb unsafe.Pointer) {
 		var jsonRes *C.json_object
 		r, _ := json.Marshal(res)
 
-		jsonRes = C.json_tokener_parse(C.CString(string(r)))
+		buffer := C.CString(string(r))
+		defer C.free(unsafe.Pointer(buffer))
+
+		jsonRes = C.json_tokener_parse(buffer)
 
 		C.call(cb, jsonRes)
 	}()
