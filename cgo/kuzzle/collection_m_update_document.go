@@ -12,25 +12,14 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_update_document
-// TODO Refactor document
-func kuzzle_wrapper_collection_m_update_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_m_update_document(c *C.collection, documents **C.document, options *C.query_options) *C.kuzzle_search_result {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
 	}
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.MUpdateDocument(goDocuments(documents), opts)
+	res, err := col.MUpdateDocument(cToGoDocuments(documents), opts)
 
-	if err != nil {
-		if err.Error() == "Collection.MUpdateDocument: please provide at least one document to update" {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
-	}
-
-	goToCSearchResult(res, result)
-
-	return 0
+	return goToCSearchResult(res, err)
 }

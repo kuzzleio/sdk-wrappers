@@ -2,43 +2,15 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-<<<<<<< HEAD
-	#include <kuzzle.h>
-
-	static int sizeArray(char** arr) {
-		int i = 0;
-
-		if (!arr || !arr[0])
-			return 0;
-		while (arr[i])
-			i++;
-
-		return i;
-	}
-
-	static int sizeDocumentArray(document** arr) {
-		int i = 0;
-
-		if (!arr || !arr[0])
-			return 0;
-		while (arr[i])
-			i++;
-
-		return i;
-	}
-=======
 	#include <stdlib.h>
 	#include "kuzzle.h"
->>>>>>> origin/dynamic_structs
 */
 import "C"
 import (
 	"encoding/json"
-	//"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"github.com/kuzzleio/sdk-go/collection"
 )
 
 //export kuzzle_wrapper_query
@@ -104,9 +76,9 @@ func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.que
 
 	start := int(request.start)
 	req.Start = start
-	req.Members = goStrings(request.members, request.members_length)
-	req.Keys = goStrings(request.keys, request.keys_length)
-	req.Fields = goStrings(request.fields, request.fields_length)
+	req.Members = cToGoStrings(request.members, request.members_length)
+	req.Keys = cToGoStrings(request.keys, request.keys_length)
+	req.Fields = cToGoStrings(request.fields, request.fields_length)
 
 	resC := make(chan *types.KuzzleResponse)
 	(*kuzzle.Kuzzle)(k.instance).Query(&req, opts, resC)
@@ -137,33 +109,3 @@ func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.que
 	return result
 }
 
-// convert a C char** to a go array of string
-func goStrings(arr **C.char, len C.uint) []string {
-	if len == 0 {
-		return nil
-	}
-
-	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(arr))[:len:len]
-	gostrings := make([]string, len)
-	for i, s := range tmpslice {
-		gostrings[i] = C.GoString(s)
-	}
-
-	return gostrings
-}
-
-// Helper to convert a C document** to a go array of document pointers
-// TODO Refactor document
-func goDocuments(argv **C.document) []*collection.Document {
-	length := C.sizeDocumentArray(argv)
-	if length == 0 {
-		return nil
-	}
-	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(argv))[:length:length]
-	godocuments := make([]*collection.Document, length)
-	for i, s := range tmpslice {
-		instance := (*C.document)(s).instance
-		godocuments[i] = (*collection.Document)(instance)
-	}
-	return godocuments
-}

@@ -2,6 +2,29 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
+
+	static int sizeArray(char** arr) {
+		int i = 0;
+
+		if (!arr || !arr[0])
+			return 0;
+		while (arr[i])
+			i++;
+
+		return i;
+	}
+
+	static int sizeDocumentArray(document** arr) {
+		int i = 0;
+
+		if (!arr || !arr[0])
+			return 0;
+		while (arr[i])
+			i++;
+
+		return i;
+	}
+
 	#include "kuzzle.h"
 */
 import "C"
@@ -116,4 +139,39 @@ func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult
 
 		cRes.result.hits = &hits[0]
 	}
+}
+
+// convert a C char** to a go array of string
+func cToGoStrings(arr **C.char, len C.uint) []string {
+	if len == 0 {
+		return nil
+	}
+
+	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(arr))[:len:len]
+	goStrings := make([]string, len)
+	for i, s := range tmpslice {
+		goStrings[i] = C.GoString(s)
+	}
+
+	return goStrings
+}
+
+// Helper to convert a C document** to a go array of document pointers
+// TODO Refactor document
+func cToGoDocuments(docs **C.document) []*collection.Document {
+	length := C.sizeDocumentArray(docs)
+	if length == 0 {
+		return nil
+	}
+	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(docs))[:length:length]
+	godocuments := make([]*collection.Document, length)
+	for i, doc := range tmpslice {
+		godocuments[i] = cToGoDocument(doc)
+	}
+	return godocuments
+}
+
+// TODO
+func cToGoDocument(doc *C.document) *collection.Document {
+
 }

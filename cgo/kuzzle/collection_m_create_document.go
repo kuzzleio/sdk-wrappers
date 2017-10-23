@@ -20,7 +20,7 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 
-	res, err := col.MCreateDocument(goDocuments(documents), opts)
+	res, err := col.MCreateDocument(cToGoDocuments(documents), opts)
 
 	 return goToCSearchResult(res, err)
 }
@@ -33,7 +33,7 @@ func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, doc
 	}
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.MCreateOrReplaceDocument(goDocuments(documents), opts)
+	res, err := col.MCreateOrReplaceDocument(cToGoDocuments(documents), opts)
 
 	return goToCSearchResult(res, err)
 }
