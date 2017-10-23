@@ -3,13 +3,13 @@ sudo: required
 go:
   - 1.9
 install:
-  - go get -t -v ./...
-  - git clone https://github.com/json-c/json-c.git
   - cd json-c
   - apt-get install build-essential
   - sh autogen.sh
   - ./configure
   - make
   - make install
+  - go get -t -v ./...
+  - git clone https://github.com/json-c/json-c.git
 script:
   - make core
