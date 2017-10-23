@@ -12,8 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_create_document
-// TODO Refactor document
-func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
+func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.document, options *C.query_options) *C.kuzzle_search_result {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,17 +21,12 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, result *C.kuzz
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 
 	res, err := col.MCreateDocument(goDocuments(documents), opts)
-	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
-	}
 
-	goToCSearchResult(res, result)
+	 return goToCSearchResult(res, err)
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
-// TODO Refactor document
-func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, result *C.kuzzle_search_result, documents **C.document, options *C.query_options) {
+func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, documents **C.document, options *C.query_options) *C.kuzzle_search_result {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -41,10 +35,5 @@ func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, res
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.MCreateOrReplaceDocument(goDocuments(documents), opts)
 
-	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
-	}
-
-	goToCSearchResult(res, result)
+	return goToCSearchResult(res, err)
 }

@@ -8,13 +8,13 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_fetch_document
-// TODO
-func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.document, id *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_fetch_document(c *C.collection, id *C.char, options *C.query_options) *C.document_result {
+	result := (*C.string_result)(C.calloc(1, C.sizeof_document_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -24,15 +24,11 @@ func kuzzle_wrapper_collection_fetch_document(c *C.collection, result *C.documen
 	res, err := col.FetchDocument(C.GoString(id), opts)
 
 	if err != nil {
-		if err.Error() == "Collection.FetchDocument: document id required" {
-			return C.int(C.EINVAL)
-		} else {
-			result.error = ToCString_2048(err.Error())
-			return 0
-		}
+		Set_document_error(result, err)
+		return result
 	}
 
-	result.instance = unsafe.Pointer(&res)
+	result.result = goToCDocument(res)
 
-	return 0
+	return result
 }

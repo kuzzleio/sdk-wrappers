@@ -29,8 +29,6 @@ func kuzzle_wrapper_collection_document_exists(c *C.collection, id *C.char, opti
 
 	if res {
 		result.result = 1
-	} else {
-		result.result = 0
 	}
 
 	return result

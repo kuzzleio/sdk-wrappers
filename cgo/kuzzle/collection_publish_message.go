@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_publish_message
+// TODO
 func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_result, message *C.json_object, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

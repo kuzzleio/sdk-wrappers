@@ -13,6 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_get_mapping
+// TODO
 func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection_mapping, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

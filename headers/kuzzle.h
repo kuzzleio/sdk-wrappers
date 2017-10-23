@@ -295,6 +295,7 @@ typedef struct {
 
 typedef struct {
     document** hits;
+    int length;
     int total;
     char scrollId[128];
 } search_result;
@@ -315,7 +316,7 @@ typedef struct {
 
 typedef struct {
     char request_id[36];
-    search_result result;
+    search_result *result;
     char room_id[36];
     char channel[128];
     char error[2048];

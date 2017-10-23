@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_scroll
+// TODO
 func kuzzle_wrapper_collection_scroll(c *C.collection, result *C.kuzzle_search_result, scrollId *C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {

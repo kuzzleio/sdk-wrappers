@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_truncate
+// TODO
 func kuzzle_wrapper_collection_truncate(c *C.collection, result *C.ack_result, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

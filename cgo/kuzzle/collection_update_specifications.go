@@ -13,6 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_update_specifications
+// TODO
 func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.kuzzle_specification, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

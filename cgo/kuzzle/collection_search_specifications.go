@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_search_specifications
+// TODO
 func kuzzle_wrapper_collection_search_specifications(c *C.collection, result *C.kuzzle_specification_search_result, searchFilters *C.search_filters, options *C.query_options) {
 	var opts types.QueryOptions
 	if options != nil {

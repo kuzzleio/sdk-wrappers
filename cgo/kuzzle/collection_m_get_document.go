@@ -12,6 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_m_get_document
+// TODO
 func kuzzle_wrapper_collection_m_get_document(c *C.collection, result *C.kuzzle_search_result, ids **C.char, options *C.query_options) C.int {
 	var opts types.QueryOptions
 	if options != nil {

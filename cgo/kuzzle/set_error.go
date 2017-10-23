@@ -145,8 +145,18 @@ func Set_user_error(s *C.user, err error) {
 }
 
 // apply a types.KuzzleError on a document* C struct
-// TODO Refactor document
-func Set_document_error(s *C.document, err error) {
+func Set_document_error(s *C.document_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+// apply a types.KuzzleError on a kuzzle_search_result* C struct
+func Set_kuzzle_search_result_error(s *C.kuzzle_search_result, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
