@@ -32,11 +32,8 @@ func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.O
 		instances = make(map[interface{}]interface{})
 	}
 
-	var opts types.Options
-	if options != nil {
-		opts = SetOptions(options)
-	}
-
+	opts := SetOptions(options)
+	
 	if C.GoString(protocol) == "websocket" {
 		c = websocket.NewWebSocket(C.GoString(host), opts)
 	}

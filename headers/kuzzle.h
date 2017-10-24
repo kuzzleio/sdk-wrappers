@@ -276,6 +276,7 @@ extern void kuzzle_wrapper_start_queuing(Kuzzle*);
 extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
 extern ack_response* kuzzle_wrapper_delete_my_credentials(Kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_update_my_credentials(Kuzzle*, char*, json_object*, query_options*);
+
 //Options
 extern Options* kuzzle_wrapper_new_options(void);
 
@@ -293,5 +294,10 @@ extern JsonObject kuzzle_wrapper_json_get_json_object(json_object*, char*);
 
 //gc management
 extern void unregisterKuzzle(Kuzzle*);
+
+// memory storage
+extern int_result* kuzzle_wrapper_ms_append(Kuzzle *, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitcount(Kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitop(Kuzzle*, char*, char*, char**, query_options*);
 
 #endif

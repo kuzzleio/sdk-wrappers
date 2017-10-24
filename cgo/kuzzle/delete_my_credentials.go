@@ -16,11 +16,7 @@ import (
 //export kuzzle_wrapper_delete_my_credentials
 func kuzzle_wrapper_delete_my_credentials(k *C.Kuzzle, strategy *C.char, options *C.query_options) *C.ack_response {
 	result := (*C.ack_response)(C.calloc(1, C.sizeof_ack_response))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).DeleteMyCredentials(C.GoString(strategy), opts)
 

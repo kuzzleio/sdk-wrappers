@@ -17,11 +17,7 @@ import (
 //export kuzzle_wrapper_get_my_credentials
 func kuzzle_wrapper_get_my_credentials(k *C.Kuzzle, strategy *C.char, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetMyCredentials(C.GoString(strategy), opts)
 

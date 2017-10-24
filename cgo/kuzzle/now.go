@@ -14,10 +14,7 @@ import (
 //export kuzzle_wrapper_now
 func kuzzle_wrapper_now(k *C.Kuzzle, options *C.query_options) *C.int_result {
 	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	time, err := (*kuzzle.Kuzzle)(k.instance).Now(opts)
 	if err != nil {
