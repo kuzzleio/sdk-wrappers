@@ -12,7 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_login
-func kuzzle_wrapper_login(k *C.Kuzzle, strategy *C.char, credentials *C.json_object, expires_in *C.int) *C.login_result {
+func kuzzle_wrapper_login(k *C.kuzzle, strategy *C.char, credentials *C.json_object, expires_in *C.int) *C.login_result {
 	result := (*C.login_result)(C.calloc(1, C.sizeof_login_result))
 
 	jp := JsonParser{}

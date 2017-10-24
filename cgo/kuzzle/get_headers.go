@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_headers
-func kuzzle_wrapper_get_headers(k *C.Kuzzle) *C.json_object {
+func kuzzle_wrapper_get_headers(k *C.kuzzle) *C.json_object {
 	res := (*kuzzle.Kuzzle)(k.instance).GetHeaders()
 	r, _ := json.Marshal(res)
 

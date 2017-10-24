@@ -4,10 +4,11 @@
 #include <json-c/json.h>
 #include <time.h>
 #include <errno.h>
+#include <stdbool.h>
 
-typedef struct {
+typedef struct _kuzzle {
     void *instance;
-} Kuzzle;
+} kuzzle;
 
 enum {
     CONNECTED,
@@ -24,7 +25,7 @@ enum {
 } event;
 
 //define a request
-typedef struct {
+typedef struct _kuzzle_request {
     char *request_id;
     char *controller;
     char *action;
@@ -37,7 +38,7 @@ typedef struct {
     char *scroll;
     char *scroll_id;
     char *strategy;
-    unsigned long expires_in;
+    unsigned long long expires_in;
     json_object *volatiles;
     char *scope;
     char *state;
@@ -74,34 +75,34 @@ typedef struct {
 } kuzzle_request;
 
 //query object used by query()
-typedef struct {
+typedef struct _query_object {
     json_object *query;
     unsigned long long timestamp;
     char   *request_id;
 } query_object;
 
-typedef struct {
+typedef struct _offline_queue {
     query_object **queries;
     unsigned long length;
 } offline_queue;
 
 
 //options passed to query()
-typedef struct {
-    unsigned queuable;
+typedef struct _query_options {
+    bool queuable;
     long from;
     long size;
     char *scroll;
     char *scroll_id;
     char *refresh;
     char *if_exist;
-    unsigned char retry_on_conflict;
+    int retry_on_conflict;
     json_object *volatiles;
 } query_options;
 
 enum Mode {AUTO, MANUAL};
 //options passed to the Kuzzle() fct
-typedef struct {
+typedef struct _options {
     unsigned queue_ttl;
     unsigned long queue_max_size;
     unsigned char offline_mode;
@@ -115,20 +116,20 @@ typedef struct {
     char *refresh;
     char *default_index;
     json_object    *headers;
-} Options;
+} options;
 
 //meta of a document
-typedef struct {
+typedef struct _kuzzle_meta {
     char *author;
     unsigned long long created_at;
     unsigned long long updated_at;
     char *updater;
-    unsigned char active;
+    bool active;
     unsigned long long deleted_at;
 } kuzzle_meta;
 
 //kuzzle user
-typedef struct {
+typedef struct _user {
     char *id;
     json_object* source;
     kuzzle_meta* meta;
@@ -142,7 +143,7 @@ typedef struct {
 /* === Dedicated response structures === */
 
 //statistics
-typedef struct {
+typedef struct _statistics {
     json_object* completed_requests;
     json_object* connections;
     json_object* failed_requests;
@@ -154,26 +155,26 @@ typedef struct {
 } statistics;
 
 //check_token
-typedef struct {
-    unsigned valid;
+typedef struct _token_validity {
+    bool valid;
     char *state;
-    long long expiresAt;
+    unsigned long long expires_at;
     int status;
     char *error;
     char *stack;
 } token_validity;
 
 //any delete* function
-typedef struct {
-    unsigned acknowledged;
-    unsigned shardsAcknowledged;
+typedef struct _ack_response {
+    bool acknowledged;
+    bool shards_acknowledged;
     int status;
     char *error;
     char *stack;
 } ack_response;
 
 //login
-typedef struct {
+typedef struct _login_result {
     char *jwt;
     int status;
     char *error;
@@ -181,7 +182,7 @@ typedef struct {
 } login_result;
 
 //refresh_index
-typedef struct {
+typedef struct _shards {
     int total;
     int successful;
     int failed;
@@ -193,7 +194,7 @@ typedef struct {
 /* === Generic response structures === */
 
 // raw Kuzzle response
-typedef struct {
+typedef struct _kuzzle_response {
     char *request_id;
     json_object *result;
     char *room_id;
@@ -204,7 +205,7 @@ typedef struct {
 } kuzzle_response;
 
 //any json result
-typedef struct {
+typedef struct _json_result {
     json_object *result;
     int status;
     char *error;
@@ -212,15 +213,15 @@ typedef struct {
 } json_result;
 
 //any boolean result
-typedef struct {
-    unsigned result;
+typedef struct _bool_result {
+    bool result;
     int status;
     char *error;
     char *stack;
 } bool_result;
 
 //any integer result
-typedef struct {
+typedef struct _int_result {
     long long result;
     int status;
     char *error;
@@ -228,7 +229,7 @@ typedef struct {
 } int_result;
 
 //any array of strings result
-typedef struct {
+typedef struct _string_array_result {
     char **result;
     unsigned long length;
     int status;
@@ -238,60 +239,56 @@ typedef struct {
 
 
 // Kuzzle main object functions
-extern void kuzzle_wrapper_new_kuzzle(Kuzzle*, char*, char*, Options*);
-extern char* kuzzle_wrapper_connect(Kuzzle*);
-extern offline_queue* kuzzle_wrapper_get_offline_queue(Kuzzle*);
-extern char* kuzzle_wrapper_get_jwt(Kuzzle*);
-extern token_validity* kuzzle_wrapper_check_token(Kuzzle*, char*);
-extern ack_response* kuzzle_wrapper_create_index(Kuzzle*, char*, query_options*);
-extern login_result* kuzzle_wrapper_login(Kuzzle*, char*, json_object*, int*);
-extern json_result* kuzzle_wrapper_create_my_credentials(Kuzzle*, char*, json_object*, query_options*);
-extern void kuzzle_wrapper_disconnect(Kuzzle*);
-extern void kuzzle_wrapper_flush_queue(Kuzzle*);
-extern json_result* kuzzle_wrapper_get_all_statistics(Kuzzle*, query_options*);
-extern bool_result* kuzzle_wrapper_get_auto_refresh(Kuzzle*, char*, query_options*);
-extern json_result* kuzzle_wrapper_get_my_credentials(Kuzzle*, char*, query_options*);
-extern json_result* kuzzle_wrapper_get_my_rights(Kuzzle*, query_options*);
-extern json_result* kuzzle_wrapper_get_server_info(Kuzzle*, query_options*);
-extern statistics* kuzzle_wrapper_get_statistics(Kuzzle*, time_t, query_options*);
-extern json_result* kuzzle_wrapper_list_collections(Kuzzle*, char*, query_options*);
-extern string_array_result* kuzzle_wrapper_list_indexes(Kuzzle*, query_options*);
-extern char* kuzzle_wrapper_logout(Kuzzle*);
-extern int_result* kuzzle_wrapper_now(Kuzzle*, query_options*);
-extern shards* kuzzle_wrapper_refresh_index(Kuzzle*, char*, query_options*);
-extern bool_result* kuzzle_wrapper_set_auto_refresh(Kuzzle*, char*, unsigned, query_options*);
-extern int kuzzle_wrapper_set_default_index(Kuzzle*, char*);
-extern void kuzzle_wrapper_unset_jwt(Kuzzle*);
-extern json_result* kuzzle_wrapper_update_self(Kuzzle*, json_object*, query_options*);
-extern bool_result* kuzzle_wrapper_validate_my_credentials(Kuzzle*, char*, json_object*, query_options*);
-extern user* kuzzle_wrapper_who_am_i(Kuzzle*);
-extern kuzzle_response* kuzzle_wrapper_query(Kuzzle*, kuzzle_request*, query_options*);
-extern void kuzzle_wrapper_set_headers(Kuzzle*, json_object*, unsigned);
-extern json_object* kuzzle_wrapper_get_headers(Kuzzle*);
-extern void kuzzle_wrapper_add_listener(Kuzzle*, int, void*);
-extern void kuzzle_wrapper_remove_listener(Kuzzle*, int);
-extern void kuzzle_wrapper_replay_queue(Kuzzle*);
-extern void kuzzle_wrapper_set_jwt(Kuzzle*, char*);
-extern void kuzzle_wrapper_start_queuing(Kuzzle*);
-extern void kuzzle_wrapper_stop_queuing(Kuzzle*);
-extern ack_response* kuzzle_wrapper_delete_my_credentials(Kuzzle*, char*, query_options*);
-extern json_result* kuzzle_wrapper_update_my_credentials(Kuzzle*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_new_kuzzle(kuzzle*, char*, char*, options*);
+extern char* kuzzle_wrapper_connect(kuzzle*);
+extern offline_queue* kuzzle_wrapper_get_offline_queue(kuzzle*);
+extern char* kuzzle_wrapper_get_jwt(kuzzle*);
+extern token_validity* kuzzle_wrapper_check_token(kuzzle*, char*);
+extern ack_response* kuzzle_wrapper_create_index(kuzzle*, char*, query_options*);
+extern login_result* kuzzle_wrapper_login(kuzzle*, char*, json_object*, int*);
+extern json_result* kuzzle_wrapper_create_my_credentials(kuzzle*, char*, json_object*, query_options*);
+extern void kuzzle_wrapper_disconnect(kuzzle*);
+extern void kuzzle_wrapper_flush_queue(kuzzle*);
+extern json_result* kuzzle_wrapper_get_all_statistics(kuzzle*, query_options*);
+extern bool_result* kuzzle_wrapper_get_auto_refresh(kuzzle*, char*, query_options*);
+extern json_result* kuzzle_wrapper_get_my_credentials(kuzzle*, char*, query_options*);
+extern json_result* kuzzle_wrapper_get_my_rights(kuzzle*, query_options*);
+extern json_result* kuzzle_wrapper_get_server_info(kuzzle*, query_options*);
+extern statistics* kuzzle_wrapper_get_statistics(kuzzle*, time_t, query_options*);
+extern json_result* kuzzle_wrapper_list_collections(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_list_indexes(kuzzle*, query_options*);
+extern char* kuzzle_wrapper_logout(kuzzle*);
+extern int_result* kuzzle_wrapper_now(kuzzle*, query_options*);
+extern shards* kuzzle_wrapper_refresh_index(kuzzle*, char*, query_options*);
+extern bool_result* kuzzle_wrapper_set_auto_refresh(kuzzle*, char*, unsigned, query_options*);
+extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
+extern void kuzzle_wrapper_unset_jwt(kuzzle*);
+extern json_result* kuzzle_wrapper_update_self(kuzzle*, json_object*, query_options*);
+extern bool_result* kuzzle_wrapper_validate_my_credentials(kuzzle*, char*, json_object*, query_options*);
+extern user* kuzzle_wrapper_who_am_i(kuzzle*);
+extern kuzzle_response* kuzzle_wrapper_query(kuzzle*, kuzzle_request*, query_options*);
+extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
+extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
+extern void kuzzle_wrapper_add_listener(kuzzle*, int, void*);
+extern void kuzzle_wrapper_remove_listener(kuzzle*, int);
+extern void kuzzle_wrapper_replay_queue(kuzzle*);
+extern void kuzzle_wrapper_set_jwt(kuzzle*, char*);
+extern void kuzzle_wrapper_start_queuing(kuzzle*);
+extern void kuzzle_wrapper_stop_queuing(kuzzle*);
+extern ack_response* kuzzle_wrapper_delete_my_credentials(kuzzle*, char*, query_options*);
+extern json_result* kuzzle_wrapper_update_my_credentials(kuzzle*, char*, json_object*, query_options*);
 //Options
-extern Options* kuzzle_wrapper_new_options(void);
+extern options* kuzzle_wrapper_new_options(void);
 
-//JsonObject
-typedef struct JsonObject_struct {
-    json_object* jobj;
-} JsonObject;
 
-extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
-extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
-extern int kuzzle_wrapper_json_get_int(json_object*, char*);
-extern double kuzzle_wrapper_json_get_double(json_object*, char*);
-extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
-extern JsonObject kuzzle_wrapper_json_get_json_object(json_object*, char*);
+//extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
+//extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
+//extern int kuzzle_wrapper_json_get_int(json_object*, char*);
+//extern double kuzzle_wrapper_json_get_double(json_object*, char*);
+//extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
+//extern json_object kuzzle_wrapper_json_get_json_object(json_object*, char*);
 
 //gc management
-extern void unregisterKuzzle(Kuzzle*);
+extern void unregisterKuzzle(kuzzle*);
 
 #endif

@@ -11,6 +11,6 @@ import (
 )
 
 //export kuzzle_wrapper_unset_jwt
-func kuzzle_wrapper_unset_jwt(k *C.Kuzzle) {
+func kuzzle_wrapper_unset_jwt(k *C.kuzzle) {
 	(*kuzzle.Kuzzle)(k.instance).UnsetJwt()
 }

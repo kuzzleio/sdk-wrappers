@@ -14,7 +14,7 @@ import (
 func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts = types.NewQueryOptions()
 
-	opts.SetQueuable(options.queuable != 0)
+	opts.SetQueuable(bool(options.queuable))
 	opts.SetFrom(int(options.from))
 	opts.SetSize(int(options.size))
 	opts.SetScroll(C.GoString(options.scroll))
@@ -31,7 +31,7 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	return
 }
 
-func SetOptions(options *C.Options) (opts types.Options) {
+func SetOptions(options *C.options) (opts types.Options) {
 	opts = types.NewOptions()
 
 	opts.SetQueueTTL(time.Duration(uint16(options.queue_ttl)))
