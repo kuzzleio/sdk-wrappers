@@ -28,7 +28,7 @@ func kuzzle_wrapper_collection_create_document(c *C.collection, id *C.char, docu
 		return result
 	}
 
-	result.result = goToCDocument(res)
+	result.result = goToCDocument(res, c)
 
 	return result
 }

@@ -6,6 +6,7 @@ package main
 	#include "kuzzle.h"
 */
 import "C"
+import "unsafe"
 
 func JsonCType(jobj *C.json_object) C.json_type {
 	// Returning the value directly results in a type mismatch
@@ -75,4 +76,66 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 	}
 
 	return nil
+}
+
+//export kuzzle_wrapper_json_put
+func kuzzle_wrapper_json_put(jobj *C.json_object, key *C.char, content unsafe.Pointer, kind C.int) {
+	if kind == 0 {
+		//string
+		C.json_object_object_add(jobj, key, C.json_object_new_string((*C.char)(content)))
+	} else if kind == 1 {
+		//int
+		C.json_object_object_add(jobj, key, C.json_object_new_int64((C.int64_t)(*(*C.int)(content))))
+	} else if kind == 2 {
+		//double
+		C.json_object_object_add(jobj, key, C.json_object_new_double(*(*C.double)(content)))
+	} else if kind == 3 {
+		//bool
+		C.json_object_object_add(jobj, key, C.json_object_new_boolean((C.json_bool)(*(*C.uchar)(content))))
+	} else if kind == 4 {
+		//json_object
+		C.json_object_object_add(jobj, key, ((*C.JsonObject)(content)).jobj)
+	}
+}
+
+//export kuzzle_wrapper_json_get_string
+func kuzzle_wrapper_json_get_string(jobj *C.json_object, key *C.char) *C.char {
+	value := C.json_object_new_object()
+	C.json_object_object_get_ex(jobj, key, &value)
+
+	return C.json_object_get_string(value)
+}
+
+//export kuzzle_wrapper_json_get_int
+func kuzzle_wrapper_json_get_int(jobj *C.json_object, key *C.char) C.int {
+	value := C.json_object_new_object()
+	C.json_object_object_get_ex(jobj, key, &value)
+
+	return C.int(C.json_object_get_int64(value))
+}
+
+//export kuzzle_wrapper_json_get_double
+func kuzzle_wrapper_json_get_double(jobj *C.json_object, key *C.char) C.double {
+	value := C.json_object_new_object()
+	C.json_object_object_get_ex(jobj, key, &value)
+
+	return C.json_object_get_double(value)
+}
+
+//export kuzzle_wrapper_json_get_bool
+func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool {
+	value := C.json_object_new_object()
+	C.json_object_object_get_ex(jobj, key, &value)
+
+	return C.json_object_get_boolean(value)
+}
+
+//export kuzzle_wrapper_json_get_json_object
+func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) C.JsonObject {
+	value := C.json_object_new_object()
+	C.json_object_object_get_ex(jobj, key, &value)
+
+	jo := C.JsonObject{}
+	jo.jobj = value
+	return jo
 }

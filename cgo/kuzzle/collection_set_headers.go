@@ -11,7 +11,6 @@ import (
 )
 
 //export kuzzle_wrapper_collection_set_headers
-// TODO
 func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_object, replace C.uint) {
 	if JsonCType(content) == C.json_type_object {
 		var r bool

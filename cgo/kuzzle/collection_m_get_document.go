@@ -22,5 +22,5 @@ func kuzzle_wrapper_collection_m_get_document(c *C.collection, ids **C.char, ids
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.MGetDocument(gIds, opts)
 
-	return goToCSearchResult(res, err)
+	return goToCSearchResult(res, c, err)
 }

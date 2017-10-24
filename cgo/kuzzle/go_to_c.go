@@ -69,7 +69,7 @@ func goToCShards(gShards *types.Shards) *C.shards {
 }
 
 // Allocates memory
-func goToCDocument(gDoc *collection.Document) *C.document {
+func goToCDocument(gDoc *collection.Document, col *C.collection) *C.document {
 	result := (*C.document)(C.calloc(1, C.sizeof_document))
 
 	result.id = C.CString(gDoc.Id)
@@ -78,6 +78,7 @@ func goToCDocument(gDoc *collection.Document) *C.document {
 	result.collection = C.CString(gDoc.Collection)
 	result.meta = goToCKuzzleMeta(gDoc.Meta)
 	result.shards = goToCShards(gDoc.Shards)
+	result._collection = col
 
 	if string(gDoc.Content) != "" {
 		buffer := C.CString(string(gDoc.Content))
@@ -97,7 +98,7 @@ func goToCDocument(gDoc *collection.Document) *C.document {
 }
 
 // Allocates memory
-func goToCSearchResult(goRes *collection.SearchResult, err error) *C.kuzzle_search_result {
+func goToCSearchResult(goRes *collection.SearchResult, col *C.collection, err error) *C.kuzzle_search_result {
 	result := (*C.kuzzle_search_result)(C.calloc(1, C.sizeof_kuzzle_search_result))
 
 	if err != nil {
@@ -114,7 +115,7 @@ func goToCSearchResult(goRes *collection.SearchResult, err error) *C.kuzzle_sear
 		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:goRes.Total:goRes.Total]
 
 		for i, doc := range goRes.Hits {
-			cArray[i] = goToCDocument(doc)
+			cArray[i] = goToCDocument(doc, col)
 		}
 	}
 
@@ -139,39 +140,4 @@ func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult
 
 		cRes.result.hits = &hits[0]
 	}
-}
-
-// convert a C char** to a go array of string
-func cToGoStrings(arr **C.char, len C.uint) []string {
-	if len == 0 {
-		return nil
-	}
-
-	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(arr))[:len:len]
-	goStrings := make([]string, len)
-	for i, s := range tmpslice {
-		goStrings[i] = C.GoString(s)
-	}
-
-	return goStrings
-}
-
-// Helper to convert a C document** to a go array of document pointers
-// TODO Refactor document
-func cToGoDocuments(docs **C.document) []*collection.Document {
-	length := C.sizeDocumentArray(docs)
-	if length == 0 {
-		return nil
-	}
-	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(docs))[:length:length]
-	godocuments := make([]*collection.Document, length)
-	for i, doc := range tmpslice {
-		godocuments[i] = cToGoDocument(doc)
-	}
-	return godocuments
-}
-
-// TODO
-func cToGoDocument(doc *C.document) *collection.Document {
-
 }

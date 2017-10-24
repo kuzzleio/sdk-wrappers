@@ -177,6 +177,7 @@ typedef struct {
     char *result;
     uint created;
     char *collection;
+    collection *_collection;
 } document;
 
 typedef struct {

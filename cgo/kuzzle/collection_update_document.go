@@ -8,13 +8,13 @@ import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_update_document
-// TODO Refactor document
-func kuzzle_wrapper_collection_update_document(c *C.collection, result *C.document, id *C.char, document *C.document, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_update_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document {
+	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,15 +22,13 @@ func kuzzle_wrapper_collection_update_document(c *C.collection, result *C.docume
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.UpdateDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
+
 	if err != nil {
-		if err.Error() == "Collection.UpdateDocument: document id required" {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
+		Set_document_error(result, err)
+		return result
 	}
 
-	result.instance = unsafe.Pointer(&res)
+	result.result = goToCDocument(res, c)
 
-	return 0
+	return result
 }

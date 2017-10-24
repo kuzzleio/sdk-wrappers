@@ -47,11 +47,11 @@ func kuzzle_wrapper_new_kuzzle(k *C.Kuzzle, host, protocol *C.char, options *C.O
 	k.instance = unsafe.Pointer(inst)
 }
 
+// Allocates memory
 //export kuzzle_wrapper_connect
 func kuzzle_wrapper_connect(k *C.Kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Connect()
 	if err != nil {
-		// TODO Must be freed in C
 		return C.CString(err.Error())
 	}
 
@@ -85,9 +85,9 @@ func kuzzle_wrapper_get_offline_queue(k *C.Kuzzle) *C.offline_queue {
 	return result
 }
 
+// Allocates memory
 //export kuzzle_wrapper_get_jwt
 func kuzzle_wrapper_get_jwt(k *C.Kuzzle) *C.char {
-	// TODO Must be freed in C
 	return C.CString((*kuzzle.Kuzzle)(k.instance).GetJwt())
 }
 

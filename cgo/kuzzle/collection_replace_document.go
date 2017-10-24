@@ -12,7 +12,6 @@ import (
 )
 
 //export kuzzle_wrapper_collection_replace_document
-// TODO Refactor document
 func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document {
 	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
 
@@ -29,7 +28,7 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, doc
 		return result
 	}
 
-	result.result = goToCDocument(res)
+	result.result = goToCDocument(res, c)
 
 	return result
 }

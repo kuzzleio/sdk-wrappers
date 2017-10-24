@@ -12,8 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_search
-// TODO
-func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_result, searchFilters *C.search_filters, options *C.query_options) {
+func kuzzle_wrapper_collection_search(c *C.collection, searchFilters *C.search_filters, options *C.query_options) *C.kuzzle_search_result {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,10 +21,5 @@ func kuzzle_wrapper_collection_search(c *C.collection, result *C.kuzzle_search_r
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.Search(cToGoSearchFilters(searchFilters), opts)
 
-	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
-	}
-
-	goToCSearchResult(res, result)
+	return goToCSearchResult(res, c, err)
 }

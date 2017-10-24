@@ -12,8 +12,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_scroll
-// TODO
-func kuzzle_wrapper_collection_scroll(c *C.collection, result *C.kuzzle_search_result, scrollId *C.char, options *C.query_options) C.int {
+func kuzzle_wrapper_collection_scroll(c *C.collection, scrollId *C.char, options *C.query_options) *C.kuzzle_search_result {
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -22,15 +21,5 @@ func kuzzle_wrapper_collection_scroll(c *C.collection, result *C.kuzzle_search_r
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.Scroll(C.GoString(scrollId), opts)
 
-	if err != nil {
-		if err.Error() == "Collection.Scroll: scroll id required" {
-			return C.int(C.EINVAL)
-		}
-		result.error = ToCString_2048(err.Error())
-		return 0
-	}
-
-	goToCSearchResult(res, result)
-
-	return 0
+	return goToCSearchResult(res, c, err)
 }

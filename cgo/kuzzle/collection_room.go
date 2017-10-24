@@ -35,6 +35,7 @@ func kuzzle_wrapper_collection_get_room_id(room *C.room, result *C.string_result
 }
 
 //export kuzzle_wrapper_collection_get_room_filters
+// TODO refactor
 func kuzzle_wrapper_collection_get_room_filters(room *C.room, result *C.json_result) {
 	res := (*collection.Room)(room.instance).GetFilters()
 	jsonString, err := json.Marshal(res)
