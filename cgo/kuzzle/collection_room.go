@@ -2,7 +2,7 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -15,7 +15,9 @@ import (
 
 //export kuzzle_wrapper_collection_new_room
 // Todo Refactor
-func kuzzle_wrapper_collection_new_room(room *C.room, c *C.collection, options *C.room_options) {
+func kuzzle_wrapper_collection_new_room(c *C.collection, options *C.room_options) *C.room {
+	result := (*C.room)(C.calloc(1, C.sizeof_room))
+
 	var opts types.RoomOptions
 	if options != nil {
 		opts = SetRoomOptions(options)

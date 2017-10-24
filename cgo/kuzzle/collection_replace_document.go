@@ -2,7 +2,8 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
+	#include "kuzzle.h"
+	#include <stdlib.h>
 */
 import "C"
 import (

@@ -310,10 +310,15 @@ typedef struct {
     char *stack;
 } ack_result;
 
+// TODO
 typedef struct {
-    void *instance;
-    char error[2048];
+
 } kuzzle_specification;
+
+typedef struct {
+    kuzzle_specification *result;
+    char error[2048];
+} kuzzle_specification_result;
 
 typedef struct {
     char request_id[36];
@@ -330,7 +335,7 @@ typedef struct {
 } specification_search_result;
 
 typedef struct {
-    specification_search_result result;
+    specification_search_result *result;
     char error[2048];
 } kuzzle_specification_search_result;
 
