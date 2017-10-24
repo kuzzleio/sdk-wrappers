@@ -3,7 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
@@ -14,6 +14,7 @@ import (
 func kuzzle_wrapper_logout(k *C.kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Logout()
 	if err != nil {
+		// TODO Must be freed in C
 		return C.CString(err.Error())
 	}
 

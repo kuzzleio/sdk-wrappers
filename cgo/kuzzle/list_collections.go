@@ -9,8 +9,9 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_list_collections

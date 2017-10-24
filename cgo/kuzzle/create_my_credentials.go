@@ -18,11 +18,7 @@ func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credent
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 	opts := SetQueryOptions(options)
 
-	jp := JsonParser{}
-	jp.Parse(credentials)
-
-	res, err := (*kuzzle.Kuzzle)(k.instance).CreateMyCredentials(C.GoString(strategy), jp.GetContent(), opts)
-
+	res, err := (*kuzzle.Kuzzle)(k.instance).CreateMyCredentials(C.GoString(strategy),JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
 		Set_json_result_error(result, err)
 		return result

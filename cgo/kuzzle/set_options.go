@@ -2,11 +2,10 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include <kuzzle.h>
- */
+	#include "kuzzle.h"
+*/
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/types"
 	"time"
 )
@@ -21,16 +20,13 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts.SetQueuable(bool(options.queuable))
 	opts.SetFrom(int(options.from))
 	opts.SetSize(int(options.size))
+
 	opts.SetScroll(C.GoString(options.scroll))
 	opts.SetScrollId(C.GoString(options.scroll_id))
 	opts.SetRefresh(C.GoString(options.refresh))
 	opts.SetIfExist(C.GoString(options.if_exist))
 	opts.SetRetryOnConflict(int(options.retry_on_conflict))
-
-	out, _ := json.Marshal(opts.GetVolatile())
-	vols := make(map[string]interface{})
-	json.Unmarshal(out, &vols)
-	opts.SetVolatile(vols)
+	opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
 
 	return
 }
@@ -55,11 +51,23 @@ func SetOptions(options *C.options) (opts types.Options) {
 	opts.SetConnect(int(options.connect))
 	opts.SetRefresh(C.GoString(options.refresh))
 	opts.SetDefaultIndex(C.GoString(options.default_index))
+	opts.SetHeaders(JsonCConvert(options.headers).(map[string]interface{}))
 
-	p := JsonParser{}
-	p.Parse(options.headers)
+	return
+}
 
-	opts.SetHeaders(p.GetContent())
+func SetRoomOptions(options *C.room_options) (opts types.RoomOptions) {
+	opts = types.NewRoomOptions()
+
+	opts.SetScope(C.GoString(options.scope))
+	opts.SetState(C.GoString(options.state))
+	opts.SetUser(C.GoString(options.user))
+
+	opts.SetSubscribeToSelf(options.subscribe_to_self == 1)
+
+	if options.volatiles != nil {
+		opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
+	}
 
 	return
 }

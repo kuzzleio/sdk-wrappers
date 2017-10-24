@@ -9,10 +9,11 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
-	"time"
-	"strconv"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"strconv"
+	"time"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_statistics
@@ -31,25 +32,25 @@ func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.q
 	}
 
 	ongoing, _ := json.Marshal(res.OngoingRequests)
-	completed_requests, _ := json.Marshal(res.CompletedRequests)
+	completedRequests, _ := json.Marshal(res.CompletedRequests)
 	connections, _ := json.Marshal(res.Connections)
-	failed_requests, _ := json.Marshal(res.FailedRequests)
+	failedRequests, _ := json.Marshal(res.FailedRequests)
 
-	c_ongoing := C.CString(string(ongoing))
-	c_completed_request := C.CString(string(completed_requests))
-	c_connections := C.CString(string(connections))
-	c_failed_requests := C.CString(string(failed_requests))
+	cOnGoing := C.CString(string(ongoing))
+	cCompleteRequest := C.CString(string(completedRequests))
+	cConnections := C.CString(string(connections))
+	cFailedRequests := C.CString(string(failedRequests))
 
-	result.ongoing_requests = C.json_tokener_parse(c_ongoing)
-	result.completed_requests = C.json_tokener_parse(c_completed_request)
-	result.connections = C.json_tokener_parse(c_connections)
-	result.failed_requests = C.json_tokener_parse(c_failed_requests)
+	result.ongoing_requests = C.json_tokener_parse(cOnGoing)
+	result.completed_requests = C.json_tokener_parse(cCompleteRequest)
+	result.connections = C.json_tokener_parse(cConnections)
+	result.failed_requests = C.json_tokener_parse(cFailedRequests)
 	result.timestamp = C.ulonglong(res.Timestamp)
 
-	C.free(unsafe.Pointer(c_ongoing))
-	C.free(unsafe.Pointer(c_completed_request))
-	C.free(unsafe.Pointer(c_connections))
-	C.free(unsafe.Pointer(c_failed_requests))
+	C.free(unsafe.Pointer(cOnGoing))
+	C.free(unsafe.Pointer(cCompleteRequest))
+	C.free(unsafe.Pointer(cConnections))
+	C.free(unsafe.Pointer(cFailedRequests))
 
 	return result
 }

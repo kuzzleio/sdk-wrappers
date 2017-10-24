@@ -18,6 +18,7 @@
   }
 %}
 
+
 %extend options {
     options() {
         options *o = kuzzle_wrapper_new_options();

@@ -34,8 +34,8 @@ func Set_token_validity_error(s *C.token_validity, err error) {
   }
 }
 
-// apply a types.KuzzleError on a ack_response* C struct
-func Set_ack_response_error(s *C.ack_response, err error) {
+// apply a types.KuzzleError on a ack_result* C struct
+func Set_ack_result_error(s *C.ack_result, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
@@ -111,6 +111,17 @@ func Set_int_result_error(s *C.int_result, err error) {
   }
 }
 
+// apply a types.KuzzleError on a string_result* C struct
+func Set_string_result_error(s *C.string_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
 // apply a types.KuzzleError on a shards* C struct
 func Set_shards_error(s *C.shards, err error) {
   kuzzleError := err.(*types.KuzzleError)
@@ -133,3 +144,24 @@ func Set_user_error(s *C.user, err error) {
   }
 }
 
+// apply a types.KuzzleError on a document* C struct
+func Set_document_error(s *C.document_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+// apply a types.KuzzleError on a kuzzle_search_result* C struct
+func Set_kuzzle_search_result_error(s *C.kuzzle_search_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}

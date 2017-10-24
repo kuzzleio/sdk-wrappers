@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_get_all_statistics

@@ -8,6 +8,7 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_now
