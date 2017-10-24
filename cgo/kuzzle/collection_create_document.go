@@ -13,7 +13,7 @@ import (
 
 //export kuzzle_wrapper_collection_create_document
 func kuzzle_wrapper_collection_create_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document_result {
-	result := (*C.string_result)(C.calloc(1, C.sizeof_document_result))
+	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
 
 	var opts types.QueryOptions
 	if options != nil {

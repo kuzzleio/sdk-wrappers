@@ -12,8 +12,8 @@ import (
 )
 
 //export kuzzle_wrapper_collection_publish_message
-// TODO
-func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_result, message *C.json_object, options *C.query_options) {
+func kuzzle_wrapper_collection_publish_message(c *C.collection, message *C.json_object, options *C.query_options) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
@@ -23,19 +23,13 @@ func kuzzle_wrapper_collection_publish_message(c *C.collection, result *C.bool_r
 	res, err := col.PublishMessage(JsonCConvert(message).(map[string]interface{}), opts)
 
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
+		Set_bool_result_error(result, err)
+		return result
 	}
 
-	var r C.uint
-
-	if res.Published {
-		r = 1
-	} else {
-		r = 0
+	if res {
+		result.result = 1
 	}
 
-	result.result = r
-
-	return
+	return result
 }

@@ -14,6 +14,7 @@ import (
 //export kuzzle_wrapper_collection_document_exists
 func kuzzle_wrapper_collection_document_exists(c *C.collection, id *C.char, options *C.query_options) *C.bool_result {
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
 	var opts types.QueryOptions
 	if options != nil {
 		opts = SetQueryOptions(options)
