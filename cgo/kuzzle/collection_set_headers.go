@@ -13,11 +13,7 @@ import (
 //export kuzzle_wrapper_collection_set_headers
 func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_object, replace C.uint) {
 	if JsonCType(content) == C.json_type_object {
-		var r bool
-		if replace == 1 {
-			r = true
-		}
-
+		r := replace != 0
 		col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 		col.SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
 	}

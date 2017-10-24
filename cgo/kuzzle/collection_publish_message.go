@@ -23,9 +23,7 @@ func kuzzle_wrapper_collection_publish_message(c *C.collection, message *C.json_
 		return result
 	}
 
-	if res {
-		result.result = 1
-	}
+	result.result = C.bool(res)
 
 	return result
 }

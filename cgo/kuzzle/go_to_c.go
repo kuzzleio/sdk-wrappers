@@ -84,10 +84,7 @@ func goToCDocument(gDoc *collection.Document, col *C.collection) *C.document {
 	}
 
 	result.version = C.int(gDoc.Version)
-
-	if gDoc.Created {
-		result.created = 1
-	}
+	result.created = C.bool(gDoc.Created)
 
 	return result
 }

@@ -176,7 +176,7 @@ typedef struct {
     json_object *content;
     int version;
     char *result;
-    uint created;
+    bool created;
     char *collection;
     collection *_collection;
 } document;

@@ -64,11 +64,7 @@ func kuzzle_wrapper_collection_mapping_set(cm *C.collection_mapping, jMap *C.jso
 //export kuzzle_wrapper_collection_mapping_set_headers
 func kuzzle_wrapper_collection_mapping_set_headers(cm *C.collection_mapping, content *C.json_object, replace C.uint) {
 	if JsonCType(content) == C.json_type_object {
-		var r bool
-		if replace == 1 {
-			r = true
-		}
-
+		r := replace != 0
 		(*collection.Mapping)(cm.instance).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
 	}
 
