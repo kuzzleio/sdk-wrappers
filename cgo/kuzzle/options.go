@@ -14,8 +14,8 @@ import (
 import "C"
 
 //export kuzzle_wrapper_new_options
-func kuzzle_wrapper_new_options() *C.Options {
-	copts := (*C.Options)(C.calloc(1, C.sizeof_Options))
+func kuzzle_wrapper_new_options() *C.options {
+	copts := (*C.options)(C.calloc(1, C.sizeof_options))
 	opts := types.NewOptions()
 
 	copts.queue_ttl = C.uint(opts.GetQueueTTL())

@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_check_token
-func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
+func kuzzle_wrapper_check_token(k *C.kuzzle, token *C.char) *C.token_validity {
 	result := (*C.token_validity)(C.calloc(1, C.sizeof_token_validity))
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CheckToken(C.GoString(token))
@@ -20,15 +20,11 @@ func kuzzle_wrapper_check_token(k *C.Kuzzle, token *C.char) *C.token_validity {
 		return result
 	}
 
-	if res.Valid {
-		result.valid = 1
-	} else {
-		result.valid = 0
-	}
+	result.valid = C.bool(res.Valid)
 
 	result.status = 200
 	result.state = C.CString(res.State)
-	result.expiresAt = C.longlong(res.ExpiresAt)
+	result.expires_at = C.ulonglong(res.ExpiresAt)
 
 	return result
 }
