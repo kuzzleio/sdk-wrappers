@@ -1,3 +1,12 @@
+%rename(TokenValidity) token_validity;
+%rename(AckResponse) ack_response;
+%rename(queueTTL) queue_ttl;
+%rename(Options) options;
+%rename(Kuzzle) kuzzle;
+%rename(JsonObject) json_object;
+
+%include "../../kcore.i"
+
 %pragma(java) jniclasscode=%{
   static {
     try {
@@ -9,19 +18,13 @@
   }
 %}
 
-%rename(TokenValidity) _token_validity;
-%rename(AckResponse) _ack_response;
-%rename(queueTTL) queue_ttl;
-%rename(Options) _options;
-%rename(Kuzzle) _kuzzle;
-
-%extend _options {
-    _options() {
+%extend options {
+    options() {
         options *o = kuzzle_wrapper_new_options();
         return o;
     }
 
-    ~_options() {
+    ~options() {
         free($self);
     }
 }
@@ -79,30 +82,30 @@
     }
 
     json_object getJsonObject(char* key) {
-        return kuzzle_wrapper_json_get_json_object($self, key);
+        return kuzzle_wrapper_json_get_json_object($self->jobj, key);
     }
 }
 
-%typemap(javaimports) _kuzzle "
+%typemap(javaimports) kuzzle "
 /* The type Kuzzle. */"
 
-%extend _kuzzle {
+%extend kuzzle {
     // ctors && dtor
-    _kuzzle(char* host, options *opts) {
+    kuzzle(char* host, options *opts) {
         kuzzle *k = malloc(sizeof(kuzzle));
         kuzzle_wrapper_new_kuzzle(k, host, "websocket", opts);
         return k;
     }
-    _kuzzle(char* host) {
-        kuzzle *k;
-        k = malloc(sizeof(kuzzle));
-        kuzzle_wrapper_new_kuzzle(k, host, "websocket", (void*)0);
-        return k;
-    }
-    ~_kuzzle() {
-        unregisterKuzzle($self);
-        free($self);
-    }
+//    _kuzzle(char* host) {
+//        kuzzle *k;
+//        k = malloc(sizeof(kuzzle));
+//        kuzzle_wrapper_new_kuzzle(k, host, "websocket", (void*)0);
+//        return k;
+//    }
+//    ~_kuzzle() {
+//        unregisterKuzzle($self);
+//        free($self);
+//    }
 
     // checkToken
 //    %exception checkToken {
@@ -198,4 +201,3 @@
 //    }
 }
 
-%include "../../kcore.i"

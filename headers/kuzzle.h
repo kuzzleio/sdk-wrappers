@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <stdbool.h>
 
-typedef struct _kuzzle {
+typedef struct {
     void *instance;
 } kuzzle;
 
@@ -25,7 +25,7 @@ enum {
 } event;
 
 //define a request
-typedef struct _kuzzle_request {
+typedef struct {
     char *request_id;
     char *controller;
     char *action;
@@ -75,20 +75,20 @@ typedef struct _kuzzle_request {
 } kuzzle_request;
 
 //query object used by query()
-typedef struct _query_object {
+typedef struct {
     json_object *query;
     unsigned long long timestamp;
     char   *request_id;
 } query_object;
 
-typedef struct _offline_queue {
+typedef struct {
     query_object **queries;
     unsigned long length;
 } offline_queue;
 
 
 //options passed to query()
-typedef struct _query_options {
+typedef struct {
     bool queuable;
     long from;
     long size;
@@ -102,7 +102,7 @@ typedef struct _query_options {
 
 enum Mode {AUTO, MANUAL};
 //options passed to the Kuzzle() fct
-typedef struct _options {
+typedef struct {
     unsigned queue_ttl;
     unsigned long queue_max_size;
     unsigned char offline_mode;
@@ -119,7 +119,7 @@ typedef struct _options {
 } options;
 
 //meta of a document
-typedef struct _kuzzle_meta {
+typedef struct {
     char *author;
     unsigned long long created_at;
     unsigned long long updated_at;
@@ -129,7 +129,7 @@ typedef struct _kuzzle_meta {
 } kuzzle_meta;
 
 //kuzzle user
-typedef struct _user {
+typedef struct {
     char *id;
     json_object* source;
     kuzzle_meta* meta;
@@ -143,7 +143,7 @@ typedef struct _user {
 /* === Dedicated response structures === */
 
 //statistics
-typedef struct _statistics {
+typedef struct {
     json_object* completed_requests;
     json_object* connections;
     json_object* failed_requests;
@@ -155,7 +155,7 @@ typedef struct _statistics {
 } statistics;
 
 //check_token
-typedef struct _token_validity {
+typedef struct {
     bool valid;
     char *state;
     unsigned long long expires_at;
@@ -165,7 +165,7 @@ typedef struct _token_validity {
 } token_validity;
 
 //any delete* function
-typedef struct _ack_response {
+typedef struct {
     bool acknowledged;
     bool shards_acknowledged;
     int status;
@@ -174,7 +174,7 @@ typedef struct _ack_response {
 } ack_response;
 
 //login
-typedef struct _login_result {
+typedef struct {
     char *jwt;
     int status;
     char *error;
@@ -182,7 +182,7 @@ typedef struct _login_result {
 } login_result;
 
 //refresh_index
-typedef struct _shards {
+typedef struct {
     int total;
     int successful;
     int failed;
@@ -194,7 +194,7 @@ typedef struct _shards {
 /* === Generic response structures === */
 
 // raw Kuzzle response
-typedef struct _kuzzle_response {
+typedef struct {
     char *request_id;
     json_object *result;
     char *room_id;
@@ -205,7 +205,7 @@ typedef struct _kuzzle_response {
 } kuzzle_response;
 
 //any json result
-typedef struct _json_result {
+typedef struct {
     json_object *result;
     int status;
     char *error;
@@ -213,7 +213,7 @@ typedef struct _json_result {
 } json_result;
 
 //any boolean result
-typedef struct _bool_result {
+typedef struct {
     bool result;
     int status;
     char *error;
@@ -221,7 +221,7 @@ typedef struct _bool_result {
 } bool_result;
 
 //any integer result
-typedef struct _int_result {
+typedef struct {
     long long result;
     int status;
     char *error;
@@ -229,7 +229,7 @@ typedef struct _int_result {
 } int_result;
 
 //any array of strings result
-typedef struct _string_array_result {
+typedef struct {
     char **result;
     unsigned long length;
     int status;
@@ -280,13 +280,12 @@ extern json_result* kuzzle_wrapper_update_my_credentials(kuzzle*, char*, json_ob
 //Options
 extern options* kuzzle_wrapper_new_options(void);
 
-
-//extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
-//extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
-//extern int kuzzle_wrapper_json_get_int(json_object*, char*);
-//extern double kuzzle_wrapper_json_get_double(json_object*, char*);
-//extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
-//extern json_object kuzzle_wrapper_json_get_json_object(json_object*, char*);
+extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
+extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
+extern int kuzzle_wrapper_json_get_int(json_object*, char*);
+extern double kuzzle_wrapper_json_get_double(json_object*, char*);
+extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
+extern json_object* kuzzle_wrapper_json_get_json_object(json_object*, char*);
 
 //gc management
 extern void unregisterKuzzle(kuzzle*);
