@@ -8,18 +8,13 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_refresh_index
 func kuzzle_wrapper_refresh_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.shards {
 	result := (*C.shards)(C.calloc(1, C.sizeof_shards))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	shards, err := (*kuzzle.Kuzzle)(k.instance).RefreshIndex(C.GoString(index), opts)
 	if err != nil {

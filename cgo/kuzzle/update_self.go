@@ -8,7 +8,6 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
@@ -17,11 +16,7 @@ import (
 //export kuzzle_wrapper_update_self
 func kuzzle_wrapper_update_self(k *C.Kuzzle, credentials *C.json_object, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	jp := JsonParser{}
 	jp.Parse(credentials)
