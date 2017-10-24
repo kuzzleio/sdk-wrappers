@@ -9,18 +9,13 @@ import "C"
 import (
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 )
 
 //export kuzzle_wrapper_get_my_rights
 func kuzzle_wrapper_get_my_rights(k *C.kuzzle, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetMyRights(opts)
 

@@ -8,7 +8,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
@@ -16,11 +15,7 @@ import (
 //export kuzzle_wrapper_collection_m_delete_document
 func kuzzle_wrapper_collection_m_delete_document(c *C.collection, ids **C.char, idsCount C.uint, options *C.query_options) *C.string_array_result {
 	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
-
+	opts := SetQueryOptions(options)
 	gIds := cToGoStrings(ids, idsCount)
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.MDeleteDocument(gIds, opts)

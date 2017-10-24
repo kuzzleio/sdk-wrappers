@@ -8,18 +8,13 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_delete_document
 func kuzzle_wrapper_collection_delete_document(c *C.collection, id *C.char, options *C.query_options) *C.string_result {
 	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.DeleteDocument(C.GoString(id), opts)

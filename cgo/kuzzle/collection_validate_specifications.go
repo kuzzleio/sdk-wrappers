@@ -15,11 +15,7 @@ import (
 //export kuzzle_wrapper_collection_validate_specifications
 // TODO
 func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.bool_result, options *C.query_options) {
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
-
+	opts := SetQueryOptions(options)
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.ValidateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
 

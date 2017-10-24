@@ -14,7 +14,6 @@ import (
 	"github.com/kuzzleio/sdk-go/connection"
 	"github.com/kuzzleio/sdk-go/connection/websocket"
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 )
 
@@ -32,11 +31,8 @@ func kuzzle_wrapper_new_kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.o
 		instances = make(map[interface{}]interface{})
 	}
 
-	var opts types.Options
-	if options != nil {
-		opts = SetOptions(options)
-	}
-
+	opts := SetOptions(options)
+	
 	if C.GoString(protocol) == "websocket" {
 		c = websocket.NewWebSocket(C.GoString(host), opts)
 	}

@@ -9,17 +9,12 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_create_index
 func kuzzle_wrapper_create_index(k *C.kuzzle, index *C.char, options *C.query_options) *C.ack_result {
 	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).CreateIndex(C.GoString(index), opts)
 

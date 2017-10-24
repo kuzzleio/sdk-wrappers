@@ -44,12 +44,7 @@ func goToCKuzzleMeta(gMeta *types.KuzzleMeta) *C.kuzzle_meta {
 		result.updated_at = C.ulonglong(gMeta.UpdatedAt)
 		result.deleted_at = C.ulonglong(gMeta.DeletedAt)
 		result.updater = C.CString(gMeta.Updater)
-
-		if gMeta.Active {
-			result.active = 1
-		} else {
-			result.active = 0
-		}
+		result.active = C.bool(gMeta.Active)
 	}
 
 	return result

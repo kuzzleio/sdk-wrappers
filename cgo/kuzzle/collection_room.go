@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_new_room
-// Todo Refactor
+// Todo Redo
 func kuzzle_wrapper_collection_new_room(c *C.collection, options *C.room_options) *C.room {
 	result := (*C.room)(C.calloc(1, C.sizeof_room))
 

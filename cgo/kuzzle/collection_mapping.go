@@ -25,11 +25,7 @@ func kuzzle_wrapper_new_collection_mapping(cm *C.collection_mapping, c *C.collec
 
 //export kuzzle_wrapper_collection_mapping_apply
 func kuzzle_wrapper_collection_mapping_apply(cm *C.collection_mapping, options *C.query_options) C.int {
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
-
+	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Apply(opts)
 	if err != nil {
 		cm.error = ToCString_2048(err.Error())
@@ -41,11 +37,7 @@ func kuzzle_wrapper_collection_mapping_apply(cm *C.collection_mapping, options *
 
 //export kuzzle_wrapper_collection_mapping_refresh
 func kuzzle_wrapper_collection_mapping_refresh(cm *C.collection_mapping, options *C.query_options) C.int {
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
-
+	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Refresh(opts)
 	if err != nil {
 		cm.error = ToCString_2048(err.Error())

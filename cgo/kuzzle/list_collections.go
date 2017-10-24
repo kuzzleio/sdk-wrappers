@@ -17,11 +17,7 @@ import (
 //export kuzzle_wrapper_list_collections
 func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(C.GoString(index), opts)
 	if err != nil {
