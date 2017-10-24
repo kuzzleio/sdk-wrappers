@@ -10,6 +10,6 @@ import (
 )
 
 //export kuzzle_wrapper_disconnect
-func kuzzle_wrapper_disconnect(k *C.Kuzzle) {
+func kuzzle_wrapper_disconnect(k *C.kuzzle) {
 	(*kuzzle.Kuzzle)(k.instance).Disconnect()
 }

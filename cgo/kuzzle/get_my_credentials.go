@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_my_credentials
-func kuzzle_wrapper_get_my_credentials(k *C.Kuzzle, strategy *C.char, options *C.query_options) *C.json_result {
+func kuzzle_wrapper_get_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 	opts := SetQueryOptions(options)
 

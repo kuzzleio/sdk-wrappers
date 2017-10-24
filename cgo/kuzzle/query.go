@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_query
-func kuzzle_wrapper_query(k *C.Kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
+func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
 	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
 	opts := SetQueryOptions(options)
 

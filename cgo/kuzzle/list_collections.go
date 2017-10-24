@@ -14,7 +14,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.Kuzzle, index *C.char, options *C.query_options) *C.json_result {
+func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 	opts := SetQueryOptions(options)
 

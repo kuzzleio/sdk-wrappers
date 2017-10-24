@@ -10,6 +10,6 @@ import (
 )
 
 //export kuzzle_wrapper_flush_queue
-func kuzzle_wrapper_flush_queue(k *C.Kuzzle) {
+func kuzzle_wrapper_flush_queue(k *C.kuzzle) {
 	(*kuzzle.Kuzzle)(k.instance).FlushQueue()
 }

@@ -15,7 +15,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_all_statistics
-func kuzzle_wrapper_get_all_statistics(k *C.Kuzzle, options *C.query_options) *C.json_result {
+func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 	opts := SetQueryOptions(options)
 
