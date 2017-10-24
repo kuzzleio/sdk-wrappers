@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_logout
-func kuzzle_wrapper_logout(k *C.Kuzzle) *C.char {
+func kuzzle_wrapper_logout(k *C.kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Logout()
 	if err != nil {
 		// TODO Must be freed in C

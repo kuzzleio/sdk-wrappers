@@ -18,7 +18,7 @@ import (
 )
 
 //export kuzzle_wrapper_add_listener
-func kuzzle_wrapper_add_listener(k *C.Kuzzle, e C.int, cb unsafe.Pointer) {
+func kuzzle_wrapper_add_listener(k *C.kuzzle, e C.int, cb unsafe.Pointer) {
 	c := make(chan interface{})
 
 	kuzzle.AddListener((*kuzzle.Kuzzle)(k.instance), int(e), c)

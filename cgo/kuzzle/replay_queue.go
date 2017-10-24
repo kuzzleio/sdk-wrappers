@@ -8,6 +8,6 @@ import "C"
 import "github.com/kuzzleio/sdk-go/kuzzle"
 
 //export kuzzle_wrapper_replay_queue
-func kuzzle_wrapper_replay_queue(k *C.Kuzzle) {
+func kuzzle_wrapper_replay_queue(k *C.kuzzle) {
 	(*kuzzle.Kuzzle)(k.instance).ReplayQueue()
 }

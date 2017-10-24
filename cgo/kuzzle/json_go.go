@@ -94,7 +94,7 @@ func kuzzle_wrapper_json_put(jobj *C.json_object, key *C.char, content unsafe.Po
 		C.json_object_object_add(jobj, key, C.json_object_new_boolean((C.json_bool)(*(*C.uchar)(content))))
 	} else if kind == 4 {
 		//json_object
-		C.json_object_object_add(jobj, key, ((*C.JsonObject)(content)).jobj)
+		C.json_object_object_add(jobj, key, (*C.json_object)(content))
 	}
 }
 
@@ -131,11 +131,9 @@ func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool 
 }
 
 //export kuzzle_wrapper_json_get_json_object
-func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) C.JsonObject {
+func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) *C.json_object {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	jo := C.JsonObject{}
-	jo.jobj = value
-	return jo
+	return value
 }

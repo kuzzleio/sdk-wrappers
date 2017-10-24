@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_create_index(k *C.kuzzle, index *C.char, options *C.query_options) *C.ack_result {
 	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
 
 	var opts types.QueryOptions
@@ -28,17 +28,8 @@ func kuzzle_wrapper_create_index(k *C.Kuzzle, index *C.char, options *C.query_op
 		return result
 	}
 
-	if res.Acknowledged {
-		result.acknowledged = 1
-	} else {
-		result.acknowledged = 0
-	}
-
-	if res.ShardsAcknowledged {
-		result.shardsAcknowledged = 1
-	} else {
-		result.shardsAcknowledged = 0
-	}
+	result.acknowledged = C.bool(res.Acknowledged)
+	result.shards_acknowledged = C.bool(res.ShardsAcknowledged)
 
 	return result
 }

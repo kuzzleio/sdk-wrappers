@@ -15,7 +15,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_indexes
-func kuzzle_wrapper_list_indexes(k *C.Kuzzle, options *C.query_options) *C.string_array_result {
+func kuzzle_wrapper_list_indexes(k *C.kuzzle, options *C.query_options) *C.string_array_result {
 	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
 
 	var opts types.QueryOptions

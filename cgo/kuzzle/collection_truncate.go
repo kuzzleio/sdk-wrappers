@@ -29,13 +29,8 @@ func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_option
 		return result
 	}
 
-	if res.Acknowledged {
-		result.acknowledged = 1
-	}
-
-	if res.ShardsAcknowledged {
-		result.shardsAcknowledged = 1
-	}
+	result.acknowledged = C.bool(res.Acknowledged)
+	result.shards_acknowledged = C.bool(res.ShardsAcknowledged)
 
 	return result
 }

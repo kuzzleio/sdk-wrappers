@@ -17,7 +17,7 @@ import (
 )
 
 //export kuzzle_wrapper_get_statistics
-func kuzzle_wrapper_get_statistics(k *C.Kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics {
+func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics {
 	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
 
 	var opts types.QueryOptions

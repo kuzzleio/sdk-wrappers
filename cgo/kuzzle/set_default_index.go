@@ -11,7 +11,7 @@ import (
 )
 
 //export kuzzle_wrapper_set_default_index
-func kuzzle_wrapper_set_default_index(k *C.Kuzzle, index *C.char) C.int {
+func kuzzle_wrapper_set_default_index(k *C.kuzzle, index *C.char) C.int {
 	err := (*kuzzle.Kuzzle)(k.instance).SetDefaultIndex(C.GoString(index))
 	if err != nil {
 		return C.int(C.EINVAL)
