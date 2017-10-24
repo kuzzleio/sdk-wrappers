@@ -70,12 +70,12 @@ func kuzzle_wrapper_get_offline_queue(k *C.kuzzle) *C.offline_queue {
 	idx := 0
 	for _, queryObject := range offlineQueue {
 		query_objects[idx] = (*C.query_object)(C.calloc(1, C.sizeof_query_object))
-		(*query_objects[idx]).timestamp = C.ulonglong(queryObject.Timestamp.Unix())
-		(*query_objects[idx]).request_id = C.CString(queryObject.RequestId)
+		query_objects[idx].timestamp = C.ulonglong(queryObject.Timestamp.Unix())
+		query_objects[idx].request_id = C.CString(queryObject.RequestId)
 		mquery, _ := json.Marshal(queryObject.Query)
 
 		buffer := C.CString(string(mquery))
-		(*query_objects[idx]).query = C.json_tokener_parse(buffer)
+		query_objects[idx].query = C.json_tokener_parse(buffer)
 		C.free(unsafe.Pointer(buffer))
 
 		idx += 1
