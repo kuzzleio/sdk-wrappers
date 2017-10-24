@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"encoding/json"
 )
 
 /*
@@ -52,9 +52,9 @@ func kuzzle_wrapper_new_options() *C.options {
 		copts.refresh = C.CString(refresh)
 	}
 
-	default_index := opts.GetDefaultIndex()
-	if len(default_index) > 0 {
-		copts.default_index = C.CString(default_index)
+	defaultIndex := opts.GetDefaultIndex()
+	if len(defaultIndex) > 0 {
+		copts.default_index = C.CString(defaultIndex)
 	}	
 
 	r, _ := json.Marshal(opts.GetHeaders())

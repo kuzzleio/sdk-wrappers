@@ -9,8 +9,8 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_my_credentials
