@@ -12,6 +12,10 @@ import (
 )
 
 func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
+	if options == nil {
+		return
+	}
+
 	opts = types.NewQueryOptions()
 
 	opts.SetQueuable(bool(options.queuable))
@@ -32,6 +36,10 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 }
 
 func SetOptions(options *C.options) (opts types.Options) {
+	if options == nil {
+		return
+	}
+
 	opts = types.NewOptions()
 
 	opts.SetQueueTTL(time.Duration(uint16(options.queue_ttl)))
