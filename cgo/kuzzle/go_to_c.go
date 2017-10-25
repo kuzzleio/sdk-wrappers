@@ -2,29 +2,6 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-
-	static int sizeArray(char** arr) {
-		int i = 0;
-
-		if (!arr || !arr[0])
-			return 0;
-		while (arr[i])
-			i++;
-
-		return i;
-	}
-
-	static int sizeDocumentArray(document** arr) {
-		int i = 0;
-
-		if (!arr || !arr[0])
-			return 0;
-		while (arr[i])
-			i++;
-
-		return i;
-	}
-
 	#include "kuzzle.h"
 */
 import "C"
@@ -78,7 +55,7 @@ func goToCDocument(gDoc *collection.Document, col *C.collection) *C.document {
 	if string(gDoc.Content) != "" {
 		buffer := C.CString(string(gDoc.Content))
     result.content = C.json_tokener_parse(buffer)
-    C.free(buffer)
+    C.free(unsafe.Pointer(buffer))
 	} else {
 		result.content = C.json_object_new_object()
 	}
@@ -114,7 +91,8 @@ func goToCSearchResult(goRes *collection.SearchResult, col *C.collection, err er
 	return result
 }
 
-// TODO check if it is still legit - refactor
+/*
+  TODO: Must be re-done
 func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_result) {
 	cRes.result.total = C.int(goRes.Total)
 
@@ -133,3 +111,5 @@ func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult
 		cRes.result.hits = &hits[0]
 	}
 }
+
+ */

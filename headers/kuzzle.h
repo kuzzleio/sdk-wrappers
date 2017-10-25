@@ -6,6 +6,8 @@
 #include <errno.h>
 #include <stdbool.h>
 
+typedef char* char_ptr;
+
 typedef struct {
     void *instance;
 } kuzzle;
@@ -157,7 +159,7 @@ typedef struct {
   int total;
 } shards;
 
-typdef struct {
+typedef struct {
     char* index;
     char* collection;
     void* kuzzle;
@@ -189,13 +191,6 @@ typedef struct {
     char *error;
     char *stack;
 } string_result;
-
-typedef struct {
-    int result;
-    int status;
-    char *error;
-    char *stack;
-} int_result;
 
 //statistics
 typedef struct {
@@ -289,7 +284,7 @@ typedef struct {
     document** hits;
     int length;
     int total;
-    char scrollId[128];
+    char *scrollId;
 } search_result;
 
 //any delete* function
@@ -300,6 +295,13 @@ typedef struct {
     char *error;
     char *stack;
 } ack_result;
+
+typedef struct {
+    shards *result;
+    int status;
+    char *error;
+    char *stack;
+} shards_result;
 
 // TODO
 typedef struct {
@@ -369,7 +371,7 @@ extern json_result* kuzzle_wrapper_list_collections(kuzzle*, char*, query_option
 extern string_array_result* kuzzle_wrapper_list_indexes(kuzzle*, query_options*);
 extern char* kuzzle_wrapper_logout(kuzzle*);
 extern int_result* kuzzle_wrapper_now(kuzzle*, query_options*);
-extern shards* kuzzle_wrapper_refresh_index(kuzzle*, char*, query_options*);
+extern shards_result* kuzzle_wrapper_refresh_index(kuzzle*, char*, query_options*);
 extern bool_result* kuzzle_wrapper_set_auto_refresh(kuzzle*, char*, unsigned, query_options*);
 extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
 extern void kuzzle_wrapper_unset_jwt(kuzzle*);

@@ -38,8 +38,7 @@ func cToGoStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func cToGoDocuments(docs **C.document, col *C.collection) []*collection.Document {
-	length := C.sizeDocumentArray(docs)
+func cToGoDocuments(docs **C.document, length C.int, col *C.collection) []*collection.Document {
 	if length == 0 {
 		return nil
 	}
@@ -65,8 +64,8 @@ func cToGoKuzzleMeta(cMeta *C.kuzzle_meta) *types.KuzzleMeta {
 		CreatedAt: int(cMeta.created_at),
 		UpdatedAt: int(cMeta.updated_at),
 		Updater: C.GoString(cMeta.updater),
-		Active: cMeta.active == 1,
-		DeletedAt: int(cMeta.deletedAt),
+		Active: bool(cMeta.active),
+		DeletedAt: int(cMeta.deleted_at),
 	}
 }
 
@@ -81,7 +80,7 @@ func cToGoDocument(cDoc *C.document, c *C.collection) *collection.Document {
 	gDoc.Version = int(cDoc.version)
 	gDoc.Result = C.GoString(cDoc.result)
 	gDoc.Collection = C.GoString(cDoc.collection)
-	cDoc.created = cDoc.created == 1
+	gDoc.Created = bool(cDoc.created)
 
 	return gDoc
 }

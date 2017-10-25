@@ -69,7 +69,7 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 		content := make([]interface{}, length)
 
 		for i := 0; i < length ; i++ {
-			content[i] = JsonCConvert(C.json_object_array_get_idx(jobj, C.int(i)))
+			content[i] = JsonCConvert(C.json_object_array_get_idx(jobj, C.size_t(i)))
 		}
 
 		return content

@@ -123,7 +123,7 @@ func Set_string_result_error(s *C.string_result, err error) {
 }
 
 // apply a types.KuzzleError on a shards* C struct
-func Set_shards_error(s *C.shards, err error) {
+func Set_shards_result_error(s *C.shards_result, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
