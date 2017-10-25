@@ -6,6 +6,7 @@ package main
 	#include <stdlib.h>
 */
 import "C"
+/*
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
@@ -25,3 +26,4 @@ func kuzzle_wrapper_collection_search_specifications(c *C.collection, result *C.
 
 	goToCSpecificationSearchResult(res, result)
 }
+*/

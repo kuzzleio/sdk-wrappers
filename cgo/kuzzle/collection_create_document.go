@@ -17,7 +17,7 @@ func kuzzle_wrapper_collection_create_document(c *C.collection, id *C.char, docu
 	opts := SetQueryOptions(options)
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.CreateDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
+	res, err := col.CreateDocument(C.GoString(id), cToGoDocument(document, c), opts)
 
 	if err != nil {
 		Set_document_error(result, err)

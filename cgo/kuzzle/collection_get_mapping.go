@@ -6,6 +6,7 @@ package main
 	#include <stdlib.h>
 */
 import "C"
+/*
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"unsafe"
@@ -27,3 +28,4 @@ func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection
 
 	result.instance = unsafe.Pointer(&res)
 }
+*/

@@ -6,6 +6,7 @@ package main
 	#include <stdlib.h>
 */
 import "C"
+/*
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
@@ -27,3 +28,4 @@ func kuzzle_wrapper_collection_update_specifications(c *C.collection, specificat
 
 	result.result = unsafe.Pointer(res)
 }
+*/

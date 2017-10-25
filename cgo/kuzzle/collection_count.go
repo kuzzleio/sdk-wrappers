@@ -24,7 +24,7 @@ func kuzzle_wrapper_collection_count(c *C.collection, searchFilters *C.search_fi
 		return result
 	}
 
-	result.result = C.int(res)
+	result.result = C.longlong(res)
 
 	return result
 }

@@ -13,7 +13,7 @@ import (
 )
 
 //export kuzzle_wrapper_collection_replace_document
-func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document {
+func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, document *C.document, options *C.query_options) *C.document_result {
 	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
 
 	var opts types.QueryOptions
@@ -22,7 +22,7 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, doc
 	}
 
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.ReplaceDocument(C.GoString(id), (*collection.Document)(document.instance), opts)
+	res, err := col.ReplaceDocument(C.GoString(id), cToGoDocument(document, c), opts)
 
 	if err != nil {
 		Set_document_error(result, err)
