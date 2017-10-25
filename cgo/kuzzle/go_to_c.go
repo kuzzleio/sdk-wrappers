@@ -41,7 +41,7 @@ func goToCShards(gShards *types.Shards) *C.shards {
 }
 
 // Allocates memory
-func goToCDocument(gDoc *collection.Document, col *C.collection) *C.document {
+func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 	result := (*C.document)(C.calloc(1, C.sizeof_document))
 
 	result.id = C.CString(gDoc.Id)
@@ -67,7 +67,7 @@ func goToCDocument(gDoc *collection.Document, col *C.collection) *C.document {
 }
 
 // Allocates memory
-func goToCSearchResult(goRes *collection.SearchResult, col *C.collection, err error) *C.kuzzle_search_result {
+func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err error) *C.kuzzle_search_result {
 	result := (*C.kuzzle_search_result)(C.calloc(1, C.sizeof_kuzzle_search_result))
 
 	if err != nil {
@@ -84,7 +84,7 @@ func goToCSearchResult(goRes *collection.SearchResult, col *C.collection, err er
 		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:goRes.Total:goRes.Total]
 
 		for i, doc := range goRes.Hits {
-			cArray[i] = goToCDocument(doc, col)
+			cArray[i] = goToCDocument(col, doc)
 		}
 	}
 

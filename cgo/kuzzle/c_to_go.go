@@ -38,14 +38,14 @@ func cToGoStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func cToGoDocuments(docs **C.document, length C.int, col *C.collection) []*collection.Document {
+func cToGoDocuments( col *C.collection, docs **C.document, length C.int) []*collection.Document {
 	if length == 0 {
 		return nil
 	}
 	tmpslice := (*[1 << 30]*C.document)(unsafe.Pointer(docs))[:length:length]
 	godocuments := make([]*collection.Document, length)
 	for i, doc := range tmpslice {
-		godocuments[i] = cToGoDocument(doc, col)
+		godocuments[i] = cToGoDocument(col, doc)
 	}
 	return godocuments
 }
@@ -69,7 +69,7 @@ func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 	}
 }
 
-func cToGoDocument(cDoc *C.document, c *C.collection) *collection.Document {
+func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
 	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	gDoc := col.Document()
 	gDoc.Id = C.GoString(cDoc.id)
