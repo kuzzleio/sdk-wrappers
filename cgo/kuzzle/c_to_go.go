@@ -38,7 +38,7 @@ func cToGoStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func cToGoDocuments( col *C.collection, docs **C.document, length C.int) []*collection.Document {
+func cToGoDocuments( col *C.collection, docs **C.document, length C.uint) []*collection.Document {
 	if length == 0 {
 		return nil
 	}

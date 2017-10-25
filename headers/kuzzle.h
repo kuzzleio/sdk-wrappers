@@ -6,8 +6,6 @@
 #include <errno.h>
 #include <stdbool.h>
 
-typedef char* char_ptr;
-
 typedef struct {
     void *instance;
 } kuzzle;
