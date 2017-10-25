@@ -7,9 +7,7 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_collection_replace_document
@@ -21,15 +19,14 @@ func kuzzle_wrapper_collection_replace_document(c *C.collection, id *C.char, doc
 		opts = SetQueryOptions(options)
 	}
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.ReplaceDocument(C.GoString(id), cToGoDocument(document, c), opts)
+	res, err := cToGoCollection(c).ReplaceDocument(C.GoString(id), cToGoDocument(c, document), opts)
 
 	if err != nil {
 		Set_document_error(result, err)
 		return result
 	}
 
-	result.result = goToCDocument(res, c)
+	result.result = goToCDocument(c, res)
 
 	return result
 }

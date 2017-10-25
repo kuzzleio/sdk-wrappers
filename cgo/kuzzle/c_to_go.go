@@ -10,7 +10,6 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
@@ -69,8 +68,20 @@ func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 	}
 }
 
+func cToGoCollection(c *C.collection) *collection.Collection {
+	return cToGoCollection(c)
+}
+
+// TODO: Test !
+func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
+	mapping := collection.NewMapping(cToGoCollection(cMapping.collection))
+	mapping.Mapping = JsonCConvert(cMapping.mapping).(types.MappingFields)
+
+	return mapping
+}
+
 func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
+	col := cToGoCollection(c)
 	gDoc := col.Document()
 	gDoc.Id = C.GoString(cDoc.id)
 	gDoc.Index = C.GoString(cDoc.index)

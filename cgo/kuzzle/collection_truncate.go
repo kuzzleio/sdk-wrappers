@@ -6,17 +6,12 @@ package main
 	#include <stdlib.h>
 */
 import "C"
-import (
-	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
-)
 
 //export kuzzle_wrapper_collection_truncate
 func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_options) *C.ack_result {
 	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
 	opts := SetQueryOptions(options)
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.Truncate(opts)
+	res, err := cToGoCollection(c).Truncate(opts)
 
 	if err != nil {
 		Set_ack_result_error(result, err)

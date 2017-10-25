@@ -165,3 +165,15 @@ func Set_kuzzle_search_result_error(s *C.kuzzle_search_result, err error) {
     s.stack = C.CString(kuzzleError.Stack)
   }
 }
+
+
+// apply a types.KuzzleError on a kuzzle_search_result* C struct
+func Set_mapping_result_error(s *C.mapping_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}

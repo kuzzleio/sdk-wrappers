@@ -18,7 +18,7 @@ import (
 // TODO
 func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.kuzzle_specification, options *C.query_options) {
 	opts := SetQueryOptions(options)
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
+	col := cToGoCollection(c)
 	res, err := col.UpdateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
 
 	if err != nil {

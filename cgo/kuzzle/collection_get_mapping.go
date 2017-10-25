@@ -6,26 +6,20 @@ package main
 	#include <stdlib.h>
 */
 import "C"
-/*
-import (
-	"github.com/kuzzleio/sdk-go/collection"
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/kuzzle"
-)
 
 //export kuzzle_wrapper_collection_get_mapping
 // TODO
-func kuzzle_wrapper_collection_get_mapping(c *C.collection, result *C.collection_mapping, options *C.query_options) {
+func kuzzle_wrapper_collection_get_mapping(c *C.collection, options *C.query_options) *C.mapping_result {
+	result := (*C.mapping_result)(C.calloc(1, C.sizeof_mapping_result))
 	opts := SetQueryOptions(options)
-
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.GetMapping(opts)
+	res, err := cToGoCollection(c).GetMapping(opts)
 
 	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
+		Set_mapping_result_error(result, err)
+		return result
 	}
 
-	result.instance = unsafe.Pointer(&res)
+	result.result = goToCMapping(res)
+
+	return result
 }
-*/

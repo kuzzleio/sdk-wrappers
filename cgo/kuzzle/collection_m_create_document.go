@@ -5,28 +5,21 @@ package main
 	#include "kuzzle.h"
 */
 import "C"
-import (
-	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
-)
 
 //export kuzzle_wrapper_collection_m_create_document
 func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.document, docCount C.int, options *C.query_options) *C.kuzzle_search_result {
 	opts := SetQueryOptions(options)
+	res, err := cToGoCollection(c).MCreateDocument(cToGoDocuments(c, documents, docCount), opts)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-
-	res, err := col.MCreateDocument(cToGoDocuments(documents, docCount, c), opts)
-
-	 return goToCSearchResult(res, c, err)
+	 return goToCSearchResult(c, res, err)
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
 func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, documents **C.document, docCount C.int, options *C.query_options) *C.kuzzle_search_result {
 	opts := SetQueryOptions(options)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-	res, err := col.MCreateOrReplaceDocument(cToGoDocuments(documents, docCount, c), opts)
+	col := cToGoCollection(c)
+	res, err := col.MCreateOrReplaceDocument(cToGoDocuments(c, documents, docCount), opts)
 
-	return goToCSearchResult(res, c, err)
+	return goToCSearchResult(c, res, err)
 }

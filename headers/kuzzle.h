@@ -327,26 +327,26 @@ typedef struct {
     kuzzle_specification** hits;
     int total;
     char *scrollId;
+} specification_search;
+
+typedef struct {
+    specification_search *result;
+    int status;
+    char *error;
+    char *stack;
 } specification_search_result;
 
 typedef struct {
-    specification_search_result *result;
+    json_object *mapping;
+    collection *collection;
+} mapping;
+
+typedef struct {
+    mapping *result;
     int status;
     char *error;
     char *stack;
-} kuzzle_specification_search_result;
-
-// TODO
-typedef struct {
-
-} collection_mapping;
-
-typedef struct {
-    collection_mapping *instance;
-    int status;
-    char *error;
-    char *stack;
-} collection_mapping_result;
+} mapping_result;
 
 // Kuzzle main object functions
 extern void kuzzle_wrapper_new_kuzzle(kuzzle*, char*, char*, options*);

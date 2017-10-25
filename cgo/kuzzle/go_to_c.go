@@ -94,9 +94,18 @@ func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err er
 	return result
 }
 
+// TODO
+func goToCMapping(goMapping *collection.Mapping) *C.mapping {
+	result := (*C.mapping)(C.calloc(1, C.sizeof_mapping))
+
+	// TODO
+
+	return result
+}
+
 /*
   TODO: Must be re-done
-func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.kuzzle_specification_search_result) {
+func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.specification_search_result) {
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {

@@ -5,23 +5,23 @@ package main
 	#include "kuzzle.h"
 	#include <stdlib.h>
 */
-import "C"
 /*
+import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"encoding/json"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_new_collection_mapping
 // TODO refactor
-func kuzzle_wrapper_new_collection_mapping(cm *C.collection_mapping, c *C.collection) {
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
-	instance := collection.NewMapping(col)
+func kuzzle_wrapper_new_collection_mapping(c *C.collection) *C.collection_mapping {
+	cm := (*C.collection_mapping)(C.calloc(1, C.sizeof_collection_mapping))
+	// TODO Is it wise to do so ?
+	cm.mapping = C.json_object_new_object()
+	cm.collection = c
 
-	cm.instance = unsafe.Pointer(instance)
+	return cm
 }
 
 //export kuzzle_wrapper_collection_mapping_apply
