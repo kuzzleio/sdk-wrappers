@@ -7,7 +7,7 @@ package main
 import "C"
 
 //export kuzzle_wrapper_collection_m_create_document
-func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.document, docCount C.int, options *C.query_options) *C.kuzzle_search_result {
+func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.document, docCount C.uint, options *C.query_options) *C.kuzzle_search_result {
 	opts := SetQueryOptions(options)
 	res, err := cToGoCollection(c).MCreateDocument(cToGoDocuments(c, documents, docCount), opts)
 
@@ -15,7 +15,7 @@ func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.
 }
 
 //export kuzzle_wrapper_collection_m_create_or_replace_document
-func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, documents **C.document, docCount C.int, options *C.query_options) *C.kuzzle_search_result {
+func kuzzle_wrapper_collection_m_create_or_replace_document(c *C.collection, documents **C.document, docCount C.uint, options *C.query_options) *C.kuzzle_search_result {
 	opts := SetQueryOptions(options)
 
 	col := cToGoCollection(c)
