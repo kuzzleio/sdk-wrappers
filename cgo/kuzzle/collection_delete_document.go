@@ -16,7 +16,7 @@ func kuzzle_wrapper_collection_delete_document(c *C.collection, id *C.char, opti
 	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
 	opts := SetQueryOptions(options)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.DeleteDocument(C.GoString(id), opts)
 
 	if err != nil {

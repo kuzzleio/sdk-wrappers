@@ -15,7 +15,7 @@ import (
 func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_options) *C.ack_result {
 	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
 	opts := SetQueryOptions(options)
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.Truncate(opts)
 
 	if err != nil {

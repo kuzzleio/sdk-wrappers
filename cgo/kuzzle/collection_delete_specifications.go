@@ -16,7 +16,7 @@ func kuzzle_wrapper_collection_delete_specifications(c *C.collection, options *C
 	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
 	opts := SetQueryOptions(options)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.DeleteSpecifications(opts)
 
 	if err != nil {

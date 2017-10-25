@@ -16,7 +16,7 @@ func kuzzle_wrapper_collection_count(c *C.collection, searchFilters *C.search_fi
 	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
 	opts := SetQueryOptions(options)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.Count(cToGoSearchFilters(searchFilters), opts)
 
 	if err != nil {

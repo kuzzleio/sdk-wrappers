@@ -23,7 +23,7 @@ func kuzzle_wrapper_collection_new_room(c *C.collection, options *C.room_options
 		opts = SetRoomOptions(options)
 	}
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	instance := collection.NewRoom(col, opts)
 
 	room.instance = unsafe.Pointer(instance)

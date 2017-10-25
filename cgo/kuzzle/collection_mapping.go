@@ -18,7 +18,7 @@ import (
 //export kuzzle_wrapper_new_collection_mapping
 // TODO refactor
 func kuzzle_wrapper_new_collection_mapping(cm *C.collection_mapping, c *C.collection) {
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	instance := collection.NewMapping(col)
 
 	cm.instance = unsafe.Pointer(instance)

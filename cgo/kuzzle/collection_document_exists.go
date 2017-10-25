@@ -16,7 +16,7 @@ func kuzzle_wrapper_collection_document_exists(c *C.collection, id *C.char, opti
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 	opts := SetQueryOptions(options)
 
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	res, err := col.DocumentExists(C.GoString(id), opts)
 
 	if err != nil {
