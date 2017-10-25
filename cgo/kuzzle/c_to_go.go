@@ -58,8 +58,8 @@ func cToGoShards(cShards *C.shards) *types.Shards {
 	}
 }
 
-func cToGoKuzzleMeta(cMeta *C.kuzzle_meta) *types.KuzzleMeta {
-	return &types.KuzzleMeta{
+func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
+	return &types.Meta{
 		Author: C.GoString(cMeta.author),
 		CreatedAt: int(cMeta.created_at),
 		UpdatedAt: int(cMeta.updated_at),

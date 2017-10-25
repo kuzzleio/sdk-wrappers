@@ -12,8 +12,8 @@ import (
 )
 
 // Allocates memory
-func goToCKuzzleMeta(gMeta *types.KuzzleMeta) *C.kuzzle_meta {
-	result := (*C.kuzzle_meta)(C.calloc(1, C.sizeof_kuzzle_meta))
+func goToCKuzzleMeta(gMeta *types.Meta) *C.meta {
+	result := (*C.meta)(C.calloc(1, C.sizeof_meta))
 
 	if gMeta != nil {
 		result.author = C.CString(gMeta.Author)

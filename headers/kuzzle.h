@@ -137,13 +137,13 @@ typedef struct {
     char *updater;
     bool active;
     unsigned long long deleted_at;
-} kuzzle_meta;
+} meta;
 
 //kuzzle user
 typedef struct {
     char *id;
     json_object* source;
-    kuzzle_meta* meta;
+    meta* meta;
     char **strategies;
     unsigned long strategies_length;
     int status;
@@ -168,7 +168,7 @@ typedef struct {
 typedef struct {
     char *id;
     char *index;
-    kuzzle_meta *meta;
+    meta *meta;
     shards *shards;
     json_object *content;
     int version;
