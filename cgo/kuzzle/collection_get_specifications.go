@@ -15,7 +15,7 @@ import (
 
 //export kuzzle_wrapper_collection_get_specifications
 // TODO
-func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.kuzzle_specification, options *C.query_options) {
+func kuzzle_wrapper_collection_get_specifications(c *C.collection, result *C.specification, options *C.query_options) {
 	opts := SetQueryOptions(options)
 
 	col := cToGoCollection(c)

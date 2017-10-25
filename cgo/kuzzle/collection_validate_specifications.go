@@ -15,7 +15,7 @@ import (
 
 //export kuzzle_wrapper_collection_validate_specifications
 // TODO
-func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specification *C.kuzzle_specification, options *C.query_options) *C.bool_result {
+func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specification *C.specification, options *C.query_options) *C.bool_result {
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 	opts := SetQueryOptions(options)
 	col := cToGoCollection(c)

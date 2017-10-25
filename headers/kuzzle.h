@@ -283,7 +283,7 @@ typedef struct {
     int length;
     int total;
     char *scrollId;
-} search_result;
+} document_search;
 
 //any delete* function
 typedef struct {
@@ -304,27 +304,27 @@ typedef struct {
 // TODO
 typedef struct {
 
-} kuzzle_specification;
+} specification;
 
 typedef struct {
-    kuzzle_specification *result;
+    specification *result;
     int status;
     char *error;
     char *stack;
-} kuzzle_specification_result;
+} specification_result;
 
 typedef struct {
     char *request_id;
-    search_result *result;
+    document_search *result;
     char *room_id;
     char *channel;
     int status;
     char *error;
     char *stack;
-} kuzzle_search_result;
+} search_result;
 
 typedef struct {
-    kuzzle_specification** hits;
+    specification** hits;
     int total;
     char *scrollId;
 } specification_search;

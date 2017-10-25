@@ -7,7 +7,7 @@ package main
 import "C"
 
 //export kuzzle_wrapper_collection_m_get_document
-func kuzzle_wrapper_collection_m_get_document(c *C.collection, ids **C.char, idsCount C.uint, options *C.query_options) *C.kuzzle_search_result {
+func kuzzle_wrapper_collection_m_get_document(c *C.collection, ids **C.char, idsCount C.uint, options *C.query_options) *C.search_result {
 	opts := SetQueryOptions(options)
 	gIds := cToGoStrings(ids, idsCount)
 	res, err := cToGoCollection(c).MGetDocument(gIds, opts)

@@ -13,10 +13,10 @@ import (
 	"encoding/json"
 )
 
-//export kuzzle_wrapper_new_collection_mapping
+//export kuzzle_wrapper_new_mapping
 // TODO refactor
-func kuzzle_wrapper_new_collection_mapping(c *C.collection) *C.collection_mapping {
-	cm := (*C.collection_mapping)(C.calloc(1, C.sizeof_collection_mapping))
+func kuzzle_wrapper_new_mapping(c *C.collection) *C.mapping {
+	cm := (*C.mapping)(C.calloc(1, C.sizeof_mapping))
 	// TODO Is it wise to do so ?
 	cm.mapping = C.json_object_new_object()
 	cm.collection = c
@@ -24,8 +24,8 @@ func kuzzle_wrapper_new_collection_mapping(c *C.collection) *C.collection_mappin
 	return cm
 }
 
-//export kuzzle_wrapper_collection_mapping_apply
-func kuzzle_wrapper_collection_mapping_apply(cm *C.collection_mapping, options *C.query_options) C.int {
+//export kuzzle_wrapper_mapping_apply
+func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) C.int {
 	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Apply(opts)
 	if err != nil {
@@ -36,8 +36,8 @@ func kuzzle_wrapper_collection_mapping_apply(cm *C.collection_mapping, options *
 	return 0
 }
 
-//export kuzzle_wrapper_collection_mapping_refresh
-func kuzzle_wrapper_collection_mapping_refresh(cm *C.collection_mapping, options *C.query_options) C.int {
+//export kuzzle_wrapper_mapping_refresh
+func kuzzle_wrapper_mapping_refresh(cm *C.mapping, options *C.query_options) C.int {
 	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Refresh(opts)
 	if err != nil {
@@ -48,8 +48,8 @@ func kuzzle_wrapper_collection_mapping_refresh(cm *C.collection_mapping, options
 	return 0
 }
 
-//export kuzzle_wrapper_collection_mapping_set
-func kuzzle_wrapper_collection_mapping_set(cm *C.collection_mapping, jMap *C.json_object) {
+//export kuzzle_wrapper_mapping_set
+func kuzzle_wrapper_mapping_set(cm *C.mapping, jMap *C.json_object) {
 	mappings := make(types.KuzzleFieldsMapping)
 
 	if JsonCType(jMap) == C.json_type_object {
@@ -62,8 +62,8 @@ func kuzzle_wrapper_collection_mapping_set(cm *C.collection_mapping, jMap *C.jso
 	return
 }
 
-//export kuzzle_wrapper_collection_mapping_set_headers
-func kuzzle_wrapper_collection_mapping_set_headers(cm *C.collection_mapping, content *C.json_object, replace C.uint) {
+//export kuzzle_wrapper_mapping_set_headers
+func kuzzle_wrapper_mapping_set_headers(cm *C.mapping, content *C.json_object, replace C.uint) {
 	if JsonCType(content) == C.json_type_object {
 		r := replace != 0
 		(*collection.Mapping)(cm.instance).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)

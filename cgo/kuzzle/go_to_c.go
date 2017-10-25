@@ -70,15 +70,15 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 }
 
 // Allocates memory
-func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err error) *C.kuzzle_search_result {
-	result := (*C.kuzzle_search_result)(C.calloc(1, C.sizeof_kuzzle_search_result))
+func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err error) *C.search_result {
+	result := (*C.search_result)(C.calloc(1, C.sizeof_search_result))
 
 	if err != nil {
-		Set_kuzzle_search_result_error(result, err)
+		Set_search_result_error(result, err)
 		return result
 	}
 
-	result.result = (*C.search_result)(C.calloc(1, C.sizeof_search_result))
+	result.result = (*C.document_search)(C.calloc(1, C.sizeof_document_search))
 	result.result.total = C.int(goRes.Total)
 	result.result.scrollId = C.CString(goRes.ScrollId)
 
@@ -109,10 +109,10 @@ func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult
 	cRes.result.total = C.int(goRes.Total)
 
 	if len(goRes.Hits) > 0 {
-		hits := make([]*C.kuzzle_specification, len(goRes.Hits) + 1)
+		hits := make([]*C.specification, len(goRes.Hits) + 1)
 
 		for i := 0; i < len(goRes.Hits); i++ {
-			var spec C.kuzzle_specification
+			var spec C.specification
 			// TODO register it in global
 			t := goRes.Hits[i]
 			spec.instance = unsafe.Pointer(&t)

@@ -8,7 +8,7 @@ package main
 import "C"
 
 //export kuzzle_wrapper_collection_scroll
-func kuzzle_wrapper_collection_scroll(c *C.collection, scrollId *C.char, options *C.query_options) *C.kuzzle_search_result {
+func kuzzle_wrapper_collection_scroll(c *C.collection, scrollId *C.char, options *C.query_options) *C.search_result {
 	opts := SetQueryOptions(options)
 	res, err := cToGoCollection(c).Scroll(C.GoString(scrollId), opts)
 

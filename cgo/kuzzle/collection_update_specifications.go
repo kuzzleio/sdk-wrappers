@@ -16,7 +16,7 @@ import (
 
 //export kuzzle_wrapper_collection_update_specifications
 // TODO
-func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.kuzzle_specification, result *C.kuzzle_specification, options *C.query_options) {
+func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.specification, result *C.specification, options *C.query_options) {
 	opts := SetQueryOptions(options)
 	col := cToGoCollection(c)
 	res, err := col.UpdateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
