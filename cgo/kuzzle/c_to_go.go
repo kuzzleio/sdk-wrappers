@@ -70,7 +70,7 @@ func cToGoKuzzleMeta(cMeta *C.kuzzle_meta) *types.KuzzleMeta {
 }
 
 func cToGoDocument(cDoc *C.document, c *C.collection) *collection.Document {
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 	gDoc := col.Document()
 	gDoc.Id = C.GoString(cDoc.id)
 	gDoc.Index = C.GoString(cDoc.index)

@@ -160,9 +160,9 @@ typedef struct {
 } shards;
 
 typedef struct {
-    char* index;
-    char* collection;
-    void* kuzzle;
+    char *index;
+    char *collection;
+    kuzzle *kuzzle;
 } collection;
 
 typedef struct {
