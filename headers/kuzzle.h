@@ -228,6 +228,14 @@ typedef struct {
     char *stack;
 } int_result;
 
+//any string result
+typedef struct {
+    char *result;
+    int status;
+    char *error;
+    char *stack;
+} string_result;
+
 //any array of strings result
 typedef struct {
     char **result;
@@ -289,5 +297,18 @@ extern json_object* kuzzle_wrapper_json_get_json_object(json_object*, char*);
 
 //gc management
 extern void unregisterKuzzle(kuzzle*);
+
+//memory storage
+extern int_result* kuzzle_wrapper_ms_append(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitcount(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitop(kuzzle*, char*, char*, char**, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitpos(kuzzle*, char*, unsigned char, query_options*);
+extern int_result* kuzzle_wrapper_ms_dbsize(kuzzle*, query_options*);
+extern int_result* kuzzle_wrapper_ms_decr(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_decrby(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_del(kuzzle*, char**, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_exists(kuzzle*, char**, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_expire(kuzzle*, char*, unsigned long, query_options*);
+extern int_result* kuzzle_wrapper_ms_expireat(kuzzle*, char*, unsigned long long, query_options*);
 
 #endif
