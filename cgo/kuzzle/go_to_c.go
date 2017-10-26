@@ -10,6 +10,7 @@ import (
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
+	"encoding/json"
 )
 
 // Allocates memory
@@ -79,12 +80,13 @@ func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err er
 	}
 
 	result.result = (*C.document_search)(C.calloc(1, C.sizeof_document_search))
-	result.result.total = C.int(goRes.Total)
+	result.result.length = C.uint(len(goRes.Hits))
+	result.result.total = C.uint(goRes.Total)
 	result.result.scrollId = C.CString(goRes.ScrollId)
 
 	if len(goRes.Hits) > 0 {
-		result.result.hits = (**C.document)(C.calloc(C.size_t(goRes.Total), C.sizeof_document_ptr))
-		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:goRes.Total:goRes.Total]
+		result.result.hits = (**C.document)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_document_ptr))
+		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
 
 		for i, doc := range goRes.Hits {
 			cArray[i] = goToCDocument(col, doc)
@@ -94,34 +96,95 @@ func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err er
 	return result
 }
 
-// TODO
-func goToCMapping(goMapping *collection.Mapping) *C.mapping {
+// Allocates memory
+func goToCMapping(c *C.collection, goMapping *collection.Mapping) *C.mapping {
 	result := (*C.mapping)(C.calloc(1, C.sizeof_mapping))
 
-	// TODO
+	result.collection = c
+	buffer := C.CString(json.Marshal(goMapping.Mapping))
+	result.mapping = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
 
 	return result
 }
 
-/*
-  TODO: Must be re-done
-func goToCSpecificationSearchResult(goRes *types.KuzzleSpecificationSearchResult, cRes *C.specification_search_result) {
-	cRes.result.total = C.int(goRes.Total)
+// Allocates memory
+func goToCMappingResult(c *C.collection, goRes *collection.Mapping, err error) *C.mapping_result {
+	result := (*C.mapping_result)(C.calloc(1, C.sizeof_mapping_result))
 
-	if len(goRes.Hits) > 0 {
-		hits := make([]*C.specification, len(goRes.Hits) + 1)
-
-		for i := 0; i < len(goRes.Hits); i++ {
-			var spec C.specification
-			// TODO register it in global
-			t := goRes.Hits[i]
-			spec.instance = unsafe.Pointer(&t)
-			hits[i] = &spec
-		}
-		hits[len(goRes.Hits)] = nil
-
-		cRes.result.hits = &hits[0]
+	if err != nil {
+		Set_mapping_result_error(result, err)
+		return result
 	}
+
+	result.result = goToCMapping(c, goRes)
+
+	return result
 }
 
- */
+// Allocates memory
+func goToCSpecification(goSpec *types.Specification) *C.specification {
+	result := (*C.specification)(C.calloc(1, C.sizeof_specification))
+
+	result.strict = C.bool(goSpec.Strict)
+
+	bufferFields := C.Cstring(json.Marshal(goSpec.Fields))
+	bufferValidators := C.Cstring(json.Marshal(goSpec.Validators))
+
+	result.fields = C.json_tokener_parse(bufferFields)
+	result.validators = C.json_tokener_parse(bufferValidators)
+
+	C.free(unsafe.Pointer(bufferFields))
+	C.free(unsafe.Pointer(bufferValidators))
+
+	return result
+}
+
+// Allocates memory
+func goToCSpecificationEntry(goEntry *types.SpecificationEntry) *C.specification_entry {
+	result := (*C.specification_entry)(C.calloc(1, C.sizeof_specification_entry))
+	result.index = C.Cstring(goEntry.Index)
+	result.collection = C.CString(goEntry.Collection)
+	result.validation = goToCSpecification(goEntry.Validation)
+
+	return result
+}
+
+// Allocates memory
+func goToCSpecificationResult(goRes *types.Specification, err error) *C.specification_result {
+	result := (*C.specification_result)(C.calloc(1, C.sizeof_specification_result))
+
+	if err != nil {
+		Set_specification_result_err(result, err)
+	}
+
+	result.result = goToCSpecification(goRes)
+
+	return result
+}
+
+// Allocates memory
+func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err error) *C.specification_search_result {
+	result := (*C.specification_search_result)(C.calloc(1, C.sizeof_specification_search_result))
+
+	if err != nil {
+		Set_specification_search_result_error(result, err)
+		return result
+	}
+
+	result.result = (*C.specification_search)(C.calloc(1, C.specification_search))
+	result.result.length = C.uint(len(goRes.Hits))
+	result.result.total = C.uint(goRes.Total)
+	result.result.scrollId = C.CString(goRes.ScrollId)
+
+	if len(goRes.Hits) > 0 {
+		result.result.hits = (**C.specification_entry)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_specification_entry_ptr))
+		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
+
+		for i, spec := range goRes.Hits {
+			cArray[i] = goToCSpecificationEntry(&spec.Source)
+		}
+	}
+
+	return result
+}

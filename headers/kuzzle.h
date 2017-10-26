@@ -280,8 +280,8 @@ typedef struct {
 
 typedef struct {
     document** hits;
-    int length;
-    int total;
+    uint length;
+    uint total;
     char *scrollId;
 } document_search;
 
@@ -301,10 +301,17 @@ typedef struct {
     char *stack;
 } shards_result;
 
-// TODO
 typedef struct {
-
+    bool strict;
+    json_object *fields;
+    json_object *validators;
 } specification;
+
+typedef stuct {
+    specification *validation;
+    char *index;
+    char *collection;
+} specification_entry;
 
 typedef struct {
     specification *result;
@@ -324,8 +331,9 @@ typedef struct {
 } search_result;
 
 typedef struct {
-    specification** hits;
-    int total;
+    specification_entry** hits;
+    uint length;
+    uint total;
     char *scrollId;
 } specification_search;
 

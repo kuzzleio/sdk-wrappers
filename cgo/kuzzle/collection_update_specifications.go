@@ -6,26 +6,11 @@ package main
 	#include <stdlib.h>
 */
 import "C"
-/*
-import (
-	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/kuzzle"
-)
 
 //export kuzzle_wrapper_collection_update_specifications
-// TODO
-func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.specification, result *C.specification, options *C.query_options) {
+func kuzzle_wrapper_collection_update_specifications(c *C.collection, specification *C.specification, options *C.query_options) *C.specification_result {
 	opts := SetQueryOptions(options)
-	col := cToGoCollection(c)
-	res, err := col.UpdateSpecifications((*types.KuzzleValidation)(specification.instance), opts)
+	res, err := cToGoCollection(c).UpdateSpecifications(cToGoSpecification(specification), opts)
 
-	if err != nil {
-		result.error = ToCString_2048(err.Error())
-		return
-	}
-
-	result.result = unsafe.Pointer(res)
+	return goToCSpecificationResult(res, err)
 }
-*/

@@ -10,6 +10,7 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
+	"encoding/json"
 )
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
@@ -72,12 +73,20 @@ func cToGoCollection(c *C.collection) *collection.Collection {
 	return cToGoCollection(c)
 }
 
-// TODO: Test !
 func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
 	mapping := collection.NewMapping(cToGoCollection(cMapping.collection))
-	mapping.Mapping = JsonCConvert(cMapping.mapping).(types.MappingFields)
+	json.Unmarshal([]byte(C.json_object_to_json_string(cMapping.mapping)), &mapping.Mapping)
 
 	return mapping
+}
+
+func cToGoSpecification(cSpec *C.specification) *types.Specification {
+	spec := types.Specification{}
+	spec.Strict = bool(cSpec.strict)
+	json.Unmarshal([]byte(C.json_object_to_json_string(cSpec.fields)), &spec.Fields)
+	json.Unmarshal([]byte(C.json_object_to_json_string(cSpec.validators)), &spec.Validators)
+
+	return &spec
 }
 
 func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {

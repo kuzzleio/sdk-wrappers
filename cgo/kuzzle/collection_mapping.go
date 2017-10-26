@@ -5,7 +5,7 @@ package main
 	#include "kuzzle.h"
 	#include <stdlib.h>
 */
-/*
+
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/collection"
@@ -14,10 +14,8 @@ import (
 )
 
 //export kuzzle_wrapper_new_mapping
-// TODO refactor
 func kuzzle_wrapper_new_mapping(c *C.collection) *C.mapping {
 	cm := (*C.mapping)(C.calloc(1, C.sizeof_mapping))
-	// TODO Is it wise to do so ?
 	cm.mapping = C.json_object_new_object()
 	cm.collection = c
 
@@ -25,32 +23,40 @@ func kuzzle_wrapper_new_mapping(c *C.collection) *C.mapping {
 }
 
 //export kuzzle_wrapper_mapping_apply
-func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) C.int {
+func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) *C.bool_result {
+	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
 	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Apply(opts)
+
 	if err != nil {
-		cm.error = ToCString_2048(err.Error())
-		return 0
+		Set_int_result_error(result, err)
+		return result
 	}
 
-	return 0
+	result.result = C.bool(true)
+
+	return result
 }
 
 //export kuzzle_wrapper_mapping_refresh
-func kuzzle_wrapper_mapping_refresh(cm *C.mapping, options *C.query_options) C.int {
+func kuzzle_wrapper_mapping_refresh(cm *C.mapping, options *C.query_options) *C.bool_result {
+	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
 	opts := SetQueryOptions(options)
 	_, err := (*collection.Mapping)(cm.instance).Refresh(opts)
+
 	if err != nil {
-		cm.error = ToCString_2048(err.Error())
-		return 0
+		Set_int_result_error(result, err)
+		return result
 	}
 
-	return 0
+	result.result = C.bool(true)
+
+	return result
 }
 
 //export kuzzle_wrapper_mapping_set
 func kuzzle_wrapper_mapping_set(cm *C.mapping, jMap *C.json_object) {
-	mappings := make(types.KuzzleFieldsMapping)
+	var mappings types.MappingFields
 
 	if JsonCType(jMap) == C.json_type_object {
 		jsonString := []byte(C.GoString(C.json_object_to_json_string(jMap)))
@@ -71,4 +77,4 @@ func kuzzle_wrapper_mapping_set_headers(cm *C.mapping, content *C.json_object, r
 
 	return
 }
-*/
+
