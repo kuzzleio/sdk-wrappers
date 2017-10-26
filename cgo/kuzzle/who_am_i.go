@@ -9,8 +9,8 @@ package main
 */
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_who_am_i
@@ -23,14 +23,7 @@ func kuzzle_wrapper_who_am_i(k *C.kuzzle) *C.user {
 		return user
 	}
 
-	user.meta = (*C.kuzzle_meta)(C.calloc(1, C.sizeof_kuzzle_meta))
-	user.meta.author = C.CString(res.Meta.Author)
-	user.meta.created_at = C.ulonglong(res.Meta.CreatedAt)
-	user.meta.updated_at = C.ulonglong(res.Meta.UpdatedAt)
-	user.meta.deleted_at = C.ulonglong(res.Meta.DeletedAt)
-	user.meta.updater = C.CString(res.Meta.Updater)
-
-	user.meta.active = C.bool(res.Meta.Active)
+	user.meta = goToCKuzzleMeta(res.Meta)
 
 	buffer := C.CString(string(res.Source))
 	user.source = C.json_tokener_parse(buffer)

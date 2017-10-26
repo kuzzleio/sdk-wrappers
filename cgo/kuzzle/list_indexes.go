@@ -9,8 +9,8 @@ package main
 */
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_list_indexes
