@@ -9,7 +9,6 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
