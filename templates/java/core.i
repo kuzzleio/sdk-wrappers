@@ -41,6 +41,7 @@
     }
 
     ~_json_object() {
+        free($self->ptr);
         free($self);
     }
 
