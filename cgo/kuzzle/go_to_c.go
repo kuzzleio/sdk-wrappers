@@ -71,6 +71,97 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 }
 
 // Allocates memory
+func goToCDocumentResult(col *C.collection, goRes *collection.Document, err error) *C.document_result {
+	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
+
+	if err != nil {
+		Set_document_error(result, err)
+		return result
+	}
+
+	result.result = goToCDocument(col, goRes)
+
+	return result
+}
+
+// Allocates memory
+func goToCAckResult(goRes *types.AckResponse, err error) *C.ack_result {
+	result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))
+
+	if err != nil {
+		Set_ack_result_error(result, err)
+		return result
+	}
+
+	result.acknowledged = C.bool(goRes.Acknowledged)
+	result.shards_acknowledged = C.bool(goRes.ShardsAcknowledged)
+
+	return result
+}
+
+// Allocates memory
+func goToCStringResult(goRes string, err error) *C.string_result {
+	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
+
+	if err != nil {
+		Set_string_result_error(result, err)
+		return result
+	}
+
+	result.result = C.CString(goRes)
+
+	return result
+}
+
+func goToCStringArrayResult(goRes []string, err error) *C.string_array_result {
+	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
+
+	if err != nil {
+		Set_string_array_result_error(result, err)
+		return result
+	}
+
+	result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
+	result.length = C.ulong(len(goRes))
+
+	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+
+	for i, substring := range goRes {
+		cArray[i] = C.CString(substring)
+	}
+
+	return result
+}
+
+// Allocates memory
+func goToCIntResult(goRes int, err error) *C.int_result {
+	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
+
+	if err != nil {
+		Set_int_result_error(result, err)
+		return result
+	}
+
+	result.result = C.longlong(goRes)
+
+	return result
+}
+
+// Allocates memory
+func goToCBoolResult(goRes bool, err error) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
+	if err != nil {
+		Set_bool_result_error(result, err)
+		return result
+	}
+
+	result.result = C.bool(goRes)
+
+	return result
+}
+
+// Allocates memory
 func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err error) *C.search_result {
 	result := (*C.search_result)(C.calloc(1, C.sizeof_search_result))
 

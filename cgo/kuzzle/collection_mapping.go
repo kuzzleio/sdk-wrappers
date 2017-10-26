@@ -19,36 +19,22 @@ func kuzzle_wrapper_new_mapping(c *C.collection) *C.mapping {
 	return cm
 }
 
+//export kuzzle_wrapper_collection_get_mapping
+func kuzzle_wrapper_collection_get_mapping(c *C.collection, options *C.query_options) *C.mapping_result {
+	res, err := cToGoCollection(c).GetMapping(SetQueryOptions(options))
+	return goToCMappingResult(c, res, err)
+}
+
 //export kuzzle_wrapper_mapping_apply
 func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) *C.bool_result {
-	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
-	opts := SetQueryOptions(options)
-	_, err := cToGoMapping(cm).Apply(opts)
-
-	if err != nil {
-		Set_bool_result_error(result, err)
-		return result
-	}
-
-	result.result = C.bool(true)
-
-	return result
+	_, err := cToGoMapping(cm).Apply(SetQueryOptions(options))
+	return goToCBoolResult(true, err)
 }
 
 //export kuzzle_wrapper_mapping_refresh
 func kuzzle_wrapper_mapping_refresh(cm *C.mapping, options *C.query_options) *C.bool_result {
-	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
-	opts := SetQueryOptions(options)
-	_, err := cToGoMapping(cm).Refresh(opts)
-
-	if err != nil {
-		Set_bool_result_error(result, err)
-		return result
-	}
-
-	result.result = C.bool(true)
-
-	return result
+	_, err := cToGoMapping(cm).Refresh(SetQueryOptions(options))
+	return goToCBoolResult(true, err)
 }
 
 //export kuzzle_wrapper_mapping_set

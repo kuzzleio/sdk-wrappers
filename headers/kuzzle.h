@@ -307,7 +307,7 @@ typedef struct {
     json_object *validators;
 } specification;
 
-typedef stuct {
+typedef struct {
     specification *validation;
     char *index;
     char *collection;
