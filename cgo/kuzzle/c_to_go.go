@@ -10,7 +10,7 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/kuzzle"
+	"encoding/json"
 )
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
@@ -69,8 +69,28 @@ func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 	}
 }
 
+func cToGoCollection(c *C.collection) *collection.Collection {
+	return cToGoCollection(c)
+}
+
+func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
+	mapping := collection.NewMapping(cToGoCollection(cMapping.collection))
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cMapping.mapping))), &mapping.Mapping)
+
+	return mapping
+}
+
+func cToGoSpecification(cSpec *C.specification) *types.Specification {
+	spec := types.Specification{}
+	spec.Strict = bool(cSpec.strict)
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cSpec.fields))), &spec.Fields)
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cSpec.validators))), &spec.Validators)
+
+	return &spec
+}
+
 func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
-	col := collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
+	col := cToGoCollection(c)
 	gDoc := col.Document()
 	gDoc.Id = C.GoString(cDoc.id)
 	gDoc.Index = C.GoString(cDoc.index)

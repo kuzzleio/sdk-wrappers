@@ -281,10 +281,10 @@ typedef struct {
 
 typedef struct {
     document** hits;
-    int length;
-    int total;
+    uint length;
+    uint total;
     char *scrollId;
-} search_result;
+} document_search;
 
 //any delete* function
 typedef struct {
@@ -302,52 +302,60 @@ typedef struct {
     char *stack;
 } shards_result;
 
-// TODO
 typedef struct {
-
-} kuzzle_specification;
+    bool strict;
+    json_object *fields;
+    json_object *validators;
+} specification;
 
 typedef struct {
-    kuzzle_specification *result;
+    specification *validation;
+    char *index;
+    char *collection;
+} specification_entry;
+
+typedef struct {
+    specification *result;
     int status;
     char *error;
     char *stack;
-} kuzzle_specification_result;
+} specification_result;
 
 typedef struct {
     char *request_id;
-    search_result *result;
+    document_search *result;
     char *room_id;
     char *channel;
     int status;
     char *error;
     char *stack;
-} kuzzle_search_result;
+} search_result;
 
 typedef struct {
-    kuzzle_specification** hits;
-    int total;
+    specification_entry** hits;
+    uint length;
+    uint total;
     char *scrollId;
+} specification_search;
+
+typedef struct {
+    specification_search *result;
+    int status;
+    char *error;
+    char *stack;
 } specification_search_result;
 
 typedef struct {
-    specification_search_result *result;
+    json_object *mapping;
+    collection *collection;
+} mapping;
+
+typedef struct {
+    mapping *result;
     int status;
     char *error;
     char *stack;
-} kuzzle_specification_search_result;
-
-// TODO
-typedef struct {
-
-} collection_mapping;
-
-typedef struct {
-    collection_mapping *instance;
-    int status;
-    char *error;
-    char *stack;
-} collection_mapping_result;
+} mapping_result;
 
 // Kuzzle main object functions
 extern void kuzzle_wrapper_new_kuzzle(kuzzle*, char*, char*, options*);
@@ -394,5 +402,44 @@ extern options* kuzzle_wrapper_new_options();
 
 //gc management
 extern void unregisterKuzzle(kuzzle*);
+
+//Collection
+extern collection* kuzzle_wrapper_new_collection(kuzzle*, char*, char*);
+extern ack_result* kuzzle_wrapper_collection_create(collection*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_publish_message(collection*, json_object*, query_options*);
+extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
+extern ack_result* kuzzle_wrapper_collection_truncate(collection*, query_options*);
+
+//Collection Document
+extern int_result* kuzzle_wrapper_collection_count(collection*, search_filters*, query_options*);
+extern document_result* kuzzle_wrapper_collection_create_document(collection*, char*, document*, query_options*);
+extern string_result* kuzzle_wrapper_collection_delete_document(collection*, char*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_document_exists(collection*, char*, query_options*);
+extern document_result* kuzzle_wrapper_collection_fetch_document(collection*, char*, query_options*);
+extern document_result* kuzzle_wrapper_collection_replace_document(collection*, char*, document*, query_options*);
+extern document_result* kuzzle_wrapper_collection_update_document(collection*, char*, document*, query_options*);
+extern search_result* kuzzle_wrapper_collection_scroll(collection*, char*, query_options*);
+extern search_result* kuzzle_wrapper_collection_search(collection*, search_filters*, query_options*);
+extern search_result* kuzzle_wrapper_collection_m_create_document(collection*, document**, uint, query_options*);
+extern search_result* kuzzle_wrapper_collection_m_create_or_replace_document(collection*, document**, uint, query_options*);
+extern string_array_result* kuzzle_wrapper_collection_m_delete_document(collection*, char**, uint, query_options*);
+extern search_result* kuzzle_wrapper_collection_m_get_document(collection*, char**, uint, query_options*);
+extern search_result* kuzzle_wrapper_collection_m_replace_document(collection*, document**, uint, query_options*);
+extern search_result* kuzzle_wrapper_collection_m_update_document(collection*, document**, uint, query_options*);
+
+//Collection Mapping
+extern mapping_result* kuzzle_wrapper_collection_get_mapping(collection*, query_options*);
+extern bool_result* kuzzle_wrapper_mapping_apply(mapping*, query_options*);
+extern bool_result* kuzzle_wrapper_mapping_refresh(mapping*, query_options*);
+extern void kuzzle_wrapper_mapping_set(mapping*, json_object*);
+extern void kuzzle_wrapper_mapping_set_headers(mapping*, json_object*, uint);
+
+//Collection Specification
+extern ack_result* kuzzle_wrapper_collection_delete_specifications(collection*, query_options*);
+extern specification_result* kuzzle_wrapper_collection_get_specifications(collection*, query_options*);
+extern specification_search_result* kuzzle_wrapper_collection_scroll_specifications(collection*, char*, query_options*);
+extern specification_search_result* kuzzle_wrapper_collection_search_specifications(collection*, search_filters*, query_options*);
+extern specification_result* kuzzle_wrapper_collection_update_specifications(collection*, specification*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_validate_specifications(collection*, specification*, query_options*);
 
 #endif
