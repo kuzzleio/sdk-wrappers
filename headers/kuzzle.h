@@ -288,6 +288,11 @@ extern json_result* kuzzle_wrapper_update_my_credentials(kuzzle*, char*, json_ob
 //Options
 extern options* kuzzle_wrapper_new_options(void);
 
+//JsonObject
+typedef struct JsonObject_struct {
+    json_object* jobj;
+} JsonObject;
+
 extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
 extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
 extern int kuzzle_wrapper_json_get_int(json_object*, char*);
