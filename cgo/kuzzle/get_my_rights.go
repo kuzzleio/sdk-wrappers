@@ -10,6 +10,7 @@ import (
 	"unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_get_my_rights
