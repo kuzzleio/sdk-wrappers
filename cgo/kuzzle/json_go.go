@@ -78,6 +78,11 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 	return nil
 }
 
+//export kuzzle_wrapper_json_new
+func kuzzle_wrapper_json_new(jobj **C.json_object) {
+	*jobj = C.json_object_new_object()
+}
+
 //export kuzzle_wrapper_json_put
 func kuzzle_wrapper_json_put(jobj *C.json_object, key *C.char, content unsafe.Pointer, kind C.int) {
 	if kind == 0 {
