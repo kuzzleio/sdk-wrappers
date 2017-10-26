@@ -121,10 +121,10 @@
     }
 
     // createIndex
-    ack_response* createIndex(char* index, query_options* options) {
+    ack_result* createIndex(char* index, query_options* options) {
         return kuzzle_wrapper_create_index($self, index, options);
     }
-    ack_response* createIndex(char* index) {
+    ack_result* createIndex(char* index) {
         return kuzzle_wrapper_create_index($self, index, NULL);
     }
 
