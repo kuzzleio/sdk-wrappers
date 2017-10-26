@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -fPIC -I$(PWD)/headers
+CFLAGS = -fPIC -I$(PWD)/headers -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
 LDFLAGS = -L./
 LIBS = -lgokcore -ljson-c
 SRCS = kcore_wrap.c
