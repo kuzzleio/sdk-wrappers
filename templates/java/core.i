@@ -6,6 +6,7 @@
 %rename(JsonObject) _json_object;
 %rename(JsonResult) json_result;
 %rename(LoginResult) login_result;
+%rename(BoolResult) bool_result;
 
 %include "../../kcore.i"
 
@@ -134,6 +135,38 @@
     }
     json_result* createMyCredentials(char* strategy, _json_object* credentials) {
         return kuzzle_wrapper_create_my_credentials($self, strategy, credentials->ptr, NULL);
+    }
+
+    // deleteMyCredentials
+    ack_response* deleteMyCredentials(char* strategy, query_options *options) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, options);
+    }
+    ack_response* deleteMyCredentials(char* strategy) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, NULL);
+    }
+
+    // getMyCredentials
+    json_result* getMyCredentials(char *strategy, query_options *options) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, options);
+    }
+    json_result* getMyCredentials(char *strategy) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, NULL);
+    }
+
+    // updateMyCredentials
+    json_result* updateMyCredentials(char *strategy, _json_object* credentials, query_options *options) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, options);
+    }
+    json_result* updateMyCredentials(char *strategy, _json_object* credentials) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, NULL);
+    }
+
+    // validateMyCredentials
+    bool_result* validateMyCredentials(char *strategy, _json_object* credentials, query_options* options) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, options);
+    }
+    bool_result* validateMyCredentials(char *strategy, _json_object* credentials) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, NULL);
     }
 
     // login

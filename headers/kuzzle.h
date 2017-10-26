@@ -305,7 +305,7 @@ typedef struct {
 
 //any json result
 typedef struct {
-    json_object *result;
+    _json_object *result;
     int status;
     char *error;
     char *stack;
