@@ -6,7 +6,9 @@ package main
 	#include "kuzzle.h"
  */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 type JsonParser struct {
 	content map[string]interface{}
@@ -16,64 +18,64 @@ func (parser *JsonParser) get_json_value(key string, jobj *C.json_object, conten
 	jtype := C.json_object_get_type(jobj)
 
 	switch jtype {
-		case C.json_type_boolean:
-			v := int(C.json_object_get_boolean(jobj)) == 1 
+	case C.json_type_boolean:
+		v := int(C.json_object_get_boolean(jobj)) == 1
 
-			if isArray {
-				arr := make([]interface{}, 0)
-				if content[key] != nil {
-					for _, v := range content[key].([]interface{}) {
-						arr = append(arr, v)
-					}
+		if isArray {
+			arr := make([]interface{}, 0)
+			if content[key] != nil {
+				for _, v := range content[key].([]interface{}) {
+					arr = append(arr, v)
 				}
-				arr = append(arr, v)
-				content[key] = arr
-			} else {
-				content[key] = v
 			}
-			break
-		case C.json_type_string:
-			if isArray {
-				arr := make([]interface{}, 0)
-				if content[key] != nil {
-					for _, v := range content[key].([]interface{}) {
-						arr = append(arr, v)
-					}
+			arr = append(arr, v)
+			content[key] = arr
+		} else {
+			content[key] = v
+		}
+		break
+	case C.json_type_string:
+		if isArray {
+			arr := make([]interface{}, 0)
+			if content[key] != nil {
+				for _, v := range content[key].([]interface{}) {
+					arr = append(arr, v)
 				}
-				arr = append(arr, C.GoString(C.json_object_get_string(jobj)))
-				content[key] = arr
-			} else {
-				 content[key] = C.GoString(C.json_object_get_string(jobj))
 			}
-			break
-		case C.json_type_double:
-			if isArray {
-				arr := make([]interface{}, 0)
-				if content[key] != nil {
-					for _, v := range content[key].([]interface{}) {
-						arr = append(arr, v)
-					}
+			arr = append(arr, C.GoString(C.json_object_get_string(jobj)))
+			content[key] = arr
+		} else {
+			content[key] = C.GoString(C.json_object_get_string(jobj))
+		}
+		break
+	case C.json_type_double:
+		if isArray {
+			arr := make([]interface{}, 0)
+			if content[key] != nil {
+				for _, v := range content[key].([]interface{}) {
+					arr = append(arr, v)
 				}
-				arr = append(arr, float64(C.json_object_get_double(jobj)))
-				content[key] = arr
-			} else {
-				content[key] = float64(C.json_object_get_double(jobj))
 			}
-			break
-		case C.json_type_int:
-			if isArray {
-				arr := make([]interface{}, 0)
-				if content[key] != nil {
-					for _, v := range content[key].([]interface{}) {
-						arr = append(arr, v)
-					}
+			arr = append(arr, float64(C.json_object_get_double(jobj)))
+			content[key] = arr
+		} else {
+			content[key] = float64(C.json_object_get_double(jobj))
+		}
+		break
+	case C.json_type_int:
+		if isArray {
+			arr := make([]interface{}, 0)
+			if content[key] != nil {
+				for _, v := range content[key].([]interface{}) {
+					arr = append(arr, v)
 				}
-				arr = append(arr, int(C.json_object_get_int(jobj)))
-				content[key] = arr
-			} else {
-				content[key] = int(C.json_object_get_int(jobj))
 			}
-			break
+			arr = append(arr, int(C.json_object_get_int(jobj)))
+			content[key] = arr
+		} else {
+			content[key] = int(C.json_object_get_int(jobj))
+		}
+		break
 	}
 }
 
@@ -146,8 +148,8 @@ func (parser JsonParser) GetContent() map[string]interface{} {
 }
 
 //export kuzzle_wrapper_json_new
-func kuzzle_wrapper_json_new(jobj *C.json_object) {
-	jobj = C.json_object_new_object()
+func kuzzle_wrapper_json_new(jobj **C.json_object) {
+	*jobj = C.json_object_new_object()
 }
 
 //export kuzzle_wrapper_json_put
@@ -203,9 +205,11 @@ func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool 
 }
 
 //export kuzzle_wrapper_json_get_json_object
-func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) *C.json_object {
+func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) C._json_object {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	return value
+	jo := C._json_object{}
+	jo.ptr = value
+	return jo
 }
