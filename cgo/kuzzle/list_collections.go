@@ -17,6 +17,7 @@ import (
 //export kuzzle_wrapper_list_collections
 func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+	result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
 
 	var opts types.QueryOptions
 	if options != nil {
@@ -32,7 +33,7 @@ func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.quer
 	r, _ := json.Marshal(res)
 
 	buffer := C.CString(string(r))
-	result.result = C.json_tokener_parse(buffer)
+	result.result.ptr = C.json_tokener_parse(buffer)
 	C.free(unsafe.Pointer(buffer))
 
 	return result

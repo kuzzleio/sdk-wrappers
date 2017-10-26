@@ -16,6 +16,7 @@ import (
 //export kuzzle_wrapper_get_server_info
 func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+	result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
 
 	var opts types.QueryOptions
 	if options != nil {
@@ -33,7 +34,7 @@ func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.js
 	buffer := C.CString(string(r))
 	defer C.free(unsafe.Pointer(buffer))
 
-	result.result = C.json_tokener_parse(buffer)
+	result.result.ptr = C.json_tokener_parse(buffer)
 
 	return result
 }
