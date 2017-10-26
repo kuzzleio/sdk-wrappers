@@ -101,7 +101,8 @@ func goToCMapping(c *C.collection, goMapping *collection.Mapping) *C.mapping {
 	result := (*C.mapping)(C.calloc(1, C.sizeof_mapping))
 
 	result.collection = c
-	buffer := C.CString(json.Marshal(goMapping.Mapping))
+	r, _ := json.Marshal(goMapping.Mapping)
+	buffer := C.CString(string(r))
 	result.mapping = C.json_tokener_parse(buffer)
 	C.free(unsafe.Pointer(buffer))
 
@@ -128,8 +129,10 @@ func goToCSpecification(goSpec *types.Specification) *C.specification {
 
 	result.strict = C.bool(goSpec.Strict)
 
-	bufferFields := C.Cstring(json.Marshal(goSpec.Fields))
-	bufferValidators := C.Cstring(json.Marshal(goSpec.Validators))
+	f, _ := json.Marshal(goSpec.Fields)
+	v, _ := json.Marshal(goSpec.Validators)
+	bufferFields := C.CString(string(f))
+	bufferValidators := C.CString(string(v))
 
 	result.fields = C.json_tokener_parse(bufferFields)
 	result.validators = C.json_tokener_parse(bufferValidators)
@@ -143,7 +146,7 @@ func goToCSpecification(goSpec *types.Specification) *C.specification {
 // Allocates memory
 func goToCSpecificationEntry(goEntry *types.SpecificationEntry) *C.specification_entry {
 	result := (*C.specification_entry)(C.calloc(1, C.sizeof_specification_entry))
-	result.index = C.Cstring(goEntry.Index)
+	result.index = C.CString(goEntry.Index)
 	result.collection = C.CString(goEntry.Collection)
 	result.validation = goToCSpecification(goEntry.Validation)
 
@@ -172,14 +175,14 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 		return result
 	}
 
-	result.result = (*C.specification_search)(C.calloc(1, C.specification_search))
+	result.result = (*C.specification_search)(C.calloc(1, C.sizeof_specification_search))
 	result.result.length = C.uint(len(goRes.Hits))
 	result.result.total = C.uint(goRes.Total)
 	result.result.scrollId = C.CString(goRes.ScrollId)
 
 	if len(goRes.Hits) > 0 {
 		result.result.hits = (**C.specification_entry)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_specification_entry_ptr))
-		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
+		cArray := (*[1<<30 - 1]*C.specification_entry)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
 
 		for i, spec := range goRes.Hits {
 			cArray[i] = goToCSpecificationEntry(&spec.Source)

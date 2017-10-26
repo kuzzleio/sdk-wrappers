@@ -75,7 +75,7 @@ func cToGoCollection(c *C.collection) *collection.Collection {
 
 func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
 	mapping := collection.NewMapping(cToGoCollection(cMapping.collection))
-	json.Unmarshal([]byte(C.json_object_to_json_string(cMapping.mapping)), &mapping.Mapping)
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cMapping.mapping))), &mapping.Mapping)
 
 	return mapping
 }
@@ -83,8 +83,8 @@ func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
 func cToGoSpecification(cSpec *C.specification) *types.Specification {
 	spec := types.Specification{}
 	spec.Strict = bool(cSpec.strict)
-	json.Unmarshal([]byte(C.json_object_to_json_string(cSpec.fields)), &spec.Fields)
-	json.Unmarshal([]byte(C.json_object_to_json_string(cSpec.validators)), &spec.Validators)
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cSpec.fields))), &spec.Fields)
+	json.Unmarshal([]byte(C.GoString(C.json_object_to_json_string(cSpec.validators))), &spec.Validators)
 
 	return &spec
 }

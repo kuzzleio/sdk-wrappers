@@ -18,7 +18,7 @@ func kuzzle_wrapper_collection_validate_specifications(c *C.collection, specific
 		return result
 	}
 
-	result.result = C.bool(res)
+	result.result = C.bool(res.Valid)
 
 	return result
 }

@@ -3,12 +3,9 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include "kuzzle.h"
-	#include <stdlib.h>
 */
-
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
 )
@@ -24,12 +21,12 @@ func kuzzle_wrapper_new_mapping(c *C.collection) *C.mapping {
 
 //export kuzzle_wrapper_mapping_apply
 func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) *C.bool_result {
-	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 	opts := SetQueryOptions(options)
-	_, err := (*collection.Mapping)(cm.instance).Apply(opts)
+	_, err := cToGoMapping(cm).Apply(opts)
 
 	if err != nil {
-		Set_int_result_error(result, err)
+		Set_bool_result_error(result, err)
 		return result
 	}
 
@@ -40,12 +37,12 @@ func kuzzle_wrapper_mapping_apply(cm *C.mapping, options *C.query_options) *C.bo
 
 //export kuzzle_wrapper_mapping_refresh
 func kuzzle_wrapper_mapping_refresh(cm *C.mapping, options *C.query_options) *C.bool_result {
-	result := (*C.int_result)(C.calloc(1, C.sizeof_int_result))
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 	opts := SetQueryOptions(options)
-	_, err := (*collection.Mapping)(cm.instance).Refresh(opts)
+	_, err := cToGoMapping(cm).Refresh(opts)
 
 	if err != nil {
-		Set_int_result_error(result, err)
+		Set_bool_result_error(result, err)
 		return result
 	}
 
@@ -63,7 +60,7 @@ func kuzzle_wrapper_mapping_set(cm *C.mapping, jMap *C.json_object) {
 		json.Unmarshal(jsonString, &mappings)
 	}
 
-	(*collection.Mapping)(cm.instance).Set(&mappings)
+	cToGoMapping(cm).Set(&mappings)
 
 	return
 }
@@ -72,7 +69,7 @@ func kuzzle_wrapper_mapping_set(cm *C.mapping, jMap *C.json_object) {
 func kuzzle_wrapper_mapping_set_headers(cm *C.mapping, content *C.json_object, replace C.uint) {
 	if JsonCType(content) == C.json_type_object {
 		r := replace != 0
-		(*collection.Mapping)(cm.instance).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
+		cToGoMapping(cm).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
 	}
 
 	return
