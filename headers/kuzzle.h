@@ -137,6 +137,35 @@ typedef struct {
     unsigned long long deleted_at;
 } meta;
 
+/* === Security === */
+
+typedef json_object controllers;
+
+typedef struct {
+    char *index;
+    char **collections;
+    int length;
+} policy_restriction;
+
+typedef struct {
+    char *role_id;
+    policy_restriction **restricted_to;
+    int length;
+} policy;
+
+typedef struct {
+    char *id;
+    policy **policies;
+    int length;
+    kuzzle *kuzzle;
+} profile;
+
+typedef struct {
+    char *id;
+    json_object *controllers;
+    kuzzle *kuzzle;
+} role;
+
 //kuzzle user
 typedef struct {
     char *id;
@@ -148,6 +177,13 @@ typedef struct {
     char *error;
     char *stack;
 } user;
+
+// user content passed to user constructor
+typedef struct {
+    json_object *content;
+    char **profile_ids;
+    json_object *credentials;
+} user_data;
 
 /* === Dedicated response structures === */
 
@@ -183,13 +219,6 @@ typedef struct {
     char *stack;
 } document_result;
 
-typedef struct {
-    char *result;
-    int status;
-    char *error;
-    char *stack;
-} string_result;
-
 //statistics
 typedef struct {
     json_object* completed_requests;
@@ -219,6 +248,21 @@ typedef struct {
     char *error;
     char *stack;
 } login_result;
+
+typedef struct {
+    profile *profile;
+    int status;
+    char *error;
+    char *stack;
+} profile_result;
+
+// role
+typedef struct {
+    role *role;
+    int status;
+    char *error;
+    char *stack;
+} role_result;
 
 /* === Generic response structures === */
 
@@ -257,6 +301,14 @@ typedef struct {
     char *stack;
 } int_result;
 
+// any string result
+typedef struct {
+    char *result;
+    int status;
+    char *error;
+    char *stack;
+} string_result;
+
 //any array of strings result
 typedef struct {
     char **result;
@@ -284,6 +336,19 @@ typedef struct {
     int total;
     char *scrollId;
 } document_search;
+
+typedef struct {
+    profile **hits;
+    int length;
+    int total;
+    char *scrollId;
+} profile_search;
+
+typedef struct {
+    role** hits;
+    int length;
+    int total;
+} role_search;
 
 //any delete* function
 typedef struct {
@@ -314,14 +379,25 @@ typedef struct {
 } specification_result;
 
 typedef struct {
-    char *request_id;
     document_search *result;
-    char *room_id;
-    char *channel;
     int status;
     char *error;
     char *stack;
 } search_result;
+
+typedef struct {
+    profile_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_profiles_result;
+
+typedef struct {
+    role_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_roles_result;
 
 typedef struct {
     specification** hits;

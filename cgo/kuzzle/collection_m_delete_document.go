@@ -3,6 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include "kuzzle.h"
+	#include "sdk_wrappers_internal.h"
 	#include <stdlib.h>
 	#include "sdk_wrappers_internal.h"
 */

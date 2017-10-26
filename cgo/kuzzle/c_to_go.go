@@ -10,7 +10,68 @@ import (
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
+	"github.com/kuzzleio/sdk-go/security"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
+
+func cToGoControllers(c *C.controllers) (*types.Controllers, error) {
+	if c == nil {
+		return nil, nil
+	}
+
+	if JsonCType(c) != C.json_type_object {
+		return nil, types.NewError("Invalid controller structure", 400)
+	}
+	j := JsonCConvert(c)
+	controllers := &types.Controllers{}
+
+	for controller, val := range j.(map[string]interface{}) {
+		rawController, ok := val.(map[string]interface{})
+		if !ok {
+			return nil, types.NewError("Invalid controllers structure", 400)
+		}
+
+		rawActions, ok := rawController["Actions"]
+		if !ok {
+			return nil, types.NewError("Invalid controllers structure", 400)
+		}
+
+		actionsMap, ok := rawActions.(map[string]interface{})
+		if !ok {
+			return nil, types.NewError("Invalid controllers structure", 400)
+		}
+
+		controllers.Controllers[controller] = &types.Controller{}
+		for action, value := range actionsMap {
+			boolValue, ok := value.(bool)
+			if !ok {
+				return nil, types.NewError("Invalid controllers structure", 400)
+			}
+
+			controllers.Controllers[controller].Actions[action] = boolValue
+		}
+	}
+
+	return controllers, nil
+}
+
+func cToGoRole(crole *C.role) (*security.Role, error) {
+	id := C.GoString(crole.id)
+	var controllers *types.Controllers
+
+	if crole.controllers != nil {
+		c, err := cToGoControllers(crole.controllers)
+
+		if err != nil {
+			return nil, err
+		}
+		controllers = c
+	}
+
+	role := (*kuzzle.Kuzzle)(crole.kuzzle.instance).Security.NewRole(id, controllers)
+
+	return role, nil
+}
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
 	return &types.SearchFilters{
@@ -37,7 +98,7 @@ func cToGoStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func cToGoDocuments( col *C.collection, docs **C.document, length C.uint) []*collection.Document {
+func cToGoDocuments(col *C.collection, docs **C.document, length C.uint) []*collection.Document {
 	if length == 0 {
 		return nil
 	}
