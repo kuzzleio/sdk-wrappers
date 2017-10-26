@@ -7,24 +7,16 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_query
 func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
 	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
-
-	if result == nil {
-		return result
-	}
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	req := types.KuzzleRequest{
 		RequestId:  C.GoString(request.request_id),
@@ -66,21 +58,19 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 		Match:      C.GoString(request.match),
 	}
 
-	jp := JsonParser{}
-
 	if request.body != nil {
-		jp.Parse(request.body)
-		req.Body = jp.GetContent()
+		req.Body = JsonCConvert(request.body)
 	}
 
 	if request.volatiles != nil {
-		jp.Parse(request.volatiles)
-		req.Volatile = jp.GetContent()
+		req.Volatile = JsonCConvert(request.volatiles).(map[string]interface{})
 	}
 
-	req.Members = goStrings(request.members, request.members_length)
-	req.Keys = goStrings(request.keys, request.keys_length)
-	req.Fields = goStrings(request.fields, request.fields_length)
+	start := int(request.start)
+	req.Start = start
+	req.Members = cToGoStrings(request.members, request.members_length)
+	req.Keys = cToGoStrings(request.keys, request.keys_length)
+	req.Fields = cToGoStrings(request.fields, request.fields_length)
 
 	resC := make(chan *types.KuzzleResponse)
 	(*kuzzle.Kuzzle)(k.instance).Query(&req, opts, resC)
@@ -103,6 +93,7 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 	}
 
 	r, _ := json.Marshal(res)
+
 	buffer := C.CString(string(r))
 	result.result = C.json_tokener_parse(buffer)
 	C.free(unsafe.Pointer(buffer))
@@ -110,17 +101,3 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 	return result
 }
 
-// convert a C char** to a go array of string
-func goStrings(arr **C.char, len C.uint) []string {
-	if len == 0 {
-		return nil
-	}
-
-	tmpslice := (*[1 << 30]*C.char)(unsafe.Pointer(arr))[:len:len]
-	gostrings := make([]string, len)
-	for i, s := range tmpslice {
-		gostrings[i] = C.GoString(s)
-	}
-
-	return gostrings
-}

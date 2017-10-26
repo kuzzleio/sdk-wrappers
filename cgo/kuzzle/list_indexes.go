@@ -9,19 +9,14 @@ package main
 */
 import "C"
 import (
-	"unsafe"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_list_indexes
 func kuzzle_wrapper_list_indexes(k *C.kuzzle, options *C.query_options) *C.string_array_result {
 	result := (*C.string_array_result)(C.calloc(1, C.sizeof_string_array_result))
-
-	var opts types.QueryOptions
-	if options != nil {
-		opts = SetQueryOptions(options)
-	}
+	opts := SetQueryOptions(options)
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListIndexes(opts)
 	if err != nil {
