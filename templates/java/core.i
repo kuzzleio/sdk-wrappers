@@ -122,10 +122,10 @@
     }
 
     // createIndex
-    ack_response* createIndex(char* index, query_options* options) {
+    ack_result* createIndex(char* index, query_options* options) {
         return kuzzle_wrapper_create_index($self, index, options);
     }
-    ack_response* createIndex(char* index) {
+    ack_result* createIndex(char* index) {
         return kuzzle_wrapper_create_index($self, index, NULL);
     }
 
@@ -138,10 +138,10 @@
     }
 
     // deleteMyCredentials
-    ack_response* deleteMyCredentials(char* strategy, query_options *options) {
+    ack_result* deleteMyCredentials(char* strategy, query_options *options) {
         return kuzzle_wrapper_delete_my_credentials($self, strategy, options);
     }
-    ack_response* deleteMyCredentials(char* strategy) {
+    ack_result* deleteMyCredentials(char* strategy) {
         return kuzzle_wrapper_delete_my_credentials($self, strategy, NULL);
     }
 
@@ -177,4 +177,3 @@
         return kuzzle_wrapper_login($self, strategy, credentials->ptr, NULL);
     }
 }
-
