@@ -1,1 +1,8 @@
+# IDE
+.idea
+
+# Libgokcore
 libgokcore.*
+
+# .out files
+*.out

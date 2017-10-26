@@ -7,9 +7,9 @@ package main
 */
 import "C"
 import (
-  "unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_headers

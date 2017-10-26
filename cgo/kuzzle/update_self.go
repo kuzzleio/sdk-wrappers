@@ -9,8 +9,8 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_update_self
@@ -18,10 +18,7 @@ func kuzzle_wrapper_update_self(k *C.kuzzle, credentials *C.json_object, options
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 	opts := SetQueryOptions(options)
 
-	jp := JsonParser{}
-	jp.Parse(credentials)
-
-	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(jp.GetContent(), opts)
+	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(JsonCConvert(credentials).(map[string]interface{}), opts)
 	if err != nil {
 		Set_json_result_error(result, err)
 		return result

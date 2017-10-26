@@ -10,11 +10,11 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/kuzzle"
-	"unsafe"
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/connection"
 	"github.com/kuzzleio/sdk-go/connection/websocket"
-	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 // unregister an instance from the instances map
@@ -43,6 +43,7 @@ func kuzzle_wrapper_new_kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.o
 	k.instance = unsafe.Pointer(inst)
 }
 
+// Allocates memory
 //export kuzzle_wrapper_connect
 func kuzzle_wrapper_connect(k *C.kuzzle) *C.char {
 	err := (*kuzzle.Kuzzle)(k.instance).Connect()
@@ -61,17 +62,17 @@ func kuzzle_wrapper_get_offline_queue(k *C.kuzzle) *C.offline_queue {
 	result.length = C.ulong(len(offlineQueue))
 
 	result.queries = (**C.query_object)(C.calloc(C.size_t(len(offlineQueue)), C.sizeof_query_object_ptr))
-	query_objects := (*[1<<30 - 1]*C.query_object)(unsafe.Pointer(result.queries))[:result.length:result.length]
+	queryObjects := (*[1<<30 - 1]*C.query_object)(unsafe.Pointer(result.queries))[:result.length:result.length]
 
 	idx := 0
 	for _, queryObject := range offlineQueue {
-		query_objects[idx] = (*C.query_object)(C.calloc(1, C.sizeof_query_object))
-		query_objects[idx].timestamp = C.ulonglong(queryObject.Timestamp.Unix())
-		query_objects[idx].request_id = C.CString(queryObject.RequestId)
+		queryObjects[idx] = (*C.query_object)(C.calloc(1, C.sizeof_query_object))
+		queryObjects[idx].timestamp = C.ulonglong(queryObject.Timestamp.Unix())
+		queryObjects[idx].request_id = C.CString(queryObject.RequestId)
 		mquery, _ := json.Marshal(queryObject.Query)
 
 		buffer := C.CString(string(mquery))
-		query_objects[idx].query = C.json_tokener_parse(buffer)
+		queryObjects[idx].query = C.json_tokener_parse(buffer)
 		C.free(unsafe.Pointer(buffer))
 
 		idx += 1
@@ -80,6 +81,7 @@ func kuzzle_wrapper_get_offline_queue(k *C.kuzzle) *C.offline_queue {
 	return result
 }
 
+// Allocates memory
 //export kuzzle_wrapper_get_jwt
 func kuzzle_wrapper_get_jwt(k *C.kuzzle) *C.char {
 	return C.CString((*kuzzle.Kuzzle)(k.instance).GetJwt())

@@ -3,13 +3,13 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include <kuzzle.h>
+	#include "kuzzle.h"
 */
 import "C"
 import (
-	"unsafe"
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_get_my_rights
