@@ -250,6 +250,7 @@ func goToCSpecificationResult(goRes *types.Specification, err error) *C.specific
 
 	if err != nil {
 		Set_specification_result_err(result, err)
+		return result
 	}
 
 	result.result = goToCSpecification(goRes)
@@ -281,4 +282,22 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 	}
 
 	return result
+}
+
+func goToCJsonResult(goRes interface{}, err error) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
+  if err != nil {
+    Set_json_result_error(result, err)
+    return result
+  }
+
+	r, _ := json.Marshal(goRes)
+
+  buffer := C.CString(string(r))
+
+  result.result = C.json_tokener_parse(buffer)
+
+	C.free(unsafe.Pointer(buffer))
+  return result
 }
