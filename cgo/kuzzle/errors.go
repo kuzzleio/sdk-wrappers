@@ -155,8 +155,8 @@ func Set_document_error(s *C.document_result, err error) {
   }
 }
 
-// apply a types.KuzzleError on a kuzzle_search_result* C struct
-func Set_kuzzle_search_result_error(s *C.kuzzle_search_result, err error) {
+// apply a types.KuzzleError on a search_result* C struct
+func Set_search_result_error(s *C.search_result, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
@@ -164,4 +164,36 @@ func Set_kuzzle_search_result_error(s *C.kuzzle_search_result, err error) {
   if len(kuzzleError.Stack) > 0 {
     s.stack = C.CString(kuzzleError.Stack)
   }
+}
+
+
+// apply a types.KuzzleError on a search_result* C struct
+func Set_mapping_result_error(s *C.mapping_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+func Set_specification_result_err(s *C.specification_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+func Set_specification_search_result_error(s *C.specification_search_result, err error) {
+	kuzzleError := err.(*types.KuzzleError)
+	s.status = C.int(kuzzleError.Status)
+	s.error = C.CString(kuzzleError.Message)
+
+	if len(kuzzleError.Stack) > 0 {
+		s.stack = C.CString(kuzzleError.Stack)
+	}
 }
