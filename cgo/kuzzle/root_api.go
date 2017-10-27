@@ -15,11 +15,13 @@ import (
   "time"
   "unsafe"
   "github.com/kuzzleio/sdk-go/kuzzle"
+  "github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_list_collections
 func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(C.GoString(index), opts)
@@ -31,7 +33,7 @@ func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.quer
   r, _ := json.Marshal(res)
 
   buffer := C.CString(string(r))
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
   C.free(unsafe.Pointer(buffer))
 
   return result
@@ -131,6 +133,7 @@ func kuzzle_wrapper_get_auto_refresh(k *C.kuzzle, index *C.char, options *C.quer
 //export kuzzle_wrapper_get_server_info
 func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).GetServerInfo(opts)
@@ -144,7 +147,7 @@ func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.js
   buffer := C.CString(string(r))
   defer C.free(unsafe.Pointer(buffer))
 
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
 
   return result
 }
@@ -152,10 +155,15 @@ func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.js
 //export kuzzle_wrapper_get_all_statistics
 func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-  opts := SetQueryOptions(options)
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
+
+  var opts types.QueryOptions
+  if options != nil {
+    opts = SetQueryOptions(options)
+  }
 
   res, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(opts)
-  
+
   if err != nil {
     Set_json_result_error(result, err)
     return result
@@ -166,7 +174,7 @@ func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C
   buffer := C.CString(string(r))
   defer C.free(unsafe.Pointer(buffer))
 
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
 
   return result
 }
