@@ -4,16 +4,8 @@ package main
 	#cgo CFLAGS: -I../../headers
 	
 	#include <stdlib.h>
-	
-
 	#include "kuzzle.h"
 	#include "sdk_wrappers_internal.h"
-
-	#include <json-c/json.h>
-	#include <json-c/json_object_private.h>
-	static size_t getSizeOfJsonObject_TakeThatMotherFucker(void) {
-		return sizeof(struct json_object);
-	}
 */
 import "C"
 import (
@@ -335,12 +327,13 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
   }
 
   result.length = C.uint(len(goRes))
-  result.result = (*C.json_object)(C.calloc(C.size_t(result.length)), C.getSizeOfJsonObject_TakeThatMotherFucker())
-
+  result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
+	cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+	
   for i, res := range(goRes) {
   	r, _ := json.Marshal(res)
   	buffer := C.CString(string(r))
-  	result.result[i] = C.json_tokener_parse(buffer)
+  	cArray[i] = C.json_tokener_parse(buffer)
   	C.free(unsafe.Pointer(buffer))
   }
 
