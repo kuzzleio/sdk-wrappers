@@ -13,6 +13,7 @@ import (
   "encoding/json"
   "github.com/kuzzleio/sdk-go/kuzzle"
   "unsafe"
+  "github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_set_jwt
@@ -85,7 +86,9 @@ func kuzzle_wrapper_check_token(k *C.kuzzle, token *C.char) *C.token_validity {
 //export kuzzle_wrapper_create_my_credentials
 func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credentials *C.json_object, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
-  opts := SetQueryOptions(options)
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
+  var opts types.QueryOptions
+  opts = SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).CreateMyCredentials(C.GoString(strategy),JsonCConvert(credentials).(map[string]interface{}), opts)
   if err != nil {
@@ -98,10 +101,11 @@ func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credent
   buffer := C.CString(string(r))
   defer C.free(unsafe.Pointer(buffer))
 
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
 
   return result
 }
+
 
 //export kuzzle_wrapper_delete_my_credentials
 func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.ack_result {
@@ -124,6 +128,7 @@ func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options
 //export kuzzle_wrapper_get_my_credentials
 func kuzzle_wrapper_get_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).GetMyCredentials(C.GoString(strategy), opts)
@@ -137,7 +142,7 @@ func kuzzle_wrapper_get_my_credentials(k *C.kuzzle, strategy *C.char, options *C
   buffer := C.CString(string(r))
   defer C.free(unsafe.Pointer(buffer))
 
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
 
   return result
 }
@@ -145,6 +150,7 @@ func kuzzle_wrapper_get_my_credentials(k *C.kuzzle, strategy *C.char, options *C
 //export kuzzle_wrapper_update_my_credentials
 func kuzzle_wrapper_update_my_credentials(k *C.kuzzle, strategy *C.char, credentials *C.json_object, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).UpdateMyCredentials(C.GoString(strategy), JsonCConvert(credentials).(map[string]interface{}), opts)
@@ -155,7 +161,7 @@ func kuzzle_wrapper_update_my_credentials(k *C.kuzzle, strategy *C.char, credent
 
   r, _ := json.Marshal(res)
   buffer := C.CString(string(r))
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
   C.free(unsafe.Pointer(buffer))
 
   return result
@@ -180,6 +186,7 @@ func kuzzle_wrapper_validate_my_credentials(k *C.kuzzle, strategy *C.char, crede
 //export kuzzle_wrapper_get_my_rights
 func kuzzle_wrapper_get_my_rights(k *C.kuzzle, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).GetMyRights(opts)
@@ -191,7 +198,7 @@ func kuzzle_wrapper_get_my_rights(k *C.kuzzle, options *C.query_options) *C.json
 
   r, _ := json.Marshal(res)
   buffer := C.CString(string(r))
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
 
   C.free(unsafe.Pointer(buffer))
   return result
@@ -200,6 +207,7 @@ func kuzzle_wrapper_get_my_rights(k *C.kuzzle, options *C.query_options) *C.json
 //export kuzzle_wrapper_update_self
 func kuzzle_wrapper_update_self(k *C.kuzzle, credentials *C.json_object, options *C.query_options) *C.json_result {
   result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+  result.result = (*C._json_object)(C.calloc(1, C.sizeof__json_object))
   opts := SetQueryOptions(options)
 
   res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(JsonCConvert(credentials).(map[string]interface{}), opts)
@@ -210,7 +218,7 @@ func kuzzle_wrapper_update_self(k *C.kuzzle, credentials *C.json_object, options
 
   r, _ := json.Marshal(res)
   buffer := C.CString(string(r))
-  result.result = C.json_tokener_parse(buffer)
+  result.result.ptr = C.json_tokener_parse(buffer)
   C.free(unsafe.Pointer(buffer))
 
   return result

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <errno.h>
 #include <stdbool.h>
+#include "../templates/swig.h"
 
 typedef struct {
     void *instance;
@@ -235,7 +236,7 @@ typedef struct {
 
 //any json result
 typedef struct {
-    json_object *result;
+    _json_object *result;
     int status;
     char *error;
     char *stack;
@@ -397,16 +398,7 @@ extern ack_result* kuzzle_wrapper_delete_my_credentials(kuzzle*, char*, query_op
 extern json_result* kuzzle_wrapper_update_my_credentials(kuzzle*, char*, json_object*, query_options*);
 
 //Options
-extern options* kuzzle_wrapper_new_options(void);
-
-//Json
-extern void kuzzle_wrapper_json_new(json_object**);
-extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
-extern char* kuzzle_wrapper_json_get_string(json_object*, char*);
-extern int kuzzle_wrapper_json_get_int(json_object*, char*);
-extern double kuzzle_wrapper_json_get_double(json_object*, char*);
-extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
-extern json_object* kuzzle_wrapper_json_get_json_object(json_object*, char*);
+extern options* kuzzle_wrapper_new_options();
 
 //gc management
 extern void unregisterKuzzle(kuzzle*);

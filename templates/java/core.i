@@ -3,7 +3,10 @@
 %rename(queueTTL) queue_ttl;
 %rename(Options) options;
 %rename(Kuzzle) kuzzle;
-%rename(JsonObject) json_object;
+%rename(JsonObject) _json_object;
+%rename(JsonResult) json_result;
+%rename(LoginResult) login_result;
+%rename(BoolResult) bool_result;
 
 %include "../../kcore.i"
 
@@ -29,60 +32,62 @@
     }
 }
 
-%extend json_object {
-    json_object() {
-        json_object* j = malloc(sizeof(json_object));
-        kuzzle_wrapper_json_new(j);
+%ignore _json_object::ptr;
+%extend _json_object {
+    _json_object() {
+        _json_object* j = malloc(sizeof(*j));
+        kuzzle_wrapper_json_new(&j->ptr);
         return j;
     }
 
-    ~json_object() {
+    ~_json_object() {
+        free($self->ptr);
         free($self);
     }
 
-    json_object* put(char* key, char* content) {
-        kuzzle_wrapper_json_put($self, key, content, 0);
+    _json_object* put(char* key, char* content) {
+        kuzzle_wrapper_json_put($self->ptr, key, content, 0);
         return $self;
     }
 
-    json_object* put(char* key, int content) {
-        kuzzle_wrapper_json_put($self, key, &content, 1);
+    _json_object* put(char* key, int content) {
+        kuzzle_wrapper_json_put($self->ptr, key, &content, 1);
         return $self;
     }
 
-    json_object* put(char* key, double content) {
-        kuzzle_wrapper_json_put($self, key, &content, 2);
+    _json_object* put(char* key, double content) {
+        kuzzle_wrapper_json_put($self->ptr, key, &content, 2);
         return $self;
     }
 
-    json_object* put(char* key, bool content) {
-        kuzzle_wrapper_json_put($self, key, &content, 3);
+    _json_object* put(char* key, bool content) {
+        kuzzle_wrapper_json_put($self->ptr, key, &content, 3);
         return $self;
     }
 
-    json_object* put(char* key, JsonObject* content) {
-        kuzzle_wrapper_json_put($self, key, content, 4);
+    _json_object* put(char* key, json_object* content) {
+        kuzzle_wrapper_json_put($self->ptr, key, content, 4);
         return $self;
     }
 
     char* getString(char* key) {
-        return kuzzle_wrapper_json_get_string($self, key);
+        return kuzzle_wrapper_json_get_string($self->ptr, key);
     }
 
     int getInt(char* key) {
-        return kuzzle_wrapper_json_get_int($self, key);
+        return kuzzle_wrapper_json_get_int($self->ptr, key);
     }
 
     double getDouble(char* key) {
-        return kuzzle_wrapper_json_get_double($self, key);
+        return kuzzle_wrapper_json_get_double($self->ptr, key);
     }
 
     bool getBoolean(char* key) {
-        return kuzzle_wrapper_json_get_bool($self, key);
+        return kuzzle_wrapper_json_get_bool($self->ptr, key);
     }
 
-    json_object getJsonObject(char* key) {
-        return kuzzle_wrapper_json_get_json_object($self->jobj, key);
+    _json_object getJsonObject(char* key) {
+        return kuzzle_wrapper_json_get_json_object($self->ptr, key);
     }
 }
 
@@ -96,108 +101,80 @@
         kuzzle_wrapper_new_kuzzle(k, host, "websocket", opts);
         return k;
     }
-//    _kuzzle(char* host) {
-//        kuzzle *k;
-//        k = malloc(sizeof(kuzzle));
-//        kuzzle_wrapper_new_kuzzle(k, host, "websocket", (void*)0);
-//        return k;
-//    }
-//    ~_kuzzle() {
-//        unregisterKuzzle($self);
-//        free($self);
-//    }
+    kuzzle(char* host) {
+        kuzzle *k;
+        k = malloc(sizeof(kuzzle));
+        kuzzle_wrapper_new_kuzzle(k, host, "websocket", NULL);
+        return k;
+    }
+    ~kuzzle() {
+        unregisterKuzzle($self);
+        free($self);
+    }
 
     // checkToken
-//    %exception checkToken {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CheckToken: token required");
-//            return $null;
-//        }
-//    }
-//    token_validity* checkToken(char* token) {
-//        static token_validity res;
-//        int err = kuzzle_wrapper_check_token($self, &res, token);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//
-//    // connect
-//    %exception connect {
-//        $action
-//        if (result != $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, result);
-//        }
-//    }
-//    char* connect() {
-//        return kuzzle_wrapper_connect($self);
-//    }
-//
-//    // createIndex
-//    %exception createIndex {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
-//            return $null;
-//        }
-//    }
-//    ack_response* createIndex(char* index, query_options* options) {
-//        static ack_response res;
-//        int err = kuzzle_wrapper_create_index($self, &res, index, options);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//    ack_response* createIndex(char* index) {
-//        static ack_response res;
-//        int err = kuzzle_wrapper_create_index($self, &res, index, (void*)0);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//
-//    // createMyCredentials
-//    %exception createMyCredentials {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CreateMyCredentials: strategy is required");
-//            return $null;
-//        }
-//    }
-//    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials, query_options* options) {
-//        static json_result res;
-//        static JsonObject ret;
-//        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, options);
-//
-//        if (err == 0) {
-//            ret.jobj = res.result;
-//        } else {
-//            ret.jobj = json_tokener_parse(res.error);
-//        }
-//        return &ret;
-//    }
-//    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials) {
-//        static json_result res;
-//        static JsonObject ret;
-//        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, (void*)0);
-//
-//        if (err == 0) {
-//            ret.jobj = res.result;
-//        } else {
-//            ret.jobj = json_tokener_parse(res.error);
-//        }
-//        return &ret;
-//    }
-}
+    token_validity* checkToken(char* token) {
+        return kuzzle_wrapper_check_token($self, token);
+    }
 
+    // connect
+    char* connect() {
+        return kuzzle_wrapper_connect($self);
+    }
+
+    // createIndex
+    ack_result* createIndex(char* index, query_options* options) {
+        return kuzzle_wrapper_create_index($self, index, options);
+    }
+    ack_result* createIndex(char* index) {
+        return kuzzle_wrapper_create_index($self, index, NULL);
+    }
+
+    // createMyCredentials
+    json_result* createMyCredentials(char* strategy, _json_object* credentials, query_options* options) {
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials->ptr, options);
+    }
+    json_result* createMyCredentials(char* strategy, _json_object* credentials) {
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials->ptr, NULL);
+    }
+
+    // deleteMyCredentials
+    ack_result* deleteMyCredentials(char* strategy, query_options *options) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, options);
+    }
+    ack_result* deleteMyCredentials(char* strategy) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, NULL);
+    }
+
+    // getMyCredentials
+    json_result* getMyCredentials(char *strategy, query_options *options) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, options);
+    }
+    json_result* getMyCredentials(char *strategy) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, NULL);
+    }
+
+    // updateMyCredentials
+    json_result* updateMyCredentials(char *strategy, _json_object* credentials, query_options *options) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, options);
+    }
+    json_result* updateMyCredentials(char *strategy, _json_object* credentials) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, NULL);
+    }
+
+    // validateMyCredentials
+    bool_result* validateMyCredentials(char *strategy, _json_object* credentials, query_options* options) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, options);
+    }
+    bool_result* validateMyCredentials(char *strategy, _json_object* credentials) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, NULL);
+    }
+
+    // login
+    login_result* login(char* strategy, _json_object* credentials, int expires_in) {
+        return kuzzle_wrapper_login($self, strategy, credentials->ptr, &expires_in);
+    }
+    login_result* login(char* strategy, _json_object* credentials) {
+        return kuzzle_wrapper_login($self, strategy, credentials->ptr, NULL);
+    }
+}
