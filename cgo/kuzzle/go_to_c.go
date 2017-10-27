@@ -301,5 +301,3 @@ func goToCJsonResult(goRes interface{}, err error) *C.json_result {
 	C.free(unsafe.Pointer(buffer))
   return result
 }
-
-func goToCShardsResult()
