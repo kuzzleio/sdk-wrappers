@@ -337,5 +337,5 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 		C.free(unsafe.Pointer(buffer))
 	}
 
-return result
+	return result
 }
