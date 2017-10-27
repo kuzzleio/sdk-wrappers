@@ -209,6 +209,15 @@ typedef struct {
     char *stack;
 } token_validity;
 
+// ms.geopos
+typedef struct {
+    double (*result)[2];
+    unsigned length;
+    int status;
+    char *error;
+    char *stack;
+} geopos_result;
+
 /* === Generic response structures === */
 
 // raw Kuzzle response
@@ -461,5 +470,8 @@ extern int_result* kuzzle_wrapper_ms_expire(kuzzle*, char*, unsigned long, query
 extern int_result* kuzzle_wrapper_ms_expireat(kuzzle*, char*, unsigned long long, query_options*);
 extern string_result* kuzzle_wrapper_ms_flushdb(kuzzle*, query_options*);
 extern int_result* kuzzle_wrapper_ms_geoadd(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern double_result* kuzzle_wrapper_ms_geodist(kuzzle*, char*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_geohash(kuzzle*, char*, char**, unsigned, query_options*);
+extern geopos_result* kuzzle_wrapper_ms_geopos(kuzzle*, char*, char**, unsigned, query_options*);
 
 #endif

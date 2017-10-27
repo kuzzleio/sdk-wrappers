@@ -47,11 +47,6 @@ func Set_string_array_result_error(s *C.string_array_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
-// apply a types.KuzzleError on a login_result* C struct
-func Set_login_result_error(s *C.login_result, err error) {
-	setErr(&s.status, s.error, s.stack, err)
-}
-
 // apply a types.KuzzleError on a int_result* C struct
 func Set_int_result_error(s *C.int_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
@@ -64,11 +59,6 @@ func Set_string_result_error(s *C.string_result, err error) {
 
 // apply a types.KuzzleError on a shards* C struct
 func Set_shards_result_error(s *C.shards_result, err error) {
-	setErr(&s.status, s.error, s.stack, err)
-}
-
-// apply a types.KuzzleError on a user* C struct
-func Set_user_error(s *C.user, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
