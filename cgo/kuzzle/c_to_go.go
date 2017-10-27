@@ -90,8 +90,7 @@ func cToGoSpecification(cSpec *C.specification) *types.Specification {
 }
 
 func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
-	col := cToGoCollection(c)
-	gDoc := col.Document()
+	gDoc := cToGoCollection(c).Document()
 	gDoc.Id = C.GoString(cDoc.id)
 	gDoc.Index = C.GoString(cDoc.index)
 	gDoc.Meta = cToGoKuzzleMeta(cDoc.meta)
@@ -103,4 +102,8 @@ func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
 	gDoc.Created = bool(cDoc.created)
 
 	return gDoc
+}
+
+func cToGoFillDocument(cDoc *C.document, goDoc *collection) {
+	// TODO
 }

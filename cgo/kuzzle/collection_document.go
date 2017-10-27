@@ -8,8 +8,8 @@ import "C"
 
 //export kuzzle_wrapper_collection_count
 func kuzzle_wrapper_collection_count(c *C.collection, searchFilters *C.search_filters, options *C.query_options) *C.int_result {
-res, err := cToGoCollection(c).Count(cToGoSearchFilters(searchFilters), SetQueryOptions(options))
-return goToCIntResult(res, err)
+	res, err := cToGoCollection(c).Count(cToGoSearchFilters(searchFilters), SetQueryOptions(options))
+	return goToCIntResult(res, err)
 }
 
 //export kuzzle_wrapper_collection_create_document
