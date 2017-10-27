@@ -103,7 +103,3 @@ func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
 
 	return gDoc
 }
-
-func cToGoFillDocument(cDoc *C.document, goDoc *collection) {
-	// TODO
-}

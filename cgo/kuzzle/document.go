@@ -7,11 +7,68 @@ package main
 import "C"
 
 
-//export kuzzle_wrapper_collection_count
+//export kuzzle_wrapper_new_document
 func kuzzle_wrapper_new_document(c *C.collection) *C.document {
-	return cToGoCollection(c).Document()
+	return goToCDocument(c, cToGoCollection(c).Document())
 }
 
-func kuzzle_wrapper_document_fetch(d *C.document) {
+//export kuzzle_wrapper_document_subscribe
+func kuzzle_wrapper_document_subscribe(d *C.document) C.int {
 	// TODO
+
+	return C.int(0)
+}
+
+// Does not re-allocate the document
+// export kuzzle_wrapper_document_save
+func kuzzle_wrapper_document_save(d *C.document, options *C.query_options) *C.document_result {
+	_, err := cToGoDocument(d._collection, d).Save(SetQueryOptions(options))
+	return currentDocumentResult(d, err)
+}
+
+// export kuzzle_wrapper_document_refresh
+func kuzzle_wrapper_document_refresh(d *C.document, options *C.query_options) *C.document_result {
+	res, err := cToGoDocument(d._collection, d).Refresh(SetQueryOptions(options))
+	return goToCDocumentResult(d._collection, res, err)
+}
+
+//export kuzzle_wrapper_document_set_headers
+func kuzzle_wrapper_document_set_headers(d *C.document, content *C.json_object, replace C.uint) {
+	if JsonCType(content) == C.json_type_object {
+		r := replace != 0
+		cToGoDocument(d._collection, d).SetHeaders(JsonCConvert(content).(map[string]interface{}), r)
+	}
+
+	return
+}
+
+// export kuzzle_wrapper_document_publish
+func kuzzle_wrapper_document_publish(d *C.document, options *C.query_options) *C.bool_result {
+	res, err := cToGoDocument(d._collection, d).Publish(SetQueryOptions(options))
+	return goToCBoolResult(res, err)
+}
+
+// export kuzzle_wrapper_document_exists
+func kuzzle_wrapper_document_exists(d *C.document, options *C.query_options) *C.bool_result {
+	res, err := cToGoDocument(d._collection, d).Exists(SetQueryOptions(options))
+	return goToCBoolResult(res, err)
+}
+
+// export kuzzle_wrapper_document_delete
+func kuzzle_wrapper_document_delete(d *C.document, options *C.query_options) *C.string_result {
+	res, err := cToGoDocument(d._collection, d).Delete(SetQueryOptions(options))
+	return goToCStringResult(res, err)
+}
+
+// Does re-allocate result.result
+func currentDocumentResult(d *C.document, err error) *C.document_result {
+	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
+
+	if err != nil {
+		Set_document_error(result, err)
+	}
+
+	result.result = d
+
+	return result
 }
