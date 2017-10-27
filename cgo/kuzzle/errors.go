@@ -9,169 +9,88 @@ package main
 import "C"
 
 import (
-  "github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 // apply a types.KuzzleError on a json_result* C struct
 func Set_json_result_error(s *C.json_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a token_validity* C struct
 func Set_token_validity_error(s *C.token_validity, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a ack_result* C struct
 func Set_ack_result_error(s *C.ack_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a bool_result* C struct
 func Set_bool_result_error(s *C.bool_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a kuzzle_response* C struct
 func Set_kuzzle_response_error(s *C.kuzzle_response, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a statistics* C struct
 func Set_statistics_error(s *C.statistics, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a string_array_result* C struct
 func Set_string_array_result_error(s *C.string_array_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a int_result* C struct
 func Set_int_result_error(s *C.int_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a string_result* C struct
 func Set_string_result_error(s *C.string_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a shards* C struct
 func Set_shards_result_error(s *C.shards_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a document* C struct
 func Set_document_error(s *C.document_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 // apply a types.KuzzleError on a search_result* C struct
 func Set_search_result_error(s *C.search_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
-
 
 // apply a types.KuzzleError on a search_result* C struct
 func Set_mapping_result_error(s *C.mapping_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 func Set_specification_result_err(s *C.specification_result, err error) {
-  kuzzleError := err.(*types.KuzzleError)
-  s.status = C.int(kuzzleError.Status)
-  s.error = C.CString(kuzzleError.Message)
-
-  if len(kuzzleError.Stack) > 0 {
-    s.stack = C.CString(kuzzleError.Stack)
-  }
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 func Set_specification_search_result_error(s *C.specification_search_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func setErr(status *C.int, error *C.char, stack *C.char, err error) {
 	kuzzleError := err.(*types.KuzzleError)
-	s.status = C.int(kuzzleError.Status)
-	s.error = C.CString(kuzzleError.Message)
+	*status = C.int(kuzzleError.Status)
+	error = C.CString(kuzzleError.Message)
 
 	if len(kuzzleError.Stack) > 0 {
-		s.stack = C.CString(kuzzleError.Stack)
+		stack = C.CString(kuzzleError.Stack)
 	}
 }
