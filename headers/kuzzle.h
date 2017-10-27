@@ -257,6 +257,14 @@ typedef struct {
     char *stack;
 } int_result;
 
+//any double result
+typedef struct {
+    double result;
+    int status;
+    char *error;
+    char *stack;
+} double_result;
+
 //any array of strings result
 typedef struct {
     char **result;

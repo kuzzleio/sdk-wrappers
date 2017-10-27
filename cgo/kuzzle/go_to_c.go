@@ -148,6 +148,20 @@ func goToCIntResult(goRes int, err error) *C.int_result {
 }
 
 // Allocates memory
+func goToCDoubleResult(goRes float64, err error) *C.double_result {
+	result := (*C.double_result)(C.calloc(1, C.sizeof_double_result))
+
+	if err != nil {
+		Set_double_result_error(result, err)
+		return result
+	}
+
+	result.result = C.double(goRes)
+
+	return result
+}
+
+// Allocates memory
 func goToCBoolResult(goRes bool, err error) *C.bool_result {
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 

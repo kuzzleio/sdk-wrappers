@@ -95,6 +95,10 @@ func Set_specification_search_result_error(s *C.specification_search_result, err
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+func Set_double_result_error(s *C.double_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 func setErr(status *C.int, error *C.char, stack *C.char, err error) {
 	kuzzleError := err.(*types.KuzzleError)
 	*status = C.int(kuzzleError.Status)
