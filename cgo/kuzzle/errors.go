@@ -89,6 +89,10 @@ func Set_double_result_error(s *C.double_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+func Set_json_array_result_error(s *C.json_array_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 func setErr(status *C.int, error *C.char, stack *C.char, err error) {
 	kuzzleError := err.(*types.KuzzleError)
 	*status = C.int(kuzzleError.Status)
