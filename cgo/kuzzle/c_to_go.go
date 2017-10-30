@@ -71,7 +71,7 @@ func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 }
 
 func cToGoCollection(c *C.collection) *collection.Collection {
-	return collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
+	return collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle.instance), C.GoString(c.collection), C.GoString(c.index))
 }
 
 func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
