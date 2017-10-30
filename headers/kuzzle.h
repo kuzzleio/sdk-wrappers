@@ -144,9 +144,6 @@ typedef struct {
     meta* meta;
     char **strategies;
     unsigned long strategies_length;
-    int status;
-    char *error;
-    char *stack;
 } user;
 
 /* === Dedicated response structures === */
@@ -212,14 +209,6 @@ typedef struct {
     char *stack;
 } token_validity;
 
-//login
-typedef struct {
-    char *jwt;
-    int status;
-    char *error;
-    char *stack;
-} login_result;
-
 /* === Generic response structures === */
 
 // raw Kuzzle response
@@ -256,6 +245,14 @@ typedef struct {
     char *error;
     char *stack;
 } int_result;
+
+//any double result
+typedef struct {
+    double result;
+    int status;
+    char *error;
+    char *stack;
+} double_result;
 
 //any array of strings result
 typedef struct {
@@ -363,7 +360,7 @@ extern offline_queue* kuzzle_wrapper_get_offline_queue(kuzzle*);
 extern char* kuzzle_wrapper_get_jwt(kuzzle*);
 extern token_validity* kuzzle_wrapper_check_token(kuzzle*, char*);
 extern ack_result* kuzzle_wrapper_create_index(kuzzle*, char*, query_options*);
-extern login_result* kuzzle_wrapper_login(kuzzle*, char*, json_object*, int*);
+extern string_result* kuzzle_wrapper_login(kuzzle*, char*, json_object*, int*);
 extern json_result* kuzzle_wrapper_create_my_credentials(kuzzle*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect(kuzzle*);
 extern void kuzzle_wrapper_flush_queue(kuzzle*);
@@ -378,7 +375,7 @@ extern string_array_result* kuzzle_wrapper_list_indexes(kuzzle*, query_options*)
 extern char* kuzzle_wrapper_logout(kuzzle*);
 extern int_result* kuzzle_wrapper_now(kuzzle*, query_options*);
 extern shards_result* kuzzle_wrapper_refresh_index(kuzzle*, char*, query_options*);
-extern bool_result* kuzzle_wrapper_set_auto_refresh(kuzzle*, char*, unsigned, query_options*);
+extern bool_result* kuzzle_wrapper_set_auto_refresh(kuzzle*, char*, bool, query_options*);
 extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
 extern void kuzzle_wrapper_unset_jwt(kuzzle*);
 extern json_result* kuzzle_wrapper_update_self(kuzzle*, json_object*, query_options*);

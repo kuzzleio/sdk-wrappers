@@ -148,6 +148,20 @@ func goToCIntResult(goRes int, err error) *C.int_result {
 }
 
 // Allocates memory
+func goToCDoubleResult(goRes float64, err error) *C.double_result {
+	result := (*C.double_result)(C.calloc(1, C.sizeof_double_result))
+
+	if err != nil {
+		Set_double_result_error(result, err)
+		return result
+	}
+
+	result.result = C.double(goRes)
+
+	return result
+}
+
+// Allocates memory
 func goToCBoolResult(goRes bool, err error) *C.bool_result {
 	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
 
@@ -250,6 +264,7 @@ func goToCSpecificationResult(goRes *types.Specification, err error) *C.specific
 
 	if err != nil {
 		Set_specification_result_err(result, err)
+		return result
 	}
 
 	result.result = goToCSpecification(goRes)
@@ -281,4 +296,22 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 	}
 
 	return result
+}
+
+func goToCJsonResult(goRes interface{}, err error) *C.json_result {
+	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
+
+  if err != nil {
+    Set_json_result_error(result, err)
+    return result
+  }
+
+	r, _ := json.Marshal(goRes)
+
+  buffer := C.CString(string(r))
+
+  result.result = C.json_tokener_parse(buffer)
+
+	C.free(unsafe.Pointer(buffer))
+  return result
 }

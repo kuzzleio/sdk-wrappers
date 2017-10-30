@@ -159,9 +159,8 @@ func kuzzle_wrapper_add_listener(k *C.kuzzle, e C.int, cb unsafe.Pointer) {
 		r, _ := json.Marshal(res)
 
 		buffer := C.CString(string(r))
-		defer C.free(unsafe.Pointer(buffer))
-
 		jsonRes = C.json_tokener_parse(buffer)
+		C.free(unsafe.Pointer(buffer))
 
 		C.call(cb, jsonRes)
 	}()
