@@ -11,6 +11,7 @@ import (
 	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
 	"encoding/json"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
@@ -70,7 +71,7 @@ func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 }
 
 func cToGoCollection(c *C.collection) *collection.Collection {
-	return cToGoCollection(c)
+	return collection.NewCollection((*kuzzle.Kuzzle)(c.kuzzle), C.GoString(c.collection), C.GoString(c.index))
 }
 
 func cToGoMapping(cMapping *C.mapping) *collection.Mapping {
