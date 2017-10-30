@@ -203,3 +203,74 @@ func kuzzle_wrapper_ms_geopos(k *C.kuzzle, key *C.char, members **C.char, mlen C
 
   return result
 }
+
+//export kuzzle_wrapper_ms_georadius
+func kuzzle_wrapper_ms_georadius(k *C.kuzzle, key *C.char, lon C.double, lat C.double, dist C.double, unit *C.char, options *C.query_options) *C.json_array_result {
+  res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Georadius(
+    C.GoString(key),
+    float64(lon),
+    float64(lat),
+    float64(dist),
+    C.GoString(unit),
+    SetQueryOptions(options))
+
+  var ires []interface{}
+  if err != nil {
+    ires = make([]interface{}, len(res))
+    for i, d := range res {
+      ires[i] = d
+    }
+  }
+
+  return goToCJsonArrayResult(ires, err)
+}
+
+//export kuzzle_wrapper_ms_georadiusbymember
+func kuzzle_wrapper_ms_georadiusbymember(k *C.kuzzle, key *C.char, member *C.char, dist C.double, unit *C.char, options *C.query_options) *C.json_array_result {
+  res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Georadiusbymember(
+    C.GoString(key),
+    C.GoString(member),
+    float64(dist),
+    C.GoString(unit),
+    SetQueryOptions(options))
+
+  var ires []interface{}
+  if err != nil {
+    ires = make([]interface{}, len(res))
+    for i, d := range res {
+      ires[i] = d
+    }
+  }
+
+  return goToCJsonArrayResult(ires, err)
+}
+
+//export kuzzle_wrapper_ms_get
+func kuzzle_wrapper_ms_get(k *C.kuzzle, key *C.char, options *C.query_options) *C.string_result {
+  res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Get(
+    C.GoString(key),
+    SetQueryOptions(options))
+
+  return goToCStringResult(res, err)
+}
+
+//export kuzzle_wrapper_ms_getbit
+func kuzzle_wrapper_ms_getbit(k *C.kuzzle, key *C.char, offset C.int, options *C.query_options) *C.int_result {
+  res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Getbit(
+    C.GoString(key),
+    int(offset),
+    SetQueryOptions(options))
+
+  return goToCIntResult(res, err)
+}
+
+//export kuzzle_wrapper_ms_getrange
+func kuzzle_wrapper_ms_getrange(k *C.kuzzle, key *C.char, start C.int, end C.int, options *C.query_options) *C.string_result {
+  res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Getrange(
+    C.GoString(key),
+    int(start),
+    int(end),
+    SetQueryOptions(options))
+
+  return goToCStringResult(res, err)
+}

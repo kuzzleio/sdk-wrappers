@@ -74,6 +74,8 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts = types.NewQueryOptions()
 
 	opts.SetQueuable(bool(options.queuable))
+	opts.SetWithdist(bool(options.withdist))
+	opts.SetWithcoord(bool(options.withcoord))
 	opts.SetFrom(int(options.from))
 	opts.SetSize(int(options.size))
 	opts.SetScroll(C.GoString(options.scroll))
@@ -82,7 +84,6 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts.SetIfExist(C.GoString(options.if_exist))
 	opts.SetRetryOnConflict(int(options.retry_on_conflict))
 	opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
-
 	return
 }
 

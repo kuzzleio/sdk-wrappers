@@ -90,6 +90,8 @@ typedef struct {
 //options passed to query()
 typedef struct {
     bool queuable;
+    bool withdist;
+    bool withcoord;
     long from;
     long size;
     char *scroll;
@@ -482,5 +484,9 @@ extern int_result* kuzzle_wrapper_ms_geoadd(kuzzle*, char*, json_object**, unsig
 extern double_result* kuzzle_wrapper_ms_geodist(kuzzle*, char*, char*, char*, query_options*);
 extern string_array_result* kuzzle_wrapper_ms_geohash(kuzzle*, char*, char**, unsigned, query_options*);
 extern geopos_result* kuzzle_wrapper_ms_geopos(kuzzle*, char*, char**, unsigned, query_options*);
-
+extern json_array_result* kuzzle_wrapper_ms_georadius(kuzzle*, char*, double, double, double, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_georadiusbymember(kuzzle*, char*, char*, double, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_get(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_getbit(kuzzle*, char*, int, query_options*);
+extern string_result* kuzzle_wrapper_ms_getrange(kuzzle* char*, int, int, query_options*);
 #endif
