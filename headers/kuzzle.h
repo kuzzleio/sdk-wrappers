@@ -174,6 +174,23 @@ typedef struct {
 } document;
 
 typedef struct {
+    char *id;
+    meta *meta;
+    json_object *content;
+    int version;
+    char *collection;
+} notification;
+
+typedef struct {
+    char *request_id;
+    notification *result;
+    char *room_id;
+    status
+    char *error;
+    char *stack;
+} notification_result;
+
+typedef struct {
     document *result;
     int status;
     char *error;

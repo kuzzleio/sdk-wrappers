@@ -3,8 +3,17 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include "kuzzle.h"
+
+	static void call(void* f, notification* res) {
+		((void(*)(notification*))f)(res);
+	}
 */
 import "C"
+import (
+	"github.com/kuzzleio/sdk-go/types"
+	"encoding/json"
+	"unsafe"
+)
 
 // Allocates memory
 //export kuzzle_wrapper_new_collection
@@ -43,4 +52,16 @@ func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_obje
 func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_options) *C.ack_result {
 	res, err := cToGoCollection(c).Truncate(SetQueryOptions(options))
 	return goToCAckResult(res, err)
+}
+
+//export kuzzle_wrapper_collection_subscribe
+// TODO loop and close on Unsubscribe
+func kuzzle_wrapper_collection_subscribe(col *C.collection, filters *C.search_filters, options *C.room_options, cb unsafe.Pointer) {
+	c := make(chan *types.KuzzleNotification)
+	cToGoCollection(col).Subscribe(cToGoSearchFilters(filters), SetRoomOptions(options), c)
+
+	go func() {
+		res := <-c
+		C.call(cb, goToCNotification(res))
+	}()
 }

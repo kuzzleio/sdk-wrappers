@@ -3,9 +3,17 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include "kuzzle.h"
+
+	static void call(void* f, json_object* res) {
+		((void(*)(json_object*))f)(res);
+	}
 */
 import "C"
-
+import (
+	"unsafe"
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/types"
+)
 
 //export kuzzle_wrapper_new_document
 func kuzzle_wrapper_new_document(c *C.collection) *C.document {
@@ -13,11 +21,18 @@ func kuzzle_wrapper_new_document(c *C.collection) *C.document {
 }
 
 //export kuzzle_wrapper_document_subscribe
-func kuzzle_wrapper_document_subscribe(d *C.document) C.int {
-	// TODO
+// TODO loop and close on Unsubscribe
+func kuzzle_wrapper_document_subscribe(d *C.document, options *C.room_options, cb unsafe.Pointer) {
+	c := make(chan *types.KuzzleNotification)
+	cToGoDocument(d._collection, d).Subscribe(SetRoomOptions(options), c)
 
-	return C.int(0)
+	go func() {
+		res := <-c
+		C.call(cb, goToCNotification(res))
+	}()
 }
+
+
 
 // Does not re-allocate the document
 // export kuzzle_wrapper_document_save

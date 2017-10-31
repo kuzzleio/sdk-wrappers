@@ -71,6 +71,15 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 }
 
 // Allocates memory
+func goToCNotification(gNotif *types.KuzzleNotification) *C.notification {
+	result := (*C.notification)(C.calloc(1, C.sizeof_notification))
+
+	// TODO
+
+	return result
+}
+
+// Allocates memory
 func goToCDocumentResult(col *C.collection, goRes *collection.Document, err error) *C.document_result {
 	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
 
