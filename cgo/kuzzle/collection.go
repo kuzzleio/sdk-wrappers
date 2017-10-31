@@ -3,15 +3,11 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include "kuzzle.h"
-
-	static void call(void* f, notification* res) {
-		((void(*)(notification*))f)(res);
-	}
+  #include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/types"
-	"encoding/json"
 	"unsafe"
 )
 
@@ -62,6 +58,6 @@ func kuzzle_wrapper_collection_subscribe(col *C.collection, filters *C.search_fi
 
 	go func() {
 		res := <-c
-		C.call(cb, goToCNotification(res))
+		C.call_notification_result(cb, goToCNotificationResult(res))
 	}()
 }

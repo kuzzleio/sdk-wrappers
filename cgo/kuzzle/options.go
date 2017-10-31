@@ -1,11 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"unsafe"
-	"time"
-	"github.com/kuzzleio/sdk-go/types"
-)
 
 /*
 	#cgo CFLAGS: -I../../headers
@@ -13,6 +7,12 @@ import (
 	#include "kuzzle.h"
 */
 import "C"
+import (
+	"encoding/json"
+	"unsafe"
+	"time"
+	"github.com/kuzzleio/sdk-go/types"
+)
 
 //export kuzzle_wrapper_new_options
 func kuzzle_wrapper_new_options() *C.options {
@@ -116,7 +116,7 @@ func SetRoomOptions(options *C.room_options) (opts types.RoomOptions) {
 
 	opts.SetScope(C.GoString(options.scope))
 	opts.SetState(C.GoString(options.state))
-	opts.SetUser(C.GoString(options.user))
+	opts.SetUsers(C.GoString(options.user))
 
 	opts.SetSubscribeToSelf(options.subscribe_to_self == 1)
 

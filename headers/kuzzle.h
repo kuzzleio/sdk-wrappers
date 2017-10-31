@@ -177,15 +177,25 @@ typedef struct {
     char *id;
     meta *meta;
     json_object *content;
-    int version;
-    char *collection;
-} notification;
+    int count;
+} notification_content;
 
 typedef struct {
     char *request_id;
-    notification *result;
+    notification_content *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
+    char *protocol;
+    char *scope;
+    char *state;
+    char *user;
+    char *n_type;
     char *room_id;
-    status
+    unsigned long long timestamp;
+    int status;
     char *error;
     char *stack;
 } notification_result;
@@ -237,6 +247,7 @@ typedef struct {
     int status;
     char *error;
     char *stack;
+    // TODO
 } kuzzle_response;
 
 //any json result
@@ -288,11 +299,6 @@ typedef struct {
     char *error;
     char *stack;
 } string_array_result;
-
-typedef struct {
-    char* type;
-    json_object* fields;
-} field_mapping;
 
 typedef struct {
     json_object* query;

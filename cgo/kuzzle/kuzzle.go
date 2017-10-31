@@ -5,12 +5,7 @@ package main
 	#include <stdlib.h>
 	#include <string.h>
 	#include "kuzzle.h"
-
-	typedef query_object *query_object_ptr;
-
-	static void call(void* f, json_object* res) {
-		((void(*)(json_object*))f)(res);
-	}
+  #include "sdk_wrappers_internal.h"
 */
 import "C"
 import (

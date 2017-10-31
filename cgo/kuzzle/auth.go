@@ -149,7 +149,7 @@ func kuzzle_wrapper_who_am_i(k *C.kuzzle) *C.user {
   }
 
   user := (*C.user)(C.calloc(1, C.sizeof_user))
-  user.meta = goToCKuzzleMeta(res.Meta)
+  user.meta = goToCMeta(res.Meta)
 
   buffer := C.CString(string(res.Source))
   user.source = C.json_tokener_parse(buffer)

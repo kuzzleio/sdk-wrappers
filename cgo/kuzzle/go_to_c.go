@@ -16,7 +16,7 @@ import (
 )
 
 // Allocates memory
-func goToCKuzzleMeta(gMeta *types.Meta) *C.meta {
+func goToCMeta(gMeta *types.Meta) *C.meta {
 	if gMeta == nil {
 		return nil
 	}
@@ -54,7 +54,7 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 	result.index = C.CString(gDoc.Index)
 	result.result = C.CString(gDoc.Result)
 	result.collection = C.CString(gDoc.Collection)
-	result.meta = goToCKuzzleMeta(gDoc.Meta)
+	result.meta = goToCMeta(gDoc.Meta)
 	result.shards = goToCShards(gDoc.Shards)
 	result._collection = col
 
@@ -73,10 +73,49 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 }
 
 // Allocates memory
-func goToCNotification(gNotif *types.KuzzleNotification) *C.notification {
-	result := (*C.notification)(C.calloc(1, C.sizeof_notification))
+func goToCNotificationContent(gNotifContent *types.NotificationResult) *C.notification_content {
+	result := (*C.notification_content)(C.calloc(1, C.sizeof_notification_content))
+	result.id = C.CString(gNotifContent.Id)
+	result.meta = goToCMeta(gNotifContent.Meta)
+	result.count = C.int(gNotifContent.Count)
 
-	// TODO
+	r, _ := json.Marshal(gNotifContent.Content)
+	buffer := C.CString(string(r))
+	result.content = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
+
+	return result
+}
+
+// Allocates memory
+func goToCNotificationResult(gNotif *types.KuzzleNotification) *C.notification_result {
+	result := (*C.notification_result)(C.calloc(1, C.sizeof_notification_result))
+
+	if gNotif.Error != nil {
+		Set_notification_result_error(result, gNotif.Error)
+		return result
+	}
+
+	result.request_id = C.CString(gNotif.RequestId)
+	result.result = goToCNotificationContent(gNotif.Result)
+
+	r, _ := json.Marshal(gNotif.Volatile)
+	buffer := C.CString(string(r))
+	result.volatiles = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
+
+	result.index = C.CString(gNotif.Index)
+	result.collection = C.CString(gNotif.Collection)
+	result.controller = C.CString(gNotif.Controller)
+	result.action = C.CString(gNotif.Action)
+	result.protocol = C.CString(gNotif.Protocol)
+	result.scope = C.CString(gNotif.Scope)
+	result.state = C.CString(gNotif.State)
+	result.user = C.CString(gNotif.User)
+	result.n_type = C.CString(gNotif.Type)
+	result.room_id = C.CString(gNotif.RoomId)
+	result.timestamp = C.ulonglong(gNotif.Timestamp)
+	result.status = C.int(gNotif.Status)
 
 	return result
 }
