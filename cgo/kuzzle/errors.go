@@ -90,7 +90,7 @@ func Set_double_result_error(s *C.double_result, err error) {
 }
 
 func Set_json_array_result_error(s *C.json_array_result, err error) {
-setErr(&s.status, s.error, s.stack, err)
+	setErr(&s.status, s.error, s.stack, err)
 }
 
 func Set_notification_result_error(s *C.notification_result, err error) {
