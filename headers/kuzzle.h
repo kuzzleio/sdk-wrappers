@@ -247,6 +247,15 @@ typedef struct {
     char *stack;
 } json_result;
 
+//any array of json_object result
+typedef struct {
+    json_object **result;
+    unsigned length;
+    int status;
+    char *error;
+    char *stack;
+} json_array_result;
+
 //any boolean result
 typedef struct {
     bool result;
