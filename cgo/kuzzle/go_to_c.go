@@ -110,8 +110,8 @@ func goToCStringResult(goRes *string, err error) *C.string_result {
 		return result
 	}
 
-	if string != nil {
-		result.result = C.CString(goRes)
+	if goRes != nil {
+		result.result = C.CString(*goRes)
 	}
 
 	return result

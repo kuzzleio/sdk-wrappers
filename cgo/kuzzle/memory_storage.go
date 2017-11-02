@@ -131,7 +131,7 @@ func kuzzle_wrapper_ms_expireat(k *C.kuzzle, key *C.char, ts C.ulonglong, option
 func kuzzle_wrapper_ms_flushdb(k *C.kuzzle, options *C.query_options) *C.string_result {
   res, err := (*kuzzle.Kuzzle)(k.instance).MemoryStorage.Flushdb(SetQueryOptions(options))
 
-  return goToCStringResult(res, err)
+  return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_ms_geoadd
@@ -272,5 +272,5 @@ func kuzzle_wrapper_ms_getrange(k *C.kuzzle, key *C.char, start C.int, end C.int
     int(end),
     SetQueryOptions(options))
 
-  return goToCStringResult(res, err)
+  return goToCStringResult(&res, err)
 }

@@ -21,7 +21,7 @@ func kuzzle_wrapper_collection_create_document(c *C.collection, id *C.char, docu
 //export kuzzle_wrapper_collection_delete_document
 func kuzzle_wrapper_collection_delete_document(c *C.collection, id *C.char, options *C.query_options) *C.string_result {
 	res, err := cToGoCollection(c).DeleteDocument(C.GoString(id), SetQueryOptions(options))
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_collection_document_exists
