@@ -102,7 +102,7 @@ func goToCAckResult(goRes *types.AckResponse, err error) *C.ack_result {
 }
 
 // Allocates memory
-func goToCStringResult(goRes string, err error) *C.string_result {
+func goToCStringResult(goRes *string, err error) *C.string_result {
 	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
 
 	if err != nil {
@@ -110,7 +110,9 @@ func goToCStringResult(goRes string, err error) *C.string_result {
 		return result
 	}
 
-	result.result = C.CString(goRes)
+	if string != nil {
+		result.result = C.CString(goRes)
+	}
 
 	return result
 }

@@ -488,5 +488,6 @@ extern json_array_result* kuzzle_wrapper_ms_georadius(kuzzle*, char*, double, do
 extern json_array_result* kuzzle_wrapper_ms_georadiusbymember(kuzzle*, char*, char*, double, char*, query_options*);
 extern string_result* kuzzle_wrapper_ms_get(kuzzle*, char*, query_options*);
 extern int_result* kuzzle_wrapper_ms_getbit(kuzzle*, char*, int, query_options*);
-extern string_result* kuzzle_wrapper_ms_getrange(kuzzle* char*, int, int, query_options*);
+extern string_result* kuzzle_wrapper_ms_getrange(kuzzle*, char*, int, int, query_options*);
+
 #endif
