@@ -28,8 +28,6 @@ func kuzzle_wrapper_document_subscribe(d *C.document, options *C.room_options, c
 	}()
 }
 
-
-
 // Does not re-allocate the document
 // export kuzzle_wrapper_document_save
 func kuzzle_wrapper_document_save(d *C.document, options *C.query_options) *C.document_result {
@@ -71,7 +69,7 @@ func kuzzle_wrapper_document_delete(d *C.document, options *C.query_options) *C.
 	return goToCStringResult(res, err)
 }
 
-// Does re-allocate result.result
+// Allocates memory for result, not document
 func currentDocumentResult(d *C.document, err error) *C.document_result {
 	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))
 

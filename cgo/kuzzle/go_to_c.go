@@ -408,7 +408,7 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
 	cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-	for i, res := range(goRes) {
+	for i, res := range goRes {
 		r, _ := json.Marshal(res)
 		buffer := C.CString(string(r))
 		cArray[i] = C.json_tokener_parse(buffer)
