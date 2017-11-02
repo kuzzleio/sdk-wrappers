@@ -106,7 +106,6 @@ func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credent
   return result
 }
 
-
 //export kuzzle_wrapper_delete_my_credentials
 func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.ack_result {
   result := (*C.ack_result)(C.calloc(1, C.sizeof_ack_result))

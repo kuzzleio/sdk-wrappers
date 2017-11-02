@@ -68,7 +68,18 @@ func Set_kuzzle_response_error(s *C.kuzzle_response, err error) {
 }
 
 // apply a types.KuzzleError on a statistics* C struct
-func Set_statistics_error(s *C.statistics, err error) {
+func Set_statistics_error(s *C.statistics_result, err error) {
+  kuzzleError := err.(*types.KuzzleError)
+  s.status = C.int(kuzzleError.Status)
+  s.error = C.CString(kuzzleError.Message)
+
+  if len(kuzzleError.Stack) > 0 {
+    s.stack = C.CString(kuzzleError.Stack)
+  }
+}
+
+// apply a types.KuzzleError on a all_statistics_result* C struct
+func Set_all_statistics_error(s *C.all_statistics_result, err error) {
   kuzzleError := err.(*types.KuzzleError)
   s.status = C.int(kuzzleError.Status)
   s.error = C.CString(kuzzleError.Message)
