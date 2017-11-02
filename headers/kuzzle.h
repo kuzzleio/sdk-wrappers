@@ -489,5 +489,37 @@ extern json_array_result* kuzzle_wrapper_ms_georadiusbymember(kuzzle*, char*, ch
 extern string_result* kuzzle_wrapper_ms_get(kuzzle*, char*, query_options*);
 extern int_result* kuzzle_wrapper_ms_getbit(kuzzle*, char*, int, query_options*);
 extern string_result* kuzzle_wrapper_ms_getrange(kuzzle*, char*, int, int, query_options*);
+extern string_result* kuzzle_wrapper_ms_getset(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hdel(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_hexists(kuzzle*, char*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_hget(kuzzle*, char*, char*, query_options*);
+extern json_result* kuzzle_wrapper_ms_hgetall(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hincrby(kuzzle*, char*, char*, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_hincrbyfloat(kuzzle*, char*, char*, double, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hkeys(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hlen(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hmget(kuzzle*, char*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_hmset(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern json_result* kuzzle_wrapper_ms_hscan(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_hset(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hsetnx(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hstrlen(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hvals(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_incr(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_incr(kuzzle*, char*, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_incr(kuzzle*, char*, double, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_keys(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lindex(kuzzle*, char*, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_linsert(kuzzle*, char*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_llen(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lpop(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_lpush(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_lpushx(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_lrange(kuzzle*, char*, long, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_lrem(kuzzle*, char*, long, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lset(kuzzle*, char*, long, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_ltrim(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_mget(kuzzle*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_mset(kuzzle*, json_object**, unsigned, query_options*);
 
 #endif
