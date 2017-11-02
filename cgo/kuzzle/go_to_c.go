@@ -120,6 +120,36 @@ func goToCNotificationResult(gNotif *types.KuzzleNotification) *C.notification_r
 	return result
 }
 
+func goToCKuzzleResponse(gRes *types.KuzzleResponse) *C.kuzzle_response {
+	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
+
+	result.request_id = C.CString(gRes.RequestId)
+
+	bufResult := C.CString(string(gRes.Result))
+	result.result = C.json_tokener_parse(bufResult)
+	C.free(unsafe.Pointer(bufResult))
+
+	r, _ := json.Marshal(gRes.Volatile)
+	bufVolatile := C.CString(string(r))
+	result.volatiles = C.json_tokener_parse(bufVolatile)
+	C.free(unsafe.Pointer(bufVolatile))
+
+	result.index = C.CString(gRes.Index)
+	result.collection = C.CString(gRes.Collection)
+	result.controller = C.CString(gRes.Controller)
+	result.action = C.CString(gRes.Action)
+	result.room_id = C.CString(gRes.RoomId)
+	result.channel = C.CString(gRes.Channel)
+	result.status = C.int(gRes.Status)
+
+	if gRes.Error != nil {
+		// The error might be a partial error
+		Set_kuzzle_response_error(result, gRes.Error)
+	}
+
+	return result
+}
+
 // Allocates memory
 func goToCDocumentResult(col *C.collection, goRes *collection.Document, err error) *C.document_result {
 	result := (*C.document_result)(C.calloc(1, C.sizeof_document_result))

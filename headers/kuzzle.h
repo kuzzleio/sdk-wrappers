@@ -242,12 +242,16 @@ typedef struct {
 typedef struct {
     char *request_id;
     json_object *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
     char *room_id;
     char *channel;
     int status;
     char *error;
     char *stack;
-    // TODO
 } kuzzle_response;
 
 //any json result
