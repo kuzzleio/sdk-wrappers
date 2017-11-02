@@ -275,10 +275,21 @@ typedef struct {
     json_object* failed_requests;
     json_object* ongoing_requests;
     unsigned long long timestamp;
+} statistics;
+
+typedef struct {
+    statistics* result;
     int status;
     char *error;
     char *stack;
-} statistics;
+} statistics_result;
+
+typedef struct {
+    statistics* result;
+    int status;
+    char *error;
+    char *stack;
+} all_statistics_result;
 
 //check_token
 typedef struct {
@@ -486,7 +497,7 @@ extern string_result* kuzzle_wrapper_login(kuzzle*, char*, json_object*, int*);
 extern json_result* kuzzle_wrapper_create_my_credentials(kuzzle*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect(kuzzle*);
 extern void kuzzle_wrapper_flush_queue(kuzzle*);
-extern json_result* kuzzle_wrapper_get_all_statistics(kuzzle*, query_options*);
+extern all_statistics_result* kuzzle_wrapper_get_all_statistics(kuzzle*, query_options*);
 extern bool_result* kuzzle_wrapper_get_auto_refresh(kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_get_my_credentials(kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_get_my_rights(kuzzle*, query_options*);

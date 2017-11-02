@@ -11,10 +11,7 @@ package main
 */
 import "C"
 import (
-"github.com/kuzzleio/sdk-go/kuzzle"
-  "encoding/json"
-  "unsafe"
-  "github.com/kuzzleio/sdk-go/types"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 //export kuzzle_wrapper_set_jwt
@@ -81,7 +78,6 @@ func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credent
 
 	return goToCJsonResult(res, err)
 }
-
 
 //export kuzzle_wrapper_delete_my_credentials
 func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.bool_result {

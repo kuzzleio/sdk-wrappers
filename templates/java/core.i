@@ -7,6 +7,8 @@
 %rename(JsonResult) json_result;
 %rename(LoginResult) login_result;
 %rename(BoolResult) bool_result;
+%rename(Statistics) statistics;
+%rename(AllStatisticsResult) all_statistics_result;
 
 %include "../../kcore.i"
 
@@ -20,6 +22,59 @@
     }
   }
 %}
+
+%ignore A_::b; // We will wrap this another way
+%typemap(javacode) A %{
+  public B[] getB() {
+    B[] ret = new B[getNumBs()];
+    for (int i = 0; i < ret.length; ++i) {
+      ret[i] = getB(i);
+    }
+    return ret;
+  }
+%}
+
+// Or %include etc.
+%inline %{
+typedef struct B_ {
+ /* something */
+} B;
+
+typedef struct A_ {
+    int numBs; /* The count of Bs in the array bellow */
+    B *b;
+} A;
+%}
+
+%javamethodmodifiers A_::getB(size_t pos) "private";
+%extend A_ {
+  // This defaults to non-owning, which is exactly what we want
+  B *getB(size_t pos) {
+    return $self->b + pos;
+  }
+}
+
+
+
+%ignore all_statistics_result::result;
+%typemap(javacode) all_statistics_result %{
+  public void test() {}
+
+  public statistics[] getResult() {
+    statistics[] result = new statistics[42];
+    for (int i = 0; i < result.length; ++i) {
+      result[i] = getResult(i);
+    }
+    return result;
+  }
+%}
+
+%javamethodmodifiers all_statistics_result::getResult(size_t pos) "private";
+%extend all_statistics_result {
+    statistics *getResult(size_t pos) {
+        return $self->result+pos;
+    }
+}
 
 %extend options {
     options() {
@@ -176,5 +231,34 @@
     }
     login_result* login(char* strategy, _json_object* credentials) {
         return kuzzle_wrapper_login($self, strategy, credentials->ptr, NULL);
+    }
+
+    // getAllStatistics
+    all_statistics_result* getAllStatistics(query_options* options) {
+        return kuzzle_wrapper_get_all_statistics($self, options);
+    }
+    all_statistics_result* getAllStatistics() {
+        return kuzzle_wrapper_get_all_statistics($self, NULL);
+    }
+
+    // getAutoRefresh
+    bool_result* getAutoRefresh(char* index, query_options* options) {
+        return kuzzle_wrapper_get_auto_refresh($self, index, options);
+    }
+    bool_result* getAutoRefresh(char* index) {
+        return kuzzle_wrapper_get_auto_refresh($self, index, NULL);
+    }
+
+    // getJwt
+    char* getJwt() {
+        return kuzzle_wrapper_get_jwt($self);
+    }
+
+    // getMyRights
+    json_result* getMyRights(query_options* options) {
+        return kuzzle_wrapper_get_my_rights($self, options);
+    }
+    json_result* getMyRights() {
+        return kuzzle_wrapper_get_my_rights($self, NULL);
     }
 }

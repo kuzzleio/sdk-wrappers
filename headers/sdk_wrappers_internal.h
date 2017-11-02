@@ -16,4 +16,6 @@ static void set_errno(int err) {
   errno = err;
 }
 
+typedef statistics* statistics_ptr;
+
 #endif
