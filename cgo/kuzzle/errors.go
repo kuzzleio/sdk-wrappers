@@ -52,6 +52,11 @@ func Set_int_result_error(s *C.int_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+// apply a types.KuzzleError on a int_array_result* C struct
+func Set_int_array_result_error(s *C.int_array_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 // apply a types.KuzzleError on a string_result* C struct
 func Set_string_result_error(s *C.string_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)

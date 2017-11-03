@@ -266,6 +266,15 @@ typedef struct {
     char *stack;
 } int_result;
 
+//any array of integers result
+typedef struct {
+    long long *result;
+    unsigned length;
+    int status;
+    char *error;
+    char*stack;
+} int_array_result;
+
 //any double result
 typedef struct {
     double result;
@@ -554,5 +563,35 @@ extern string_array_result* kuzzle_wrapper_ms_smembers(kuzzle*, char*, query_opt
 extern int_result* kuzzle_wrapper_ms_smove(kuzzle*, char*, char*, char*, query_options*);
 extern string_array_result* kuzzle_wrapper_ms_sort(kuzzle*, char*, query_options*);
 extern string_array_result* kuzzle_wrapper_ms_spop(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_srandmember(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_srem(kuzzle*, char*, char**, unsigned, query_options*);
+extern json_result* kuzzle_wrapper_ms_sscan(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_strlen(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_sunion(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_sunionstore(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_array_result* kuzzle_wrapper_ms_time(kuzzle*, query_options*);
+extern int_result* kuzzle_wrapper_ms_touch(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_ttl(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_type(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zadd(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zcard(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zcount(kuzzle*, char*, long, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_zincrby(kuzzle*, char*, char*, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zinterstore(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zlexcount(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrange(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_zrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrank(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrem(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebyrank(kuzzle*, char*, long, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrevrange(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_zrevrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrevrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrevrank(kuzzle*, char*, char*, query_options*);
+extern json_result* kuzzle_wrapper_ms_zscan(kuzzle*, char*, int, query_options*);
+extern double_result* kuzzle_wrapper_ms_zscore(kuzzle*, char*, char*, query_options*);
 
 #endif

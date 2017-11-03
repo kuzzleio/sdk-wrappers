@@ -2,6 +2,7 @@
 #define __SDK_WRAPPERS_INTERNAL
 
 typedef char *char_ptr;
+typedef long long *longlong_ptr;
 typedef document *document_ptr;
 typedef specification_entry *specification_entry_ptr;
 typedef json_object *json_object_ptr;

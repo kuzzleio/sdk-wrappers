@@ -125,13 +125,15 @@ func goToCStringArrayResult(goRes []string, err error) *C.string_array_result {
 		return result
 	}
 
-	result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
-	result.length = C.ulong(len(goRes))
+	if goRes != nil {
+		result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
+		result.length = C.ulong(len(goRes))
 
-	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+		cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-	for i, substring := range goRes {
-		cArray[i] = C.CString(substring)
+		for i, substring := range goRes {
+			cArray[i] = C.CString(substring)
+		}
 	}
 
 	return result
@@ -147,6 +149,29 @@ func goToCIntResult(goRes int, err error) *C.int_result {
 	}
 
 	result.result = C.longlong(goRes)
+
+	return result
+}
+
+//Allocates memory
+func goToCIntArrayResult(goRes []int, err error) *C.int_array_result {
+	result := (*C.int_array_result)(C.calloc(1, C.sizeof_int_array_result))
+
+	if err != nil {
+		Set_int_array_result_error(result, err)
+		return result
+	}
+
+	if goRes != nil {
+		result.result = (**C.longlong)(C.calloc(C.size_t(len(goRes)), C.sizeof_longlong_ptr))
+		result.length = C.uint(len(goRes))
+
+		cArray := (*[1<<20 - 1]*C.longlong)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+
+		for i, num := range goRes {
+			cArray[i] = C.longlong(num)
+		}
+	}
 
 	return result
 }
@@ -310,13 +335,17 @@ func goToCJsonResult(goRes interface{}, err error) *C.json_result {
     return result
   }
 
-	r, _ := json.Marshal(goRes)
+  // even if there is no error, the result might still be nil
+  if goRes != nil {
+		r, _ := json.Marshal(goRes)
 
-  buffer := C.CString(string(r))
+	  buffer := C.CString(string(r))
 
-  result.result = C.json_tokener_parse(buffer)
+	  result.result = C.json_tokener_parse(buffer)
 
-	C.free(unsafe.Pointer(buffer))
+		C.free(unsafe.Pointer(buffer))
+	}
+
   return result
 }
 
