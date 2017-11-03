@@ -7,9 +7,9 @@ package main
 import "C"
 
 //export kuzzle_wrapper_collection_delete_specifications
-func kuzzle_wrapper_collection_delete_specifications(c *C.collection, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_collection_delete_specifications(c *C.collection, options *C.query_options) *C.bool_result {
 	res, err := cToGoCollection(c).DeleteSpecifications(SetQueryOptions(options))
-	return goToCAckResult(res, err)
+	return goToCBoolResult(res, err)
 }
 
 //export kuzzle_wrapper_collection_get_specifications
