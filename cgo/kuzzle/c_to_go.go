@@ -4,22 +4,22 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzle.h"
- */
+*/
 import "C"
 import (
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/collection"
+	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"github.com/kuzzleio/sdk-go/collection"
-	"encoding/json"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 )
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
 	return &types.SearchFilters{
-		Query: JsonCConvert(searchFilters.query),
-		Sort: JsonCConvert(searchFilters.sort).([]interface{}),
+		Query:        JsonCConvert(searchFilters.query),
+		Sort:         JsonCConvert(searchFilters.sort).([]interface{}),
 		Aggregations: JsonCConvert(searchFilters.aggregations),
-		SearchAfter: JsonCConvert(searchFilters.search_after).([]interface{}),
+		SearchAfter:  JsonCConvert(searchFilters.search_after).([]interface{}),
 	}
 }
 
@@ -39,7 +39,7 @@ func cToGoStrings(arr **C.char, len C.uint) []string {
 }
 
 // Helper to convert a C document** to a go array of document pointers
-func cToGoDocuments( col *C.collection, docs **C.document, length C.uint) []*collection.Document {
+func cToGoDocuments(col *C.collection, docs **C.document, length C.uint) []*collection.Document {
 	if length == 0 {
 		return nil
 	}
@@ -53,19 +53,19 @@ func cToGoDocuments( col *C.collection, docs **C.document, length C.uint) []*col
 
 func cToGoShards(cShards *C.shards) *types.Shards {
 	return &types.Shards{
-		Total: int(cShards.total),
+		Total:      int(cShards.total),
 		Successful: int(cShards.successful),
-		Failed: int(cShards.failed),
+		Failed:     int(cShards.failed),
 	}
 }
 
 func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 	return &types.Meta{
-		Author: C.GoString(cMeta.author),
+		Author:    C.GoString(cMeta.author),
 		CreatedAt: int(cMeta.created_at),
 		UpdatedAt: int(cMeta.updated_at),
-		Updater: C.GoString(cMeta.updater),
-		Active: bool(cMeta.active),
+		Updater:   C.GoString(cMeta.updater),
+		Active:    bool(cMeta.active),
 		DeletedAt: int(cMeta.deleted_at),
 	}
 }

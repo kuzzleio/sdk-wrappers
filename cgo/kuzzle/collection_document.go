@@ -59,6 +59,7 @@ func kuzzle_wrapper_collection_search(c *C.collection, searchFilters *C.search_f
 	res, err := cToGoCollection(c).Search(cToGoSearchFilters(searchFilters), SetQueryOptions(options))
 	return goToCSearchResult(c, res, err)
 }
+
 //export kuzzle_wrapper_collection_m_create_document
 func kuzzle_wrapper_collection_m_create_document(c *C.collection, documents **C.document, docCount C.uint, options *C.query_options) *C.search_result {
 	res, err := cToGoCollection(c).MCreateDocument(cToGoDocuments(c, documents, docCount), SetQueryOptions(options))

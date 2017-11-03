@@ -2,17 +2,17 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	
+
 	#include <stdlib.h>
 	#include "kuzzle.h"
 	#include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"encoding/json"
 )
 
 // Allocates memory
@@ -381,27 +381,27 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 func goToCJsonResult(goRes interface{}, err error) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 
-  if err != nil {
-    Set_json_result_error(result, err)
-    return result
-  }
+	if err != nil {
+		Set_json_result_error(result, err)
+		return result
+	}
 
 	r, _ := json.Marshal(goRes)
 
-  buffer := C.CString(string(r))
+	buffer := C.CString(string(r))
 
-  result.result = C.json_tokener_parse(buffer)
+	result.result = C.json_tokener_parse(buffer)
 
 	C.free(unsafe.Pointer(buffer))
-  return result
+	return result
 }
 
 func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	result := (*C.json_array_result)(C.calloc(1, C.sizeof_json_array_result))
 
 	if err != nil {
-	  Set_json_array_result_error(result, err)
-	  return result
+		Set_json_array_result_error(result, err)
+		return result
 	}
 
 	result.length = C.uint(len(goRes))

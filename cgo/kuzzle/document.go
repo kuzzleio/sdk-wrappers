@@ -7,8 +7,8 @@ package main
 */
 import "C"
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_new_document
