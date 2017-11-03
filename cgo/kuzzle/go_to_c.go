@@ -426,7 +426,6 @@ func goToCJson(data interface{}) (*C.json_object, error) {
 	return j, nil
 }
 
-
 func goToCJsonResult(goRes interface{}, err error) *C.json_result {
 	result := (*C.json_result)(C.calloc(1, C.sizeof_json_result))
 
@@ -453,14 +452,17 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	}
 
 	result.length = C.uint(len(goRes))
-	result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
-	cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+	if goRes != nil {
+		result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
+		cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-	for i, res := range(goRes) {
-		r, _ := json.Marshal(res)
-		buffer := C.CString(string(r))
-		cArray[i] = C.json_tokener_parse(buffer)
-		C.free(unsafe.Pointer(buffer))
+		for i, res := range(goRes) {
+			cArray[i], err = goToCJson(res)
+			if err != nil {
+				Set_json_array_result_error(result, err)
+				return result
+			}
+		}
 	}
 
 	return result
