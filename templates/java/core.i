@@ -3,13 +3,14 @@
 %rename(queueTTL) queue_ttl;
 %rename(Options) options;
 %rename(Kuzzle) kuzzle;
-%rename(JsonObject) _json_object;
+%rename(JsonObject) json_object;
 %rename(JsonResult) json_result;
 %rename(LoginResult) login_result;
 %rename(BoolResult) bool_result;
 %rename(Statistics) statistics;
 %rename(AllStatisticsResult) all_statistics_result;
 
+%include "typemap.i"
 %include "../../kcore.i"
 
 %pragma(java) jniclasscode=%{
@@ -23,59 +24,6 @@
   }
 %}
 
-%ignore A_::b; // We will wrap this another way
-%typemap(javacode) A %{
-  public B[] getB() {
-    B[] ret = new B[getNumBs()];
-    for (int i = 0; i < ret.length; ++i) {
-      ret[i] = getB(i);
-    }
-    return ret;
-  }
-%}
-
-// Or %include etc.
-%inline %{
-typedef struct B_ {
- /* something */
-} B;
-
-typedef struct A_ {
-    int numBs; /* The count of Bs in the array bellow */
-    B *b;
-} A;
-%}
-
-%javamethodmodifiers A_::getB(size_t pos) "private";
-%extend A_ {
-  // This defaults to non-owning, which is exactly what we want
-  B *getB(size_t pos) {
-    return $self->b + pos;
-  }
-}
-
-
-
-%ignore all_statistics_result::result;
-%typemap(javacode) all_statistics_result %{
-  public void test() {}
-
-  public statistics[] getResult() {
-    statistics[] result = new statistics[42];
-    for (int i = 0; i < result.length; ++i) {
-      result[i] = getResult(i);
-    }
-    return result;
-  }
-%}
-
-%javamethodmodifiers all_statistics_result::getResult(size_t pos) "private";
-%extend all_statistics_result {
-    statistics *getResult(size_t pos) {
-        return $self->result+pos;
-    }
-}
-
 %extend options {
     options() {
         options *o = kuzzle_wrapper_new_options();
@@ -87,62 +35,64 @@ typedef struct A_ {
     }
 }
 
-%ignore _json_object::ptr;
-%extend _json_object {
-    _json_object() {
-        _json_object* j = malloc(sizeof(*j));
-        kuzzle_wrapper_json_new(&j->ptr);
+struct json_object { };
+
+%ignore json_object::ptr;
+%extend json_object {
+    json_object() {
+        json_object* j = malloc(sizeof(j));
+        kuzzle_wrapper_json_new(&j);
         return j;
     }
 
-    ~_json_object() {
-        free($self->ptr);
+    ~json_object() {
+        free($self);
         free($self);
     }
 
-    _json_object* put(char* key, char* content) {
-        kuzzle_wrapper_json_put($self->ptr, key, content, 0);
+    json_object* put(char* key, char* content) {
+        kuzzle_wrapper_json_put($self, key, content, 0);
         return $self;
     }
 
-    _json_object* put(char* key, int content) {
-        kuzzle_wrapper_json_put($self->ptr, key, &content, 1);
+    json_object* put(char* key, int content) {
+        kuzzle_wrapper_json_put($self, key, &content, 1);
         return $self;
     }
 
-    _json_object* put(char* key, double content) {
-        kuzzle_wrapper_json_put($self->ptr, key, &content, 2);
+    json_object* put(char* key, double content) {
+        kuzzle_wrapper_json_put($self, key, &content, 2);
         return $self;
     }
 
-    _json_object* put(char* key, bool content) {
-        kuzzle_wrapper_json_put($self->ptr, key, &content, 3);
+    json_object* put(char* key, bool content) {
+        kuzzle_wrapper_json_put($self, key, &content, 3);
         return $self;
     }
 
-    _json_object* put(char* key, json_object* content) {
-        kuzzle_wrapper_json_put($self->ptr, key, content, 4);
+    json_object* put(char* key, json_object* content) {
+        kuzzle_wrapper_json_put($self, key, content, 4);
         return $self;
     }
 
     char* getString(char* key) {
-        return kuzzle_wrapper_json_get_string($self->ptr, key);
+        return kuzzle_wrapper_json_get_string($self, key);
     }
 
     int getInt(char* key) {
-        return kuzzle_wrapper_json_get_int($self->ptr, key);
+        return kuzzle_wrapper_json_get_int($self, key);
     }
 
     double getDouble(char* key) {
-        return kuzzle_wrapper_json_get_double($self->ptr, key);
+        return kuzzle_wrapper_json_get_double($self, key);
     }
 
     bool getBoolean(char* key) {
-        return kuzzle_wrapper_json_get_bool($self->ptr, key);
+        return kuzzle_wrapper_json_get_bool($self, key);
     }
 
-    _json_object getJsonObject(char* key) {
-        return kuzzle_wrapper_json_get_json_object($self->ptr, key);
+    json_object* getJsonObject(char* key) {
+        return kuzzle_wrapper_json_get_json_object($self, key);
     }
 }
 
@@ -187,10 +137,10 @@ typedef struct A_ {
 
     // createMyCredentials
     json_result* createMyCredentials(char* strategy, _json_object* credentials, query_options* options) {
-        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials->ptr, options);
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, options);
     }
     json_result* createMyCredentials(char* strategy, _json_object* credentials) {
-        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials->ptr, NULL);
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, NULL);
     }
 
     // deleteMyCredentials
@@ -211,26 +161,26 @@ typedef struct A_ {
 
     // updateMyCredentials
     json_result* updateMyCredentials(char *strategy, _json_object* credentials, query_options *options) {
-        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, options);
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, options);
     }
     json_result* updateMyCredentials(char *strategy, _json_object* credentials) {
-        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials->ptr, NULL);
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, NULL);
     }
 
     // validateMyCredentials
     bool_result* validateMyCredentials(char *strategy, _json_object* credentials, query_options* options) {
-        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, options);
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, options);
     }
     bool_result* validateMyCredentials(char *strategy, _json_object* credentials) {
-        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials->ptr, NULL);
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, NULL);
     }
 
     // login
     login_result* login(char* strategy, _json_object* credentials, int expires_in) {
-        return kuzzle_wrapper_login($self, strategy, credentials->ptr, &expires_in);
+        return kuzzle_wrapper_login($self, strategy, credentials, &expires_in);
     }
     login_result* login(char* strategy, _json_object* credentials) {
-        return kuzzle_wrapper_login($self, strategy, credentials->ptr, NULL);
+        return kuzzle_wrapper_login($self, strategy, credentials, NULL);
     }
 
     // getAllStatistics

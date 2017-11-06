@@ -285,7 +285,8 @@ typedef struct {
 } statistics_result;
 
 typedef struct {
-    statistics* result;
+    statistics* res;
+    int res_size;
     int status;
     char *error;
     char *stack;

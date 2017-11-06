@@ -136,10 +136,9 @@ func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool 
 }
 
 //export kuzzle_wrapper_json_get_json_object
-func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) C._json_object {
+func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) *C.json_object {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
 	return value
 }
-
