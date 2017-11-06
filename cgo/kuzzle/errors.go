@@ -98,6 +98,34 @@ func Set_json_array_result_error(s *C.json_array_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+func Set_profile_result_error(s *C.profile_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_role_result_error(s *C.role_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_search_profiles_result_error(s *C.search_profiles_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_search_roles_result_error(s *C.search_roles_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_user_result_error(s *C.user_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_profiles_result_error(s *C.profiles_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_user_rights_error(s *C.user_rights_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 func setErr(status *C.int, error *C.char, stack *C.char, err error) {
 	kuzzleError := err.(*types.KuzzleError)
 	*status = C.int(kuzzleError.Status)

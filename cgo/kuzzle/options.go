@@ -117,7 +117,7 @@ func SetRoomOptions(options *C.room_options) (opts types.RoomOptions) {
 
 	opts.SetScope(C.GoString(options.scope))
 	opts.SetState(C.GoString(options.state))
-	opts.SetUser(C.GoString(options.user))
+	opts.SetUsers(C.GoString(options.user))
 
 	opts.SetSubscribeToSelf(options.subscribe_to_self == 1)
 

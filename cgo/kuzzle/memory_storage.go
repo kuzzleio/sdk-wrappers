@@ -1134,10 +1134,10 @@ func kuzzle_wrapper_ms_zrange(k *C.kuzzle, key *C.char, start C.long, stop C.lon
     int(stop),
     SetQueryOptions(options))
 
-  var converted []types.MSSortedSet
+  var converted []interface{}
 
   if res != nil {
-    converted = make([]types.MSSortedSet, len(res), len(res))
+    converted = make([]interface{}, len(res), len(res))
 
     for i, val := range res {
       converted[i] = *val
@@ -1166,10 +1166,10 @@ func kuzzle_wrapper_ms_zrangebyscore(k *C.kuzzle, key *C.char, min C.double, max
     float64(max),
     SetQueryOptions(options))
 
-  var converted []types.MSSortedSet
+  var converted []interface{}
 
   if res != nil {
-    converted = make([]types.MSSortedSet, len(res), len(res))
+    converted = make([]interface{}, len(res), len(res))
 
     for i, val := range res {
       converted[i] = *val
@@ -1240,10 +1240,10 @@ func kuzzle_wrapper_ms_zrevrange(k *C.kuzzle, key *C.char, start C.long, stop C.
     int(stop),
     SetQueryOptions(options))
 
-  var converted []types.MSSortedSet
+  var converted []interface{}
 
   if res != nil {
-    converted = make([]types.MSSortedSet, len(res), len(res))
+    converted = make([]interface{}, len(res), len(res))
 
     for i, val := range res {
       converted[i] = *val
@@ -1272,10 +1272,10 @@ func kuzzle_wrapper_ms_zrevrangebyscore(k *C.kuzzle, key *C.char, min C.double, 
     float64(max),
     SetQueryOptions(options))
 
-  var converted []types.MSSortedSet
+  var converted []interface{}
 
   if res != nil {
-    converted = make([]types.MSSortedSet, len(res), len(res))
+    converted = make([]interface{}, len(res), len(res))
 
     for i, val := range res {
       converted[i] = *val
