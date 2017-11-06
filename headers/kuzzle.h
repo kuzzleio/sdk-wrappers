@@ -137,14 +137,50 @@ typedef struct {
     unsigned long long deleted_at;
 } meta;
 
+/* === Security === */
+
+typedef json_object controllers;
+
+typedef struct {
+    char *index;
+    char **collections;
+    int collections_length;
+} policy_restriction;
+
+typedef struct {
+    char *role_id;
+    policy_restriction **restricted_to;
+    int restricted_to_length;
+} policy;
+
+typedef struct {
+    char *id;
+    policy **policies;
+    int policies_length;
+    kuzzle *kuzzle;
+} profile;
+
+typedef struct {
+    char *id;
+    json_object *controllers;
+    kuzzle *kuzzle;
+} role;
+
 //kuzzle user
 typedef struct {
     char *id;
-    json_object* source;
-    meta* meta;
-    char **strategies;
-    unsigned long strategies_length;
+    json_object *content;
+    char **profile_ids;
+    uint profile_ids_length;
+    kuzzle *kuzzle;
 } user;
+
+// user content passed to user constructor
+typedef struct {
+    json_object *content;
+    char **profile_ids;
+    uint profile_ids_length;
+} user_data;
 
 /* === Dedicated response structures === */
 
@@ -181,11 +217,55 @@ typedef struct {
 } document_result;
 
 typedef struct {
-    char *result;
+    profile *profile;
     int status;
     char *error;
     char *stack;
-} string_result;
+} profile_result;
+
+typedef struct {
+    profile **profiles;
+    uint profiles_length;
+    int status;
+    char *error;
+    char *stack;
+} profiles_result;
+
+typedef struct {
+    role *role;
+    int status;
+    char *error;
+    char *stack;
+} role_result;
+
+typedef struct {
+    char *controller;
+    char *action;
+    char *index;
+    char *collection;
+    char *value;
+} user_right;
+
+typedef struct {
+    user_right **user_rights;
+    uint user_rights_length;
+    int status;
+    char *error;
+    char *stack;
+} user_rights_result;
+
+typedef struct {
+    user *user;
+    int status;
+    char *error;
+    char *stack;
+} user_result;
+
+enum {
+    ALLOWED=0,
+    CONDITIONNAL=1,
+    DENIED=2
+} is_action_allowed;
 
 //statistics
 typedef struct {
@@ -263,6 +343,14 @@ typedef struct {
     char *stack;
 } double_result;
 
+// any string result
+typedef struct {
+    char *result;
+    int status;
+    char *error;
+    char *stack;
+} string_result;
+
 //any array of strings result
 typedef struct {
     char **result;
@@ -290,6 +378,19 @@ typedef struct {
     uint total;
     char *scrollId;
 } document_search;
+
+typedef struct {
+    profile **hits;
+    int length;
+    int total;
+    char *scrollId;
+} profile_search;
+
+typedef struct {
+    role** hits;
+    int length;
+    int total;
+} role_search;
 
 //any delete* function
 typedef struct {
@@ -327,14 +428,25 @@ typedef struct {
 } specification_result;
 
 typedef struct {
-    char *request_id;
     document_search *result;
-    char *room_id;
-    char *channel;
     int status;
     char *error;
     char *stack;
 } search_result;
+
+typedef struct {
+    profile_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_profiles_result;
+
+typedef struct {
+    role_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_roles_result;
 
 typedef struct {
     specification_entry** hits;
@@ -368,7 +480,7 @@ extern char* kuzzle_wrapper_connect(kuzzle*);
 extern offline_queue* kuzzle_wrapper_get_offline_queue(kuzzle*);
 extern char* kuzzle_wrapper_get_jwt(kuzzle*);
 extern token_validity* kuzzle_wrapper_check_token(kuzzle*, char*);
-extern ack_result* kuzzle_wrapper_create_index(kuzzle*, char*, query_options*);
+extern bool_result* kuzzle_wrapper_create_index(kuzzle*, char*, query_options*);
 extern string_result* kuzzle_wrapper_login(kuzzle*, char*, json_object*, int*);
 extern json_result* kuzzle_wrapper_create_my_credentials(kuzzle*, char*, json_object*, query_options*);
 extern void kuzzle_wrapper_disconnect(kuzzle*);
@@ -387,9 +499,9 @@ extern shards_result* kuzzle_wrapper_refresh_index(kuzzle*, char*, query_options
 extern bool_result* kuzzle_wrapper_set_auto_refresh(kuzzle*, char*, bool, query_options*);
 extern int kuzzle_wrapper_set_default_index(kuzzle*, char*);
 extern void kuzzle_wrapper_unset_jwt(kuzzle*);
-extern json_result* kuzzle_wrapper_update_self(kuzzle*, json_object*, query_options*);
+extern json_result* kuzzle_wrapper_update_self(kuzzle*, user_data*, query_options*);
 extern bool_result* kuzzle_wrapper_validate_my_credentials(kuzzle*, char*, json_object*, query_options*);
-extern user* kuzzle_wrapper_who_am_i(kuzzle*);
+extern user_result* kuzzle_wrapper_who_am_i(kuzzle*);
 extern kuzzle_response* kuzzle_wrapper_query(kuzzle*, kuzzle_request*, query_options*);
 extern void kuzzle_wrapper_set_headers(kuzzle*, json_object*, unsigned);
 extern json_object* kuzzle_wrapper_get_headers(kuzzle*);
@@ -399,7 +511,7 @@ extern void kuzzle_wrapper_replay_queue(kuzzle*);
 extern void kuzzle_wrapper_set_jwt(kuzzle*, char*);
 extern void kuzzle_wrapper_start_queuing(kuzzle*);
 extern void kuzzle_wrapper_stop_queuing(kuzzle*);
-extern ack_result* kuzzle_wrapper_delete_my_credentials(kuzzle*, char*, query_options*);
+extern bool_result* kuzzle_wrapper_delete_my_credentials(kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_update_my_credentials(kuzzle*, char*, json_object*, query_options*);
 
 //Options
@@ -419,10 +531,10 @@ extern void unregisterKuzzle(kuzzle*);
 
 //Collection
 extern collection* kuzzle_wrapper_new_collection(kuzzle*, char*, char*);
-extern ack_result* kuzzle_wrapper_collection_create(collection*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_create(collection*, query_options*);
 extern bool_result* kuzzle_wrapper_collection_publish_message(collection*, json_object*, query_options*);
 extern void kuzzle_wrapper_collection_set_headers(collection*, json_object*, uint);
-extern ack_result* kuzzle_wrapper_collection_truncate(collection*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_truncate(collection*, query_options*);
 
 //Collection Document
 extern int_result* kuzzle_wrapper_collection_count(collection*, search_filters*, query_options*);
@@ -449,11 +561,46 @@ extern void kuzzle_wrapper_mapping_set(mapping*, json_object*);
 extern void kuzzle_wrapper_mapping_set_headers(mapping*, json_object*, uint);
 
 //Collection Specification
-extern ack_result* kuzzle_wrapper_collection_delete_specifications(collection*, query_options*);
+extern bool_result* kuzzle_wrapper_collection_delete_specifications(collection*, query_options*);
 extern specification_result* kuzzle_wrapper_collection_get_specifications(collection*, query_options*);
 extern specification_search_result* kuzzle_wrapper_collection_scroll_specifications(collection*, char*, query_options*);
 extern specification_search_result* kuzzle_wrapper_collection_search_specifications(collection*, search_filters*, query_options*);
 extern specification_result* kuzzle_wrapper_collection_update_specifications(collection*, specification*, query_options*);
 extern bool_result* kuzzle_wrapper_collection_validate_specifications(collection*, specification*, query_options*);
+
+//Security
+//  profile
+extern profile* kuzzle_wrapper_security_new_profile(kuzzle* kuzzle, char* profile_id, policy** policies);
+extern void kuzzle_wrapper_security_destroy_profile(profile* profile);
+extern profile_result* kuzzle_wrapper_security_fetch_profile(kuzzle* kuzzle, char* profile_id, query_options* options);
+extern search_profiles_result* kuzzle_wrapper_security_scroll_profiles(kuzzle* kuzzle, char* scrolle_id, query_options* options);
+extern search_profiles_result* kuzzle_wrapper_security_search_profiles(kuzzle* kuzzle, search_filters* filters, query_options* options);
+extern profile* kuzzle_wrapper_security_profile_add_policy(profile* profile, policy* policy);
+extern string_result* kuzzle_wrapper_security_profile_delete(profile* profile, query_options* options);
+extern profile_result* kuzzle_wrapper_security_profile_save(profile* profile, query_options* options);
+
+//  role
+extern role* kuzzle_wrapper_security_new_role(kuzzle* kuzzle, char* role_id, controllers* controllers);
+extern void kuzzle_wrapper_security_destroy_role(role* role);
+extern role_result* kuzzle_wrapper_security_fetch_role(kuzzle* kuzzle, char* role_id, query_options* options);
+extern search_roles_result* kuzzle_wrapper_security_search_roles(kuzzle* kuzzle, search_filters* filters, query_options* options);
+extern string_result* kuzzle_wrapper_security_role_delete(role* role, query_options* options);
+extern role_result* kuzzle_wrapper_security_role_save(role* role, query_options* options);
+
+//  user
+extern user* kuzzle_wrapper_security_new_user(kuzzle* kuzzle, char* user_id, user_data* user_data);
+extern void kuzzle_wrapper_security_destroy_user(user* user);
+extern user_result* kuzzle_wrapper_security_user_create(user* user, query_options* options);
+extern json_result* kuzzle_wrapper_security_user_create_credentials(user* user, char* strategy, json_object* credentials, query_options* options);
+extern user_result* kuzzle_wrapper_security_user_create_with_credentials(user* user, json_object* credentials, query_options* options);
+extern string_result* kuzzle_wrapper_security_user_delete(user* user, query_options* options);
+extern bool_result* kuzzle_wrapper_security_user_delete_credentials(user* user, char* strategy, query_options* options);
+extern json_result* kuzzle_wrapper_security_user_get_credentials_info(user* user, char* strategy, query_options* options);
+extern profiles_result* kuzzle_wrapper_security_user_get_profiles(user* user, query_options* options);
+extern user_rights_result* kuzzle_wrapper_security_user_get_rights(user* user, query_options* options);
+extern bool_result* kuzzle_wrapper_security_user_has_credentials(user* user, char* strategy, query_options* options);
+extern user_result* kuzzle_wrapper_security_user_replace(user* user, query_options* options);
+extern json_result* kuzzle_wrapper_security_update_credentials(user* user, char* strategy, json_object* credentials, query_options* options);
+extern unsigned int kuzzle_wrapper_security_is_action_allowed(user_right** rights, unsigned int rights_length, char* controller, char* action, char* index, char* collection);
 
 #endif

@@ -18,9 +18,9 @@ func kuzzle_wrapper_new_collection(k *C.kuzzle, colName *C.char, index *C.char) 
 }
 
 //export kuzzle_wrapper_collection_create
-func kuzzle_wrapper_collection_create(c *C.collection, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_collection_create(c *C.collection, options *C.query_options) *C.bool_result {
 	res, err := cToGoCollection(c).Create(SetQueryOptions(options))
-	return goToCAckResult(res, err)
+	return goToCBoolResult(res, err)
 }
 
 //export kuzzle_wrapper_collection_publish_message
@@ -40,7 +40,7 @@ func kuzzle_wrapper_collection_set_headers(c *C.collection, content *C.json_obje
 }
 
 //export kuzzle_wrapper_collection_truncate
-func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_collection_truncate(c *C.collection, options *C.query_options) *C.bool_result {
 	res, err := cToGoCollection(c).Truncate(SetQueryOptions(options))
-	return goToCAckResult(res, err)
+	return goToCBoolResult(res, err)
 }
