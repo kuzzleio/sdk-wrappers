@@ -12,8 +12,6 @@ package main
 import "C"
 import (
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_set_jwt
@@ -82,12 +80,12 @@ func kuzzle_wrapper_create_my_credentials(k *C.kuzzle, strategy *C.char, credent
 }
 
 //export kuzzle_wrapper_delete_my_credentials
-func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_delete_my_credentials(k *C.kuzzle, strategy *C.char, options *C.query_options) *C.bool_result {
 	res, err := (*kuzzle.Kuzzle)(k.instance).DeleteMyCredentials(
 		C.GoString(strategy),
 		SetQueryOptions(options))
 
-	return goToCAckResult(res, err)
+	return goToCBoolResult(res, err)
 }
 
 //export kuzzle_wrapper_get_my_credentials
@@ -127,43 +125,22 @@ func kuzzle_wrapper_get_my_rights(k *C.kuzzle, options *C.query_options) *C.json
 }
 
 //export kuzzle_wrapper_update_self
-func kuzzle_wrapper_update_self(k *C.kuzzle, credentials *C.json_object, options *C.query_options) *C.json_result {
+func kuzzle_wrapper_update_self(k *C.kuzzle, data *C.user_data, options *C.query_options) *C.json_result {
+	userData, err := cToGoUserData(data)
+	if err != nil {
+		return goToCJsonResult(nil, err)
+	}
+
 	res, err := (*kuzzle.Kuzzle)(k.instance).UpdateSelf(
-		JsonCConvert(credentials).(map[string]interface{}),
+		userData,
 		SetQueryOptions(options))
 
 	return goToCJsonResult(res, err)
 }
 
 //export kuzzle_wrapper_who_am_i
-func kuzzle_wrapper_who_am_i(k *C.kuzzle) *C.user {
+func kuzzle_wrapper_who_am_i(k *C.kuzzle) *C.user_result {
 	res, err := (*kuzzle.Kuzzle)(k.instance).WhoAmI()
-	if err != nil {
-		if err.(*types.KuzzleError).Status < 500 {
-			C.set_errno(C.EINVAL)
-		} else {
-			C.set_errno(C.EREMOTEIO)
-		}
 
-		return nil
-	}
-
-	user := (*C.user)(C.calloc(1, C.sizeof_user))
-	user.meta = goToCMeta(res.Meta)
-
-	buffer := C.CString(string(res.Source))
-	user.source = C.json_tokener_parse(buffer)
-	C.free(unsafe.Pointer(buffer))
-
-	user.strategies_length = C.ulong(len(res.Strategies))
-	user.strategies = (**C.char)(C.calloc(C.size_t(user.strategies_length), C.sizeof_char_ptr))
-	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(user.strategies))[:len(res.Strategies):len(res.Strategies)]
-
-	for i, substring := range res.Strategies {
-		cArray[i] = C.CString(substring)
-	}
-
-	user.id = C.CString(res.Id)
-
-	return user
+	return goToCUserResult(k, res, err)
 }
