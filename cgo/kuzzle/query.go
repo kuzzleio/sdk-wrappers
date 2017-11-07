@@ -33,7 +33,7 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 		ExpiresIn:  int(request.expires_in),
 		Scope:      C.GoString(request.scope),
 		State:      C.GoString(request.state),
-		User:       C.GoString(request.user),
+		Users:      C.GoString(request.user),
 		Start:      int(request.start),
 		Stop:       int(request.stop),
 		End:        int(request.end),

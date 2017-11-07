@@ -34,12 +34,12 @@ func kuzzle_wrapper_list_indexes(k *C.kuzzle, options *C.query_options) *C.strin
 }
 
 //export kuzzle_wrapper_create_index
-func kuzzle_wrapper_create_index(k *C.kuzzle, index *C.char, options *C.query_options) *C.ack_result {
+func kuzzle_wrapper_create_index(k *C.kuzzle, index *C.char, options *C.query_options) *C.bool_result {
   res, err := (*kuzzle.Kuzzle)(k.instance).CreateIndex(
     C.GoString(index), 
     SetQueryOptions(options))
 
-  return goToCAckResult(res, err)
+  return goToCBoolResult(res, err)
 }
 
 //export kuzzle_wrapper_refresh_index
