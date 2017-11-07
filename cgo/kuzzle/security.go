@@ -103,7 +103,7 @@ func kuzzle_wrapper_security_profile_delete(p *C.profile, o *C.query_options) *C
 
 	res, err := profile.Delete(options)
 
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_security_profile_save
@@ -176,7 +176,7 @@ func kuzzle_wrapper_security_role_delete(r *C.role, o *C.query_options) *C.strin
 	}
 	res, err := role.Delete(opts)
 
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_security_role_save
@@ -271,7 +271,7 @@ func kuzzle_wrapper_security_user_create_with_credentials(u *C.user, ccredential
 //export kuzzle_wrapper_security_user_delete
 func kuzzle_wrapper_security_user_delete(u *C.user, o *C.query_options) *C.string_result {
 	res, err := cToGoUser(u).Delete(SetQueryOptions(o))
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_security_user_delete_credentials
