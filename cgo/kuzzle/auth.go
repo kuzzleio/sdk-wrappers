@@ -39,7 +39,7 @@ func kuzzle_wrapper_login(k *C.kuzzle, strategy *C.char, credentials *C.json_obj
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).Login(C.GoString(strategy), JsonCConvert(credentials).(map[string]interface{}), &expire)
 
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 //export kuzzle_wrapper_logout

@@ -183,7 +183,7 @@ func goToCPolicyRestriction(restriction *types.PolicyRestriction) *C.policy_rest
 }
 
 // Allocates memory
-func goToCStringResult(goRes string, err error) *C.string_result {
+func goToCStringResult(goRes *string, err error) *C.string_result {
 	result := (*C.string_result)(C.calloc(1, C.sizeof_string_result))
 
 	if err != nil {
@@ -191,7 +191,9 @@ func goToCStringResult(goRes string, err error) *C.string_result {
 		return result
 	}
 
-	result.result = C.CString(goRes)
+	if goRes != nil {
+		result.result = C.CString(*goRes)
+	}
 
 	return result
 }
