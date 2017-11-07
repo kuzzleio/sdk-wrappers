@@ -9,6 +9,7 @@
 %rename(BoolResult) bool_result;
 %rename(Statistics) statistics;
 %rename(AllStatisticsResult) all_statistics_result;
+%rename(StatisticsResult) statistics_result;
 
 %include "typemap.i"
 %include "../../kcore.i"
@@ -136,10 +137,10 @@ struct json_object { };
     }
 
     // createMyCredentials
-    json_result* createMyCredentials(char* strategy, _json_object* credentials, query_options* options) {
+    json_result* createMyCredentials(char* strategy, json_object* credentials, query_options* options) {
         return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, options);
     }
-    json_result* createMyCredentials(char* strategy, _json_object* credentials) {
+    json_result* createMyCredentials(char* strategy, json_object* credentials) {
         return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, NULL);
     }
 
@@ -160,26 +161,26 @@ struct json_object { };
     }
 
     // updateMyCredentials
-    json_result* updateMyCredentials(char *strategy, _json_object* credentials, query_options *options) {
+    json_result* updateMyCredentials(char *strategy, json_object* credentials, query_options *options) {
         return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, options);
     }
-    json_result* updateMyCredentials(char *strategy, _json_object* credentials) {
+    json_result* updateMyCredentials(char *strategy, json_object* credentials) {
         return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, NULL);
     }
 
     // validateMyCredentials
-    bool_result* validateMyCredentials(char *strategy, _json_object* credentials, query_options* options) {
+    bool_result* validateMyCredentials(char *strategy, json_object* credentials, query_options* options) {
         return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, options);
     }
-    bool_result* validateMyCredentials(char *strategy, _json_object* credentials) {
+    bool_result* validateMyCredentials(char *strategy, json_object* credentials) {
         return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, NULL);
     }
 
     // login
-    login_result* login(char* strategy, _json_object* credentials, int expires_in) {
+    login_result* login(char* strategy, json_object* credentials, int expires_in) {
         return kuzzle_wrapper_login($self, strategy, credentials, &expires_in);
     }
-    login_result* login(char* strategy, _json_object* credentials) {
+    login_result* login(char* strategy, json_object* credentials) {
         return kuzzle_wrapper_login($self, strategy, credentials, NULL);
     }
 
@@ -189,6 +190,14 @@ struct json_object { };
     }
     all_statistics_result* getAllStatistics() {
         return kuzzle_wrapper_get_all_statistics($self, NULL);
+    }
+
+    // getStatistics
+    statistics_result* getStatistics(unsigned long time, query_options* options) {
+        return kuzzle_wrapper_get_statistics($self, time, options);
+    }
+    statistics_result* getStatistics(unsigned long time) {
+        return kuzzle_wrapper_get_statistics($self, time, NULL);
     }
 
     // getAutoRefresh
@@ -210,5 +219,13 @@ struct json_object { };
     }
     json_result* getMyRights() {
         return kuzzle_wrapper_get_my_rights($self, NULL);
+    }
+
+    // getServerInfo
+    json_result* getServerInfo(query_options* options) {
+        return kuzzle_wrapper_get_server_info($self, options);
+    }
+    json_result* getServerInfo() {
+        return kuzzle_wrapper_get_server_info($self, NULL);
     }
 }

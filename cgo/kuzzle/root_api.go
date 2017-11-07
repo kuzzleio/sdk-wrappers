@@ -89,30 +89,9 @@ func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C
 	return goToCJsonResult(res, err)
 }
 
-//func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C.all_statistics_result {
-//	result := (*C.all_statistics_result)(C.calloc(1, C.sizeof_statistics_result))
-//	opts := SetQueryOptions(options)
-//
-//	stats, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(opts)
-//
-//	if err != nil {
-//		Set_all_statistics_error(result, err)
-//		return result
-//	}
-//
-//	result.result = (**C.statistics)(C.calloc(C.size_t(len(stats)), C.sizeof_statistics_ptr))
-//	statistics := (*[1<<30 - 1]*C.statistics)(unsafe.Pointer(result.result))[:len(stats)]
-//
-//	for i, stat := range stats {
-//		statistics[i] = goToCStatistics(stat, err)
-//	}
-//
-//	return result
-//}
-
 //export kuzzle_wrapper_get_statistics
-func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics {
-	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
+func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics_result {
+	result := (*C.statistics_result)(C.calloc(1, C.sizeof_statistics_result))
 	opts := SetQueryOptions(options)
 
 	t, _ := strconv.ParseInt(C.GoString(C.ctime(&timestamp)), 10, 64)
@@ -120,7 +99,7 @@ func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.q
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetStatistics(&tm, opts)
 
-	result = goToCStatistics(res, err)
+	result.result = goToCStatistics(res, err)
 
 	return result
 }

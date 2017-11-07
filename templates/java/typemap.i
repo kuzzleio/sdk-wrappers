@@ -10,9 +10,6 @@
   }
 %}
 
-%javamethodmodifiers all_statistics_result::getRes_size() "private";
-int getRes_size();
-
 %javamethodmodifiers all_statistics_result::getResult(size_t pos) "private";
 %extend all_statistics_result {
     statistics *getResult(size_t pos) {

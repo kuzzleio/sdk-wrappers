@@ -317,7 +317,7 @@ typedef struct {
 
 //any json result
 typedef struct {
-    _json_object *result;
+    json_object *result;
     int status;
     char *error;
     char *stack;
@@ -503,7 +503,7 @@ extern bool_result* kuzzle_wrapper_get_auto_refresh(kuzzle*, char*, query_option
 extern json_result* kuzzle_wrapper_get_my_credentials(kuzzle*, char*, query_options*);
 extern json_result* kuzzle_wrapper_get_my_rights(kuzzle*, query_options*);
 extern json_result* kuzzle_wrapper_get_server_info(kuzzle*, query_options*);
-extern statistics* kuzzle_wrapper_get_statistics(kuzzle*, time_t, query_options*);
+extern statistics_result* kuzzle_wrapper_get_statistics(kuzzle*, time_t, query_options*);
 extern json_result* kuzzle_wrapper_list_collections(kuzzle*, char*, query_options*);
 extern string_array_result* kuzzle_wrapper_list_indexes(kuzzle*, query_options*);
 extern char* kuzzle_wrapper_logout(kuzzle*);
