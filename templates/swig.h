@@ -1,10 +1,6 @@
 #ifndef SWIG_H_
 #define SWIG_H_
 
-typedef struct {
-    json_object* ptr;
-} _json_object;
-
 //Json
 extern void kuzzle_wrapper_json_put(json_object*, char*, void*, int);
 extern char* kuzzle_wrapper_json_get_string(json_object*, char*);

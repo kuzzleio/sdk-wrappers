@@ -129,10 +129,10 @@ struct json_object { };
     }
 
     // createIndex
-    ack_result* createIndex(char* index, query_options* options) {
+    bool_result* createIndex(char* index, query_options* options) {
         return kuzzle_wrapper_create_index($self, index, options);
     }
-    ack_result* createIndex(char* index) {
+    bool_result* createIndex(char* index) {
         return kuzzle_wrapper_create_index($self, index, NULL);
     }
 
@@ -145,10 +145,10 @@ struct json_object { };
     }
 
     // deleteMyCredentials
-    ack_result* deleteMyCredentials(char* strategy, query_options *options) {
+    bool_result* deleteMyCredentials(char* strategy, query_options *options) {
         return kuzzle_wrapper_delete_my_credentials($self, strategy, options);
     }
-    ack_result* deleteMyCredentials(char* strategy) {
+    bool_result* deleteMyCredentials(char* strategy) {
         return kuzzle_wrapper_delete_my_credentials($self, strategy, NULL);
     }
 
@@ -177,10 +177,10 @@ struct json_object { };
     }
 
     // login
-    login_result* login(char* strategy, json_object* credentials, int expires_in) {
+    string_result* login(char* strategy, json_object* credentials, int expires_in) {
         return kuzzle_wrapper_login($self, strategy, credentials, &expires_in);
     }
-    login_result* login(char* strategy, json_object* credentials) {
+    string_result* login(char* strategy, json_object* credentials) {
         return kuzzle_wrapper_login($self, strategy, credentials, NULL);
     }
 

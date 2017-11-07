@@ -1,5 +1,5 @@
-#ifndef _KUZZLE_H_
-#define _KUZZLE_H_
+#ifndef _KUZZLE_
+#define _KUZZLE_
 
 #include <json-c/json.h>
 #include <time.h>
