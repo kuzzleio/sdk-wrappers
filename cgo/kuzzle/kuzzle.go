@@ -44,7 +44,7 @@ func kuzzle_wrapper_new_kuzzle(k *C.kuzzle, host, protocol *C.char, options *C.o
 	}
 
 	opts := SetOptions(options)
-	
+
 	if C.GoString(protocol) == "websocket" {
 		c = websocket.NewWebSocket(C.GoString(host), opts)
 	}
@@ -133,10 +133,10 @@ func kuzzle_wrapper_get_headers(k *C.kuzzle) *C.json_object {
 	res := (*kuzzle.Kuzzle)(k.instance).GetHeaders()
 	r, _ := json.Marshal(res)
 
-  buffer := C.CString(string(r))
-  defer C.free(unsafe.Pointer(buffer))
-	
-  return C.json_tokener_parse(buffer)
+	buffer := C.CString(string(r))
+	defer C.free(unsafe.Pointer(buffer))
+
+	return C.json_tokener_parse(buffer)
 }
 
 //export kuzzle_wrapper_set_headers

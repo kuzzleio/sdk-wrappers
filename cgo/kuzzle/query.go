@@ -100,4 +100,3 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 
 	return result
 }
-

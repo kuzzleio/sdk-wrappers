@@ -9,10 +9,10 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 // Allocates memory
@@ -473,8 +473,8 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	result := (*C.json_array_result)(C.calloc(1, C.sizeof_json_array_result))
 
 	if err != nil {
-	  Set_json_array_result_error(result, err)
-	  return result
+		Set_json_array_result_error(result, err)
+		return result
 	}
 
 	result.length = C.uint(len(goRes))
@@ -482,7 +482,7 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 		result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
 		cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-		for i, res := range(goRes) {
+		for i, res := range goRes {
 			cArray[i], err = goToCJson(res)
 			if err != nil {
 				Set_json_array_result_error(result, err)
@@ -560,7 +560,6 @@ func goToCUser(k *C.kuzzle, user *security.User) (*C.user, error) {
 		}
 	}
 
-
 	return cuser, nil
 }
 
@@ -620,7 +619,7 @@ func goToCUserRight(right *types.UserRights) *C.user_right {
 
 func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights_result {
 	result := (*C.user_rights_result)(C.calloc(1, C.sizeof_user_rights_result))
-	if (err != nil) {
+	if err != nil {
 		Set_user_rights_error(result, err)
 		return result
 	}
