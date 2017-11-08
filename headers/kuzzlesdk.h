@@ -1,6 +1,10 @@
-#ifndef _STRUCTS_H
-#define _STRUCTS_H
+#ifndef _KUZZLE_H_
+#define _KUZZLE_H_
 
+#include <json-c/json.h>
+#include <time.h>
+#include <errno.h>
+#include <stdbool.h>
 
 typedef struct {
     void *instance;

@@ -17,7 +17,7 @@
 %pragma(java) jniclasscode=%{
   static {
     try {
-        System.loadLibrary("kcore");
+        System.loadLibrary("kuzzle");
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Native code library failed to load. \n" + e);
       System.exit(1);

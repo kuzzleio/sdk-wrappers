@@ -10,7 +10,7 @@ import (
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
-	#include "kuzzle.h"
+	#include "kuzzlesdk.h"
 */
 import "C"
 

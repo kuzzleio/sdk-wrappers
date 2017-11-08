@@ -5,7 +5,7 @@ package main
   #cgo LDFLAGS: -ljson-c
 
   #include <stdlib.h>
-  #include "kuzzle.h"
+  #include "kuzzlesdk.h"
   #include "sdk_wrappers_internal.h"
 */
 import "C"

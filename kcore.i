@@ -3,8 +3,8 @@
 %module kcore
 %{
 #define _Complex
-#include "libgokcore.h"
 #include "kuzzle.h"
+#include "headers/kuzzlesdk.h"
 #include "templates/swig.h"
 
 #include <stdio.h>
@@ -13,5 +13,5 @@
 
 %enddef
 
-%include "headers/structs.h"
-%include "libgokcore.h"
+%include "headers/kuzzlesdk.h"
+%include "kuzzle.h"

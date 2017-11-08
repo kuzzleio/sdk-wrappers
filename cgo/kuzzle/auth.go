@@ -6,7 +6,7 @@ package main
 
   #include <stdlib.h>
   #include <errno.h>
-  #include "kuzzle.h"
+  #include "kuzzlesdk.h"
   #include "sdk_wrappers_internal.h"
 */
 import "C"
