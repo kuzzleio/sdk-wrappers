@@ -48,7 +48,6 @@ struct json_object { };
 
     ~json_object() {
         free($self);
-        free($self);
     }
 
     json_object* put(char* key, char* content) {
