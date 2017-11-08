@@ -8,6 +8,6 @@ extern int kuzzle_wrapper_json_get_int(json_object*, char*);
 extern double kuzzle_wrapper_json_get_double(json_object*, char*);
 extern json_bool kuzzle_wrapper_json_get_bool(json_object*, char*);
 extern json_object* kuzzle_wrapper_json_get_json_object(json_object*, char*);
-extern void kuzzle_wrapper_json_new(json_object**);
+extern void kuzzle_wrapper_json_new(json_object*);
 
 #endif

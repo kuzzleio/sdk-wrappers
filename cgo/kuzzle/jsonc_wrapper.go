@@ -79,8 +79,8 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 }
 
 //export kuzzle_wrapper_json_new
-func kuzzle_wrapper_json_new(jobj **C.json_object) {
-	*jobj = C.json_object_new_object()
+func kuzzle_wrapper_json_new(jobj *C.json_object) {
+	jobj = C.json_object_new_object()
 }
 
 //export kuzzle_wrapper_json_put
@@ -108,7 +108,9 @@ func kuzzle_wrapper_json_get_string(jobj *C.json_object, key *C.char) *C.char {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	return C.json_object_get_string(value)
+	s := C.json_object_get_string(value)
+	C.free(unsafe.Pointer(value))
+	return s
 }
 
 //export kuzzle_wrapper_json_get_int
@@ -116,7 +118,9 @@ func kuzzle_wrapper_json_get_int(jobj *C.json_object, key *C.char) C.int {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	return C.int(C.json_object_get_int64(value))
+	i := C.int(C.json_object_get_int64(value))
+	C.free(unsafe.Pointer(value))
+	return i
 }
 
 //export kuzzle_wrapper_json_get_double
@@ -124,7 +128,9 @@ func kuzzle_wrapper_json_get_double(jobj *C.json_object, key *C.char) C.double {
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	return C.json_object_get_double(value)
+	d := C.json_object_get_double(value)
+	C.free(unsafe.Pointer(value))
+	return d
 }
 
 //export kuzzle_wrapper_json_get_bool
@@ -132,7 +138,9 @@ func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool 
 	value := C.json_object_new_object()
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	return C.json_object_get_boolean(value)
+	b := C.json_object_get_boolean(value)
+	C.free(unsafe.Pointer(value))
+	return b
 }
 
 //export kuzzle_wrapper_json_get_json_object

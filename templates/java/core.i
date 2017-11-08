@@ -13,6 +13,12 @@
 
 %include "typemap.i"
 %include "../../kcore.i"
+//
+//if (strcmp(JSON_C_VERSION, "0.12.99")) {
+//    printf("You version of json-c is not equal to 0.12.99, please ensure to have the right version\n");
+//    exit(1);
+//}
+
 
 %pragma(java) jniclasscode=%{
   static {
@@ -41,8 +47,7 @@ struct json_object { };
 %ignore json_object::ptr;
 %extend json_object {
     json_object() {
-        json_object* j = malloc(sizeof(j));
-        kuzzle_wrapper_json_new(&j);
+        json_object *j = json_object_new_object();
         return j;
     }
 
