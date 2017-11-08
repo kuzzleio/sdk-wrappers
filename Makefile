@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -fPIC -I$(PWD)/headers -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
 LDFLAGS = -L./
-LIBS = -lsdkkuzzle -ljson-c
+LIBS = -lkuzzlesdk -ljson-c
 SRCS = kcore_wrap.c
 OBJS = $(SRCS:.c=.o)
 TARGET = libkcore.so
@@ -10,7 +10,7 @@ GOROOT ?= /usr/local
 GOCC = $(GOROOT)/bin/go
 GOFLAGS = -buildmode=c-shared
 GOSRC = ./cgo/kuzzle/
-GOTARGET = libsdkkuzzle.so
+GOTARGET = libkuzzlesdk.so
 
 SWIG = swig
 
@@ -24,7 +24,7 @@ ifeq ($(wildcard $(GOCC)),)
 	$(error "Unable to find go compiler")
 endif
 	$(GOCC) build -o $(GOTARGET) $(GOFLAGS) $(GOSRC)
-	mv -f libsdkkuzzle.h kuzzle.h
+	mv -f libkuzzlesdk.h kuzzle.h
 
 wrapper: $(OBJS)
 
