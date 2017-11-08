@@ -10,7 +10,6 @@ import "C"
 import (
 	"encoding/json"
 	"unsafe"
-
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/types"

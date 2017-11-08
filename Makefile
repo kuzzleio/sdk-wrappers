@@ -31,7 +31,7 @@ object:
 	gcc -ggdb -shared kcore_wrap.o -o libkcore.so $(LDFLAGS) $(LIBS)
 
 swigjava:
-	$(SWIG) -java -package io.kuzzle.sdk -outdir ./io/kuzzle/sdk -o kcore_wrap.c -I/usr/local/include templates/java/core.i
+	$(SWIG) -Wall -java -package io.kuzzle.sdk -outdir ./io/kuzzle/sdk -o kcore_wrap.c -I/usr/local/include templates/java/core.i
 
 java: 	core swigjava wrapper object
 

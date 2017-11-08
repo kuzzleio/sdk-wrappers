@@ -13,6 +13,5 @@
 
 %enddef
 
-%include "templates/swig.h"
-%include "headers/kuzzle.h"
+%include "headers/structs.h"
 %include "libgokcore.h"
