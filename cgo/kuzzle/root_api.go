@@ -14,6 +14,7 @@ import (
 	"time"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
+	"fmt"
 )
 
 //export kuzzle_wrapper_list_collections
@@ -22,6 +23,7 @@ func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.quer
 		C.GoString(index),
 		SetQueryOptions(options))
 
+		fmt.Printf("%s\n", res)
 	return goToCJsonResult(res, err)
 }
 

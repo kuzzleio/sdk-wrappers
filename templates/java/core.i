@@ -99,6 +99,10 @@ struct json_object { };
     json_object* getJsonObject(char* key) {
         return kuzzle_wrapper_json_get_json_object($self, key);
     }
+
+    json_object* getJsonArray(char* key) {
+        return json_object_new_array();
+    }
 }
 
 %typemap(javaimports) kuzzle "
@@ -231,5 +235,13 @@ struct json_object { };
     }
     json_result* getServerInfo() {
         return kuzzle_wrapper_get_server_info($self, NULL);
+    }
+
+    // listCollections
+    json_result* listCollections(char *index, query_options* options) {
+        return kuzzle_wrapper_list_collections($self, index, options);
+    }
+    json_result* listCollections(char *index) {
+        return kuzzle_wrapper_list_collections($self, index, NULL);
     }
 }
