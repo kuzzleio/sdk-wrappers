@@ -90,6 +90,8 @@ typedef struct {
 //options passed to query()
 typedef struct {
     bool queuable;
+    bool withdist;
+    bool withcoord;
     long from;
     long size;
     char *scroll;
@@ -289,6 +291,15 @@ typedef struct {
     char *stack;
 } token_validity;
 
+// ms.geopos
+typedef struct {
+    double (*result)[2];
+    unsigned length;
+    int status;
+    char *error;
+    char *stack;
+} geopos_result;
+
 /* === Generic response structures === */
 
 // raw Kuzzle response
@@ -334,6 +345,15 @@ typedef struct {
     char *error;
     char *stack;
 } int_result;
+
+//any array of integers result
+typedef struct {
+    long long *result;
+    unsigned length;
+    int status;
+    char *error;
+    char*stack;
+} int_array_result;
 
 //any double result
 typedef struct {
@@ -602,5 +622,123 @@ extern bool_result* kuzzle_wrapper_security_user_has_credentials(user* user, cha
 extern user_result* kuzzle_wrapper_security_user_replace(user* user, query_options* options);
 extern json_result* kuzzle_wrapper_security_update_credentials(user* user, char* strategy, json_object* credentials, query_options* options);
 extern unsigned int kuzzle_wrapper_security_is_action_allowed(user_right** rights, unsigned int rights_length, char* controller, char* action, char* index, char* collection);
+
+//memory storage
+extern int_result* kuzzle_wrapper_ms_append(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitcount(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitop(kuzzle*, char*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_bitpos(kuzzle*, char*, unsigned char, query_options*);
+extern int_result* kuzzle_wrapper_ms_dbsize(kuzzle*, query_options*);
+extern int_result* kuzzle_wrapper_ms_decr(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_decrby(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_del(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_exists(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_expire(kuzzle*, char*, unsigned long, query_options*);
+extern int_result* kuzzle_wrapper_ms_expireat(kuzzle*, char*, unsigned long long, query_options*);
+extern string_result* kuzzle_wrapper_ms_flushdb(kuzzle*, query_options*);
+extern int_result* kuzzle_wrapper_ms_geoadd(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern double_result* kuzzle_wrapper_ms_geodist(kuzzle*, char*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_geohash(kuzzle*, char*, char**, unsigned, query_options*);
+extern geopos_result* kuzzle_wrapper_ms_geopos(kuzzle*, char*, char**, unsigned, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_georadius(kuzzle*, char*, double, double, double, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_georadiusbymember(kuzzle*, char*, char*, double, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_get(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_getbit(kuzzle*, char*, int, query_options*);
+extern string_result* kuzzle_wrapper_ms_getrange(kuzzle*, char*, int, int, query_options*);
+extern string_result* kuzzle_wrapper_ms_getset(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hdel(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_hexists(kuzzle*, char*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_hget(kuzzle*, char*, char*, query_options*);
+extern json_result* kuzzle_wrapper_ms_hgetall(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hincrby(kuzzle*, char*, char*, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_hincrbyfloat(kuzzle*, char*, char*, double, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hkeys(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hlen(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hmget(kuzzle*, char*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_hmset(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern json_result* kuzzle_wrapper_ms_hscan(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_hset(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hsetnx(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_hstrlen(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_hvals(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_incr(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_incrby(kuzzle*, char*, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_incrbyfloat(kuzzle*, char*, double, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_keys(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lindex(kuzzle*, char*, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_linsert(kuzzle*, char*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_llen(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lpop(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_lpush(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_lpushx(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_lrange(kuzzle*, char*, long, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_lrem(kuzzle*, char*, long, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_lset(kuzzle*, char*, long, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_ltrim(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_mget(kuzzle*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_mset(kuzzle*, json_object**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_msetnx(kuzzle*, json_object**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_object(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_persist(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_pexpire(kuzzle*, char*, unsigned long, query_options*);
+extern int_result* kuzzle_wrapper_ms_pexpireat(kuzzle*, char*, unsigned long long, query_options*);
+extern int_result* kuzzle_wrapper_ms_pfadd(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_pfcount(kuzzle*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_pfmerge(kuzzle*, char*, char**, unsigned, query_options*);
+extern string_result* kuzzle_wrapper_ms_ping(kuzzle*, query_options*);
+extern string_result* kuzzle_wrapper_ms_psetex(kuzzle*, char*, char*, unsigned long, query_options*);
+extern int_result* kuzzle_wrapper_ms_pttl(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_randomkey(kuzzle*, query_options*);
+extern string_result* kuzzle_wrapper_ms_rename(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_renamenx(kuzzle*, char*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_rpop(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_rpoplpush(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_rpush(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_rpushx(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_sadd(kuzzle*, char*, char**, unsigned, query_options*);
+extern json_result* kuzzle_wrapper_ms_scan(kuzzle*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_scard(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_sdiff(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_sdiffstore(kuzzle*, char*, char**, unsigned, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_set(kuzzle*, char*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_setex(kuzzle*, char*, char*, unsigned long, query_options*);
+extern int_result* kuzzle_wrapper_ms_setnx(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_sinter(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_sinterstore(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_sismember(kuzzle*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_smembers(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_smove(kuzzle*, char*, char*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_sort(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_spop(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_srandmember(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_srem(kuzzle*, char*, char**, unsigned, query_options*);
+extern json_result* kuzzle_wrapper_ms_sscan(kuzzle*, char*, int, query_options*);
+extern int_result* kuzzle_wrapper_ms_strlen(kuzzle*, char*, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_sunion(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_sunionstore(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_array_result* kuzzle_wrapper_ms_time(kuzzle*, query_options*);
+extern int_result* kuzzle_wrapper_ms_touch(kuzzle*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_ttl(kuzzle*, char*, query_options*);
+extern string_result* kuzzle_wrapper_ms_type(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zadd(kuzzle*, char*, json_object**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zcard(kuzzle*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zcount(kuzzle*, char*, long, long, query_options*);
+extern double_result* kuzzle_wrapper_ms_zincrby(kuzzle*, char*, char*, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zinterstore(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zlexcount(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrange(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_zrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrank(kuzzle*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrem(kuzzle*, char*, char**, unsigned, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebyrank(kuzzle*, char*, long, long, query_options*);
+extern int_result* kuzzle_wrapper_ms_zremrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrevrange(kuzzle*, char*, long, long, query_options*);
+extern string_array_result* kuzzle_wrapper_ms_zrevrangebylex(kuzzle*, char*, char*, char*, query_options*);
+extern json_array_result* kuzzle_wrapper_ms_zrevrangebyscore(kuzzle*, char*, double, double, query_options*);
+extern int_result* kuzzle_wrapper_ms_zrevrank(kuzzle*, char*, char*, query_options*);
+extern json_result* kuzzle_wrapper_ms_zscan(kuzzle*, char*, int, query_options*);
+extern double_result* kuzzle_wrapper_ms_zscore(kuzzle*, char*, char*, query_options*);
 
 #endif

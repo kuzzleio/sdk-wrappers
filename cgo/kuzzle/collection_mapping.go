@@ -6,8 +6,8 @@ package main
 */
 import "C"
 import (
-	"github.com/kuzzleio/sdk-go/types"
 	"encoding/json"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 //export kuzzle_wrapper_new_mapping
@@ -60,4 +60,3 @@ func kuzzle_wrapper_mapping_set_headers(cm *C.mapping, content *C.json_object, r
 
 	return
 }
-

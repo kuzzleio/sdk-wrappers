@@ -4,16 +4,16 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzle.h"
- */
+*/
 import "C"
 import (
 	"encoding/json"
 	"unsafe"
 
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/collection"
-	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/security"
+	"github.com/kuzzleio/sdk-go/types"
 )
 
 func cToGoControllers(c *C.controllers) (*types.Controllers, error) {
@@ -77,10 +77,10 @@ func cToGoRole(crole *C.role) (*security.Role, error) {
 
 func cToGoSearchFilters(searchFilters *C.search_filters) *types.SearchFilters {
 	return &types.SearchFilters{
-		Query: JsonCConvert(searchFilters.query),
-		Sort: JsonCConvert(searchFilters.sort).([]interface{}),
+		Query:        JsonCConvert(searchFilters.query),
+		Sort:         JsonCConvert(searchFilters.sort).([]interface{}),
 		Aggregations: JsonCConvert(searchFilters.aggregations),
-		SearchAfter: JsonCConvert(searchFilters.search_after).([]interface{}),
+		SearchAfter:  JsonCConvert(searchFilters.search_after).([]interface{}),
 	}
 }
 
@@ -114,19 +114,19 @@ func cToGoDocuments(col *C.collection, docs **C.document, length C.uint) []*coll
 
 func cToGoShards(cShards *C.shards) *types.Shards {
 	return &types.Shards{
-		Total: int(cShards.total),
+		Total:      int(cShards.total),
 		Successful: int(cShards.successful),
-		Failed: int(cShards.failed),
+		Failed:     int(cShards.failed),
 	}
 }
 
 func cToGoKuzzleMeta(cMeta *C.meta) *types.Meta {
 	return &types.Meta{
-		Author: C.GoString(cMeta.author),
+		Author:    C.GoString(cMeta.author),
 		CreatedAt: int(cMeta.created_at),
 		UpdatedAt: int(cMeta.updated_at),
-		Updater: C.GoString(cMeta.updater),
-		Active: bool(cMeta.active),
+		Updater:   C.GoString(cMeta.updater),
+		Active:    bool(cMeta.active),
 		DeletedAt: int(cMeta.deleted_at),
 	}
 }
@@ -203,7 +203,7 @@ func cToGoPolicy(p *C.policy) *types.Policy {
 
 func cToGoProfile(p *C.profile) *security.Profile {
 	profile := &security.Profile{
-		Id: C.GoString(p.id),
+		Id:       C.GoString(p.id),
 		Security: (*kuzzle.Kuzzle)(p.kuzzle.instance).Security,
 	}
 
@@ -257,11 +257,10 @@ func cToGoUser(u *C.user) *security.User {
 func cToGoUserRigh(r *C.user_right) *types.UserRights {
 	right := &types.UserRights{
 		Controller: C.GoString(r.controller),
-		Action: C.GoString(r.action),
-		Index: C.GoString(r.index),
-		Value: C.GoString(r.value),
+		Action:     C.GoString(r.action),
+		Index:      C.GoString(r.index),
+		Value:      C.GoString(r.value),
 	}
 
 	return right
 }
-
