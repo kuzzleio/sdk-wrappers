@@ -22,7 +22,7 @@ import (
 )
 
 // map which stores instances to keep references in case the gc passes
-var instances map[interface{}]interface{}
+	var instances map[interface{}]interface{}
 
 // register new instance to the instances map
 func registerKuzzle(instance interface{}) {

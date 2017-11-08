@@ -13,4 +13,5 @@ install:
   - cd -
   - go get -t -v ./...
 script:
+  - wrongfmt=$(gofmt -l .); test -z "$wrongfmt" || printf "File format error:\n$wrongfmt\n" && (exit 1)
   - make core
