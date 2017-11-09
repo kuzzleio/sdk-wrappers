@@ -66,7 +66,7 @@ func kuzzle_wrapper_document_exists(d *C.document, options *C.query_options) *C.
 // export kuzzle_wrapper_document_delete
 func kuzzle_wrapper_document_delete(d *C.document, options *C.query_options) *C.string_result {
 	res, err := cToGoDocument(d._collection, d).Delete(SetQueryOptions(options))
-	return goToCStringResult(res, err)
+	return goToCStringResult(&res, err)
 }
 
 // Allocates memory for result, not document

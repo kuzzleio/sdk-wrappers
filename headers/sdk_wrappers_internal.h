@@ -13,6 +13,9 @@ typedef specification_entry *specification_entry_ptr;
 typedef json_object *json_object_ptr;
 typedef query_object *query_object_ptr;
 
+// used by memory_storage.geopos
+typedef double geopos_arr[2];
+
 static void set_errno(int err) {
   errno = err;
 }

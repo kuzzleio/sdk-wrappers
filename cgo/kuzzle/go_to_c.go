@@ -9,11 +9,11 @@ package main
 */
 import "C"
 import (
+	"encoding/json"
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"encoding/json"
 )
 
 // Allocates memory
@@ -206,13 +206,15 @@ func goToCStringArrayResult(goRes []string, err error) *C.string_array_result {
 		return result
 	}
 
-	result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
-	result.length = C.ulong(len(goRes))
+	if goRes != nil {
+		result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
+		result.length = C.ulong(len(goRes))
 
-	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+		cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-	for i, substring := range goRes {
-		cArray[i] = C.CString(substring)
+		for i, substring := range goRes {
+			cArray[i] = C.CString(substring)
+		}
 	}
 
 	return result
@@ -232,6 +234,29 @@ func goToCIntResult(goRes int, err error) *C.int_result {
 	return result
 }
 
+//Allocates memory
+func goToCIntArrayResult(goRes []int, err error) *C.int_array_result {
+	result := (*C.int_array_result)(C.calloc(1, C.sizeof_int_array_result))
+
+	if err != nil {
+		Set_int_array_result_error(result, err)
+		return result
+	}
+
+	if goRes != nil {
+		result.result = (*C.longlong)(C.calloc(C.size_t(len(goRes)), C.sizeof_longlong))
+		result.length = C.uint(len(goRes))
+
+		cArray := (*[1<<20 - 1]C.longlong)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+
+		for i, num := range goRes {
+			cArray[i] = C.longlong(num)
+		}
+	}
+
+	return result
+}
+
 // Allocates memory
 func goToCDoubleResult(goRes float64, err error) *C.double_result {
 	result := (*C.double_result)(C.calloc(1, C.sizeof_double_result))
@@ -242,20 +267,6 @@ func goToCDoubleResult(goRes float64, err error) *C.double_result {
 	}
 
 	result.result = C.double(goRes)
-
-	return result
-}
-
-// Allocates memory
-func goToCBoolResult(goRes bool, err error) *C.bool_result {
-	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
-
-	if err != nil {
-		Set_bool_result_error(result, err)
-		return result
-	}
-
-	result.result = C.bool(goRes)
 
 	return result
 }
@@ -342,6 +353,20 @@ func goToCRoleSearchResult(k *C.kuzzle, res *security.RoleSearchResult, err erro
 			cArray[i] = goToCRole(k, role)
 		}
 	}
+
+	return result
+}
+
+// Allocates memory
+func goToCBoolResult(goRes bool, err error) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
+	if err != nil {
+		Set_bool_result_error(result, err)
+		return result
+	}
+
+	result.result = C.bool(goRes)
 
 	return result
 }
@@ -536,7 +561,7 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 		result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
 		cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-		for i, res := range(goRes) {
+		for i, res := range goRes {
 			cArray[i], err = goToCJson(res)
 			if err != nil {
 				Set_json_array_result_error(result, err)
@@ -614,7 +639,6 @@ func goToCUser(k *C.kuzzle, user *security.User) (*C.user, error) {
 		}
 	}
 
-
 	return cuser, nil
 }
 
@@ -674,7 +698,7 @@ func goToCUserRight(right *types.UserRights) *C.user_right {
 
 func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights_result {
 	result := (*C.user_rights_result)(C.calloc(1, C.sizeof_user_rights_result))
-	if (err != nil) {
+	if err != nil {
 		Set_user_rights_error(result, err)
 		return result
 	}

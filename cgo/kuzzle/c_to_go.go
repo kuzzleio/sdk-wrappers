@@ -4,15 +4,15 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzle.h"
- */
+*/
 import "C"
 import (
 	"encoding/json"
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
+	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/types"
 	"unsafe"
-	"github.com/kuzzleio/sdk-go/security"
 )
 
 func cToGoControllers(c *C.controllers) (*types.Controllers, error) {
@@ -201,7 +201,7 @@ func cToGoPolicy(p *C.policy) *types.Policy {
 
 func cToGoProfile(p *C.profile) *security.Profile {
 	profile := &security.Profile{
-		Id: C.GoString(p.id),
+		Id:       C.GoString(p.id),
 		Security: (*kuzzle.Kuzzle)(p.kuzzle.instance).Security,
 	}
 
@@ -255,11 +255,10 @@ func cToGoUser(u *C.user) *security.User {
 func cToGoUserRigh(r *C.user_right) *types.UserRights {
 	right := &types.UserRights{
 		Controller: C.GoString(r.controller),
-		Action: C.GoString(r.action),
-		Index: C.GoString(r.index),
-		Value: C.GoString(r.value),
+		Action:     C.GoString(r.action),
+		Index:      C.GoString(r.index),
+		Value:      C.GoString(r.value),
 	}
 
 	return right
 }
-

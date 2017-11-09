@@ -39,7 +39,7 @@ func kuzzle_wrapper_create_index(k *C.kuzzle, index *C.char, options *C.query_op
 		C.GoString(index),
 		SetQueryOptions(options))
 
-  return goToCBoolResult(res, err)
+	return goToCBoolResult(res, err)
 }
 
 //export kuzzle_wrapper_refresh_index
