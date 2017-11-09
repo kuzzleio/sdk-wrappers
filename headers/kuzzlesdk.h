@@ -86,10 +86,11 @@ typedef struct {
     unsigned long length;
 } offline_queue;
 
-
 //options passed to query()
 typedef struct {
     bool queuable;
+    bool withdist;
+    bool withcoord;
     long from;
     long size;
     char *scroll;
@@ -217,6 +218,33 @@ typedef struct {
 } document_result;
 
 typedef struct {
+    char *id;
+    meta *meta;
+    json_object *content;
+    int count;
+} notification_content;
+
+typedef struct {
+    char *request_id;
+    notification_content *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
+    char *protocol;
+    char *scope;
+    char *state;
+    char *user;
+    char *n_type;
+    char *room_id;
+    unsigned long long timestamp;
+    int status;
+    char *error;
+    char *stack;
+} notification_result;
+
+typedef struct {
     profile *profile;
     int status;
     char *error;
@@ -291,6 +319,15 @@ typedef struct {
     char *stack;
 } all_statistics_result;
 
+// ms.geopos
+typedef struct {
+    double (*result)[2];
+    unsigned length;
+    int status;
+    char *error;
+    char *stack;
+} geopos_result;
+
 //check_token
 typedef struct {
     bool valid;
@@ -307,6 +344,11 @@ typedef struct {
 typedef struct {
     char *request_id;
     json_object *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
     char *room_id;
     char *channel;
     int status;
@@ -354,6 +396,15 @@ typedef struct {
     char *error;
     char *stack;
 } double_result;
+
+//any array of integers result
+typedef struct {
+    long long *result;
+    unsigned length;
+    int status;
+    char *error;
+    char*stack;
+} int_array_result;
 
 // any string result
 typedef struct {

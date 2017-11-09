@@ -7,7 +7,7 @@ package main
   #include <stdlib.h>
   #include <string.h>
   #include <json-c/json.h>
-  #include "kuzzle.h"
+  #include "kuzzlesdk.h"
   #include "sdk_wrappers_internal.h"
 
   static void assign_geopos(double (*ptr)[2], int idx, double lon, double lat) {
