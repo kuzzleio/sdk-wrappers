@@ -486,4 +486,17 @@ typedef struct {
     char *stack;
 } mapping_result;
 
+typedef struct  {
+    char* types;
+    char* name;
+} collections_list;
+
+typedef struct {
+    collections_list* res;
+    int collection_list_length;
+    int status;
+    char* error;
+    char* stack;
+} collections_list_result;
+
 #endif

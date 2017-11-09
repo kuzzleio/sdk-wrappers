@@ -10,6 +10,8 @@
 %rename(Statistics) statistics;
 %rename(AllStatisticsResult) all_statistics_result;
 %rename(StatisticsResult) statistics_result;
+%rename(CollectionsList) collections_list;
+%rename(CollectionsListResult) collections_list_result;
 
 %include "typemap.i"
 %include "../../kcore.i"
@@ -98,10 +100,6 @@ struct json_object { };
 
     json_object* getJsonObject(char* key) {
         return kuzzle_wrapper_json_get_json_object($self, key);
-    }
-
-    json_object* getJsonArray(char* key) {
-        return json_object_new_array();
     }
 }
 
@@ -238,10 +236,10 @@ struct json_object { };
     }
 
     // listCollections
-    json_result* listCollections(char *index, query_options* options) {
+    collections_list_result* listCollections(char *index, query_options* options) {
         return kuzzle_wrapper_list_collections($self, index, options);
     }
-    json_result* listCollections(char *index) {
+    collections_list_result* listCollections(char *index) {
         return kuzzle_wrapper_list_collections($self, index, NULL);
     }
 }

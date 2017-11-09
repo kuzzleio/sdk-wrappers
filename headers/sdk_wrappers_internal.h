@@ -10,6 +10,7 @@ typedef role *role_ptr;
 typedef user *user_ptr;
 typedef user_right *user_right_ptr;
 typedef specification_entry *specification_entry_ptr;
+typedef collections_list *collections_list_ptr;
 typedef json_object *json_object_ptr;
 
 static void set_errno(int err) {

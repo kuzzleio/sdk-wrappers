@@ -14,17 +14,15 @@ import (
 	"time"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
-	"fmt"
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.json_result {
+func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.collections_list_result {
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(
 		C.GoString(index),
 		SetQueryOptions(options))
 
-		fmt.Printf("%s\n", res)
-	return goToCJsonResult(res, err)
+	return goToCCollectionListResult(res, err)
 }
 
 //export kuzzle_wrapper_list_indexes

@@ -126,6 +126,10 @@ func Set_user_rights_error(s *C.user_rights_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+func Set_collections_list_error(s *C.collections_list_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 func setErr(status *C.int, error *C.char, stack *C.char, err error) {
 	kuzzleError := err.(*types.KuzzleError)
 	*status = C.int(kuzzleError.Status)

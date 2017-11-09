@@ -105,48 +105,40 @@ func kuzzle_wrapper_json_put(jobj *C.json_object, key *C.char, content unsafe.Po
 
 //export kuzzle_wrapper_json_get_string
 func kuzzle_wrapper_json_get_string(jobj *C.json_object, key *C.char) *C.char {
-	value := C.json_object_new_object()
+	var value *C.json_object
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	s := C.json_object_get_string(value)
-	C.free(unsafe.Pointer(value))
-	return s
+	return C.json_object_get_string(value)
 }
 
 //export kuzzle_wrapper_json_get_int
 func kuzzle_wrapper_json_get_int(jobj *C.json_object, key *C.char) C.int {
-	value := C.json_object_new_object()
+	var value *C.json_object
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	i := C.int(C.json_object_get_int64(value))
-	C.free(unsafe.Pointer(value))
-	return i
+	return C.int(C.json_object_get_int64(value))
 }
 
 //export kuzzle_wrapper_json_get_double
 func kuzzle_wrapper_json_get_double(jobj *C.json_object, key *C.char) C.double {
-	value := C.json_object_new_object()
+	var value *C.json_object
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	d := C.json_object_get_double(value)
-	C.free(unsafe.Pointer(value))
-	return d
+	return C.json_object_get_double(value)
 }
 
 //export kuzzle_wrapper_json_get_bool
 func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool {
-	value := C.json_object_new_object()
+	var value *C.json_object
 	C.json_object_object_get_ex(jobj, key, &value)
 
-	b := C.json_object_get_boolean(value)
-	C.free(unsafe.Pointer(value))
-	return b
+	return C.json_object_get_boolean(value)
 }
 
 //export kuzzle_wrapper_json_get_json_object
 func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) *C.json_object {
-	value := C.json_object_new_object()
-	C.json_object_object_get_ex(jobj, key, &value)
+	var value *C.json_object
 
+	C.json_object_object_get_ex(jobj, key, &value)
 	return value
 }

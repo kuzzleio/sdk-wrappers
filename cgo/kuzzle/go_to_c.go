@@ -448,8 +448,8 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	result := (*C.json_array_result)(C.calloc(1, C.sizeof_json_array_result))
 
 	if err != nil {
-	  Set_json_array_result_error(result, err)
-	  return result
+		Set_json_array_result_error(result, err)
+		return result
 	}
 
 	result.length = C.uint(len(goRes))
@@ -457,7 +457,7 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 		result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
 		cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-		for i, res := range(goRes) {
+		for i, res := range (goRes) {
 			cArray[i], err = goToCJson(res)
 			if err != nil {
 				Set_json_array_result_error(result, err)
@@ -535,7 +535,6 @@ func goToCUser(k *C.kuzzle, user *security.User) (*C.user, error) {
 		}
 	}
 
-
 	return cuser, nil
 }
 
@@ -595,7 +594,7 @@ func goToCUserRight(right *types.UserRights) *C.user_right {
 
 func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights_result {
 	result := (*C.user_rights_result)(C.calloc(1, C.sizeof_user_rights_result))
-	if (err != nil) {
+	if err != nil {
 		Set_user_rights_error(result, err)
 		return result
 	}
@@ -607,6 +606,38 @@ func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights
 
 		for i, right := range rights {
 			carray[i] = goToCUserRight(right)
+		}
+	}
+
+	return result
+}
+
+func goToCCollectionList(collection *types.CollectionsList) *C.collections_list {
+	if collection == nil {
+		return nil
+	}
+
+	ccollection := (*C.collections_list)(C.calloc(1, C.sizeof_collections_list))
+	ccollection.types = C.CString(collection.Type)
+	ccollection.name = C.CString(collection.Name)
+
+	return ccollection
+}
+
+func goToCCollectionListResult(collections []*types.CollectionsList, err error) *C.collections_list_result {
+	result := (*C.collections_list_result)(C.calloc(1, C.sizeof_collections_list_result))
+	if err != nil {
+		Set_collections_list_error(result, err)
+		return result
+	}
+
+	result.collection_list_length = C.int(len(collections))
+	if collections != nil {
+		result.res = (*C.collections_list)(C.calloc(C.size_t(len(collections)), C.sizeof_collections_list_ptr))
+		carray := (*[1<<30 - 1]*C.collections_list)(unsafe.Pointer(result.res))[:len(collections):len(collections)]
+
+		for i, collection := range collections {
+			carray[i] = goToCCollectionList(collection)
 		}
 	}
 
