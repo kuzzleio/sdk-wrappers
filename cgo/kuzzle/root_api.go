@@ -5,12 +5,11 @@ package main
   #cgo LDFLAGS: -ljson-c
 
   #include <stdlib.h>
-  #include "kuzzle.h"
+  #include "kuzzlesdk.h"
   #include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"strconv"
 	"time"
@@ -85,15 +84,31 @@ func kuzzle_wrapper_get_server_info(k *C.kuzzle, options *C.query_options) *C.js
 }
 
 //export kuzzle_wrapper_get_all_statistics
-func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C.json_result {
-	res, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(SetQueryOptions(options))
+func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C.all_statistics_result {
+	result := (*C.all_statistics_result)(C.calloc(1, C.sizeof_statistics_result))
+	opts := SetQueryOptions(options)
 
-	return goToCJsonResult(res, err)
+	stats, err := (*kuzzle.Kuzzle)(k.instance).GetAllStatistics(opts)
+
+	if err != nil {
+		Set_all_statistics_error(result, err)
+		return result
+	}
+
+	result.res = (*C.statistics)(C.calloc(C.size_t(len(stats)), C.sizeof_statistics_ptr))
+	result.res_size = C.int(len(stats) - 1)
+	statistics := (*[1<<30 - 1]*C.statistics)(unsafe.Pointer(result.res))[:len(stats)]
+
+	for i, stat := range stats {
+		statistics[i] = goToCStatistics(stat, err)
+	}
+
+	return result
 }
 
 //export kuzzle_wrapper_get_statistics
-func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics {
-	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
+func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.query_options) *C.statistics_result {
+	result := (*C.statistics_result)(C.calloc(1, C.sizeof_statistics_result))
 	opts := SetQueryOptions(options)
 
 	t, _ := strconv.ParseInt(C.GoString(C.ctime(&timestamp)), 10, 64)
@@ -101,31 +116,7 @@ func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.q
 
 	res, err := (*kuzzle.Kuzzle)(k.instance).GetStatistics(&tm, opts)
 
-	if err != nil {
-		Set_statistics_error(result, err)
-		return result
-	}
-
-	ongoing, _ := json.Marshal(res.OngoingRequests)
-	completedRequests, _ := json.Marshal(res.CompletedRequests)
-	connections, _ := json.Marshal(res.Connections)
-	failedRequests, _ := json.Marshal(res.FailedRequests)
-
-	cOnGoing := C.CString(string(ongoing))
-	cCompleteRequest := C.CString(string(completedRequests))
-	cConnections := C.CString(string(connections))
-	cFailedRequests := C.CString(string(failedRequests))
-
-	result.ongoing_requests = C.json_tokener_parse(cOnGoing)
-	result.completed_requests = C.json_tokener_parse(cCompleteRequest)
-	result.connections = C.json_tokener_parse(cConnections)
-	result.failed_requests = C.json_tokener_parse(cFailedRequests)
-	result.timestamp = C.ulonglong(res.Timestamp)
-
-	C.free(unsafe.Pointer(cOnGoing))
-	C.free(unsafe.Pointer(cCompleteRequest))
-	C.free(unsafe.Pointer(cConnections))
-	C.free(unsafe.Pointer(cFailedRequests))
+	result.result = goToCStatistics(res, err)
 
 	return result
 }

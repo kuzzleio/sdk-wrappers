@@ -3,7 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#cgo LDFLAGS: -ljson-c
-	#include "kuzzle.h"
+	#include "kuzzlesdk.h"
 */
 import "C"
 import "unsafe"
@@ -79,8 +79,8 @@ func JsonCConvert(jobj *C.json_object) interface{} {
 }
 
 //export kuzzle_wrapper_json_new
-func kuzzle_wrapper_json_new(jobj **C.json_object) {
-	*jobj = C.json_object_new_object()
+func kuzzle_wrapper_json_new(jobj *C.json_object) {
+	jobj = C.json_object_new_object()
 }
 
 //export kuzzle_wrapper_json_put
@@ -138,7 +138,7 @@ func kuzzle_wrapper_json_get_bool(jobj *C.json_object, key *C.char) C.json_bool 
 //export kuzzle_wrapper_json_get_json_object
 func kuzzle_wrapper_json_get_json_object(jobj *C.json_object, key *C.char) *C.json_object {
 	var value *C.json_object
-	C.json_object_object_get_ex(jobj, key, &value)
 
+	C.json_object_object_get_ex(jobj, key, &value)
 	return value
 }

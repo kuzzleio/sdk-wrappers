@@ -20,6 +20,8 @@ static void set_errno(int err) {
   errno = err;
 }
 
+typedef statistics* statistics_ptr;
+
 static void call_notification_result(void* f, notification_result* res) {
     ((void(*)(notification_result*))f)(res);
 }

@@ -2,8 +2,8 @@ package main
 
 /*
 	#cgo CFLAGS: -I../../headers
-	#include "kuzzle.h"
-  #include "sdk_wrappers_internal.h"
+	#include "kuzzlesdk.h"
+    #include "sdk_wrappers_internal.h"
 */
 import "C"
 import (

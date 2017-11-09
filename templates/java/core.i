@@ -4,13 +4,26 @@
 %rename(Options) options;
 %rename(Kuzzle) kuzzle;
 %rename(JsonObject) json_object;
+%rename(JsonResult) json_result;
+%rename(LoginResult) login_result;
+%rename(BoolResult) bool_result;
+%rename(Statistics) statistics;
+%rename(AllStatisticsResult) all_statistics_result;
+%rename(StatisticsResult) statistics_result;
 
+%include "typemap.i"
 %include "../../kcore.i"
+//
+//if (strcmp(JSON_C_VERSION, "0.12.99")) {
+//    printf("You version of json-c is not equal to 0.12.99, please ensure to have the right version\n");
+//    exit(1);
+//}
+
 
 %pragma(java) jniclasscode=%{
   static {
     try {
-        System.loadLibrary("kcore");
+        System.loadLibrary("kuzzle");
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Native code library failed to load. \n" + e);
       System.exit(1);
@@ -29,10 +42,12 @@
     }
 }
 
+struct json_object { };
+
+%ignore json_object::ptr;
 %extend json_object {
     json_object() {
-        json_object* j = malloc(sizeof(json_object));
-        kuzzle_wrapper_json_new(j);
+        json_object *j = json_object_new_object();
         return j;
     }
 
@@ -60,7 +75,7 @@
         return $self;
     }
 
-    json_object* put(char* key, JsonObject* content) {
+    json_object* put(char* key, json_object* content) {
         kuzzle_wrapper_json_put($self, key, content, 4);
         return $self;
     }
@@ -81,8 +96,8 @@
         return kuzzle_wrapper_json_get_bool($self, key);
     }
 
-    json_object getJsonObject(char* key) {
-        return kuzzle_wrapper_json_get_json_object($self->jobj, key);
+    json_object* getJsonObject(char* key) {
+        return kuzzle_wrapper_json_get_json_object($self, key);
     }
 }
 
@@ -96,108 +111,125 @@
         kuzzle_wrapper_new_kuzzle(k, host, "websocket", opts);
         return k;
     }
-//    _kuzzle(char* host) {
-//        kuzzle *k;
-//        k = malloc(sizeof(kuzzle));
-//        kuzzle_wrapper_new_kuzzle(k, host, "websocket", (void*)0);
-//        return k;
-//    }
-//    ~_kuzzle() {
-//        unregisterKuzzle($self);
-//        free($self);
-//    }
+    kuzzle(char* host) {
+        kuzzle *k;
+        k = malloc(sizeof(kuzzle));
+        kuzzle_wrapper_new_kuzzle(k, host, "websocket", NULL);
+        return k;
+    }
+    ~kuzzle() {
+        unregisterKuzzle($self);
+        free($self);
+    }
 
     // checkToken
-//    %exception checkToken {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CheckToken: token required");
-//            return $null;
-//        }
-//    }
-//    token_validity* checkToken(char* token) {
-//        static token_validity res;
-//        int err = kuzzle_wrapper_check_token($self, &res, token);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//
-//    // connect
-//    %exception connect {
-//        $action
-//        if (result != $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, result);
-//        }
-//    }
-//    char* connect() {
-//        return kuzzle_wrapper_connect($self);
-//    }
-//
-//    // createIndex
-//    %exception createIndex {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.createIndex: index required");
-//            return $null;
-//        }
-//    }
-//    ack_response* createIndex(char* index, query_options* options) {
-//        static ack_response res;
-//        int err = kuzzle_wrapper_create_index($self, &res, index, options);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//    ack_response* createIndex(char* index) {
-//        static ack_response res;
-//        int err = kuzzle_wrapper_create_index($self, &res, index, (void*)0);
-//
-//        if (err == 0) {
-//            return &res;
-//        }
-//        return (void*)0;
-//    }
-//
-//    // createMyCredentials
-//    %exception createMyCredentials {
-//        $action
-//        if (result == $null) {
-//            jclass clazz = (*jenv)->FindClass(jenv, "java/lang/IllegalArgumentException");
-//            (*jenv)->ThrowNew(jenv, clazz, "Kuzzle.CreateMyCredentials: strategy is required");
-//            return $null;
-//        }
-//    }
-//    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials, query_options* options) {
-//        static json_result res;
-//        static JsonObject ret;
-//        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, options);
-//
-//        if (err == 0) {
-//            ret.jobj = res.result;
-//        } else {
-//            ret.jobj = json_tokener_parse(res.error);
-//        }
-//        return &ret;
-//    }
-//    JsonObject* createMyCredentials(char* strategy, JsonObject* credentials) {
-//        static json_result res;
-//        static JsonObject ret;
-//        int err = kuzzle_wrapper_create_my_credentials($self, &res, strategy, credentials->jobj, (void*)0);
-//
-//        if (err == 0) {
-//            ret.jobj = res.result;
-//        } else {
-//            ret.jobj = json_tokener_parse(res.error);
-//        }
-//        return &ret;
-//    }
-}
+    token_validity* checkToken(char* token) {
+        return kuzzle_wrapper_check_token($self, token);
+    }
 
+    // connect
+    char* connect() {
+        return kuzzle_wrapper_connect($self);
+    }
+
+    // createIndex
+    bool_result* createIndex(char* index, query_options* options) {
+        return kuzzle_wrapper_create_index($self, index, options);
+    }
+    bool_result* createIndex(char* index) {
+        return kuzzle_wrapper_create_index($self, index, NULL);
+    }
+
+    // createMyCredentials
+    json_result* createMyCredentials(char* strategy, json_object* credentials, query_options* options) {
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, options);
+    }
+    json_result* createMyCredentials(char* strategy, json_object* credentials) {
+        return kuzzle_wrapper_create_my_credentials($self, strategy, credentials, NULL);
+    }
+
+    // deleteMyCredentials
+    bool_result* deleteMyCredentials(char* strategy, query_options *options) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, options);
+    }
+    bool_result* deleteMyCredentials(char* strategy) {
+        return kuzzle_wrapper_delete_my_credentials($self, strategy, NULL);
+    }
+
+    // getMyCredentials
+    json_result* getMyCredentials(char *strategy, query_options *options) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, options);
+    }
+    json_result* getMyCredentials(char *strategy) {
+        return kuzzle_wrapper_get_my_credentials($self, strategy, NULL);
+    }
+
+    // updateMyCredentials
+    json_result* updateMyCredentials(char *strategy, json_object* credentials, query_options *options) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, options);
+    }
+    json_result* updateMyCredentials(char *strategy, json_object* credentials) {
+        return kuzzle_wrapper_update_my_credentials($self, strategy, credentials, NULL);
+    }
+
+    // validateMyCredentials
+    bool_result* validateMyCredentials(char *strategy, json_object* credentials, query_options* options) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, options);
+    }
+    bool_result* validateMyCredentials(char *strategy, json_object* credentials) {
+        return kuzzle_wrapper_validate_my_credentials($self, strategy, credentials, NULL);
+    }
+
+    // login
+    string_result* login(char* strategy, json_object* credentials, int expires_in) {
+        return kuzzle_wrapper_login($self, strategy, credentials, &expires_in);
+    }
+    string_result* login(char* strategy, json_object* credentials) {
+        return kuzzle_wrapper_login($self, strategy, credentials, NULL);
+    }
+
+    // getAllStatistics
+    all_statistics_result* getAllStatistics(query_options* options) {
+        return kuzzle_wrapper_get_all_statistics($self, options);
+    }
+    all_statistics_result* getAllStatistics() {
+        return kuzzle_wrapper_get_all_statistics($self, NULL);
+    }
+
+    // getStatistics
+    statistics_result* getStatistics(unsigned long time, query_options* options) {
+        return kuzzle_wrapper_get_statistics($self, time, options);
+    }
+    statistics_result* getStatistics(unsigned long time) {
+        return kuzzle_wrapper_get_statistics($self, time, NULL);
+    }
+
+    // getAutoRefresh
+    bool_result* getAutoRefresh(char* index, query_options* options) {
+        return kuzzle_wrapper_get_auto_refresh($self, index, options);
+    }
+    bool_result* getAutoRefresh(char* index) {
+        return kuzzle_wrapper_get_auto_refresh($self, index, NULL);
+    }
+
+    // getJwt
+    char* getJwt() {
+        return kuzzle_wrapper_get_jwt($self);
+    }
+
+    // getMyRights
+    json_result* getMyRights(query_options* options) {
+        return kuzzle_wrapper_get_my_rights($self, options);
+    }
+    json_result* getMyRights() {
+        return kuzzle_wrapper_get_my_rights($self, NULL);
+    }
+
+    // getServerInfo
+    json_result* getServerInfo(query_options* options) {
+        return kuzzle_wrapper_get_server_info($self, options);
+    }
+    json_result* getServerInfo() {
+        return kuzzle_wrapper_get_server_info($self, NULL);
+    }
+}

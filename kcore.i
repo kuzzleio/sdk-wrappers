@@ -3,16 +3,15 @@
 %module kcore
 %{
 #define _Complex
-#include "libgokcore.h"
 #include "kuzzle.h"
-#include <json-c/json.h>
+#include "headers/kuzzlesdk.h"
+#include "templates/swig.h"
+
 #include <stdio.h>
 %}
 %define _Complex
 
 %enddef
 
-%import "json-c/json_object_private.h"
-%import "json-c/json.h"
-%include "headers/kuzzle.h"
-%include "libgokcore.h"
+%include "headers/kuzzlesdk.h"
+%include "kuzzle.h"

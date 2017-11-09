@@ -4,7 +4,7 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include <string.h>
-	#include "kuzzle.h"
+	#include "kuzzlesdk.h"
 	#include "sdk_wrappers_internal.h"
 */
 import "C"

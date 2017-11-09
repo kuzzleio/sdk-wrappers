@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -fPIC -I$(PWD)/headers
+CFLAGS = -fPIC -I$(PWD)/headers -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
 LDFLAGS = -L./
-LIBS = -lgokcore -ljson-c
+LIBS = -lkuzzlesdk -ljson-c
 SRCS = kcore_wrap.c
 OBJS = $(SRCS:.c=.o)
 TARGET = libkcore.so
@@ -10,7 +10,7 @@ GOROOT ?= /usr/local
 GOCC = $(GOROOT)/bin/go
 GOFLAGS = -buildmode=c-shared
 GOSRC = ./cgo/kuzzle/
-GOTARGET = libgokcore.so
+GOTARGET = libkuzzlesdk.so
 
 SWIG = swig
 
@@ -24,14 +24,15 @@ ifeq ($(wildcard $(GOCC)),)
 	$(error "Unable to find go compiler")
 endif
 	$(GOCC) build -o $(GOTARGET) $(GOFLAGS) $(GOSRC)
+	mv -f libkuzzlesdk.h kuzzle.h
 
 wrapper: $(OBJS)
 
 object:
-	gcc -ggdb -shared kcore_wrap.o -o libkcore.so $(LDFLAGS) $(LIBS)
+	gcc -ggdb -shared kcore_wrap.o -o libkuzzle.so $(LDFLAGS) $(LIBS)
 
 swigjava:
-	$(SWIG) -java -package io.kuzzle.sdk -outdir ./io/kuzzle/sdk -o kcore_wrap.c -I/usr/local/include templates/java/core.i
+	$(SWIG) -Wall -java -package io.kuzzle.sdk -outdir ./io/kuzzle/sdk -o kcore_wrap.c -I/usr/local/include templates/java/core.i
 
 java: 	core swigjava wrapper object
 

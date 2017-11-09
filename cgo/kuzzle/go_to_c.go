@@ -4,7 +4,7 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <string.h>
 	#include <stdlib.h>
-	#include "kuzzle.h"
+	#include "kuzzlesdk.h"
 	#include "sdk_wrappers_internal.h"
 */
 import "C"
@@ -712,6 +712,34 @@ func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights
 			carray[i] = goToCUserRight(right)
 		}
 	}
+
+	return result
+}
+
+// Allocates memory
+func goToCStatistics(res *types.Statistics, err error) *C.statistics {
+	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
+
+	ongoing, _ := json.Marshal(res.OngoingRequests)
+	completedRequests, _ := json.Marshal(res.CompletedRequests)
+	connections, _ := json.Marshal(res.Connections)
+	failedRequests, _ := json.Marshal(res.FailedRequests)
+
+	cOnGoing := C.CString(string(ongoing))
+	cCompleteRequest := C.CString(string(completedRequests))
+	cConnections := C.CString(string(connections))
+	cFailedRequests := C.CString(string(failedRequests))
+
+	result.ongoing_requests = C.json_tokener_parse(cOnGoing)
+	result.completed_requests = C.json_tokener_parse(cCompleteRequest)
+	result.connections = C.json_tokener_parse(cConnections)
+	result.failed_requests = C.json_tokener_parse(cFailedRequests)
+	result.timestamp = C.ulonglong(res.Timestamp)
+
+	C.free(unsafe.Pointer(cOnGoing))
+	C.free(unsafe.Pointer(cCompleteRequest))
+	C.free(unsafe.Pointer(cConnections))
+	C.free(unsafe.Pointer(cFailedRequests))
 
 	return result
 }
