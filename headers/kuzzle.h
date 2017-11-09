@@ -212,6 +212,33 @@ typedef struct {
 } document;
 
 typedef struct {
+    char *id;
+    meta *meta;
+    json_object *content;
+    int count;
+} notification_content;
+
+typedef struct {
+    char *request_id;
+    notification_content *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
+    char *protocol;
+    char *scope;
+    char *state;
+    char *user;
+    char *n_type;
+    char *room_id;
+    unsigned long long timestamp;
+    int status;
+    char *error;
+    char *stack;
+} notification_result;
+
+typedef struct {
     document *result;
     int status;
     char *error;
@@ -306,6 +333,11 @@ typedef struct {
 typedef struct {
     char *request_id;
     json_object *result;
+    json_object *volatiles;
+    char *index;
+    char *collection;
+    char *controller;
+    char *action;
     char *room_id;
     char *channel;
     int status;
@@ -379,11 +411,6 @@ typedef struct {
     char *error;
     char *stack;
 } string_array_result;
-
-typedef struct {
-    char* type;
-    json_object* fields;
-} field_mapping;
 
 typedef struct {
     json_object* query;

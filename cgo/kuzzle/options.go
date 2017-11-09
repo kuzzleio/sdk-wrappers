@@ -1,18 +1,17 @@
 package main
 
-import (
-	"encoding/json"
-	"github.com/kuzzleio/sdk-go/types"
-	"time"
-	"unsafe"
-)
-
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzle.h"
 */
 import "C"
+import (
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/types"
+	"time"
+	"unsafe"
+)
 
 //export kuzzle_wrapper_new_options
 func kuzzle_wrapper_new_options() *C.options {
@@ -84,6 +83,7 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts.SetIfExist(C.GoString(options.if_exist))
 	opts.SetRetryOnConflict(int(options.retry_on_conflict))
 	opts.SetVolatile(JsonCConvert(options.volatiles).(map[string]interface{}))
+
 	return
 }
 

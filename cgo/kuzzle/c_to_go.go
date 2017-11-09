@@ -8,12 +8,11 @@ package main
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
-
 	"github.com/kuzzleio/sdk-go/collection"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/security"
 	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 func cToGoControllers(c *C.controllers) (*types.Controllers, error) {
@@ -152,8 +151,7 @@ func cToGoSpecification(cSpec *C.specification) *types.Specification {
 }
 
 func cToGoDocument(c *C.collection, cDoc *C.document) *collection.Document {
-	col := cToGoCollection(c)
-	gDoc := col.Document()
+	gDoc := cToGoCollection(c).Document()
 	gDoc.Id = C.GoString(cDoc.id)
 	gDoc.Index = C.GoString(cDoc.index)
 	gDoc.Meta = cToGoKuzzleMeta(cDoc.meta)

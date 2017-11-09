@@ -5,12 +5,7 @@ package main
 	#include <stdlib.h>
 	#include <string.h>
 	#include "kuzzle.h"
-
-	typedef query_object *query_object_ptr;
-
-	static void call(void* f, json_object* res) {
-		((void(*)(json_object*))f)(res);
-	}
+	#include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
@@ -148,6 +143,7 @@ func kuzzle_wrapper_set_headers(k *C.kuzzle, content *C.json_object, replace C.u
 }
 
 //export kuzzle_wrapper_add_listener
+// TODO loop and close on Unsubscribe
 func kuzzle_wrapper_add_listener(k *C.kuzzle, e C.int, cb unsafe.Pointer) {
 	c := make(chan interface{})
 

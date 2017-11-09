@@ -7,15 +7,12 @@ package main
 */
 import "C"
 import (
-	"encoding/json"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"github.com/kuzzleio/sdk-go/types"
-	"unsafe"
 )
 
 //export kuzzle_wrapper_query
 func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.query_options) *C.kuzzle_response {
-	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
 	opts := SetQueryOptions(options)
 
 	req := types.KuzzleRequest{
@@ -77,26 +74,5 @@ func kuzzle_wrapper_query(k *C.kuzzle, request *C.kuzzle_request, options *C.que
 
 	res := <-resC
 
-	if res.Error != nil {
-		Set_kuzzle_response_error(result, res.Error)
-		return result
-	}
-
-	result.request_id = C.CString(res.RequestId)
-
-	if len(res.RoomId) > 0 {
-		result.room_id = C.CString(res.RoomId)
-	}
-
-	if len(res.Channel) > 0 {
-		result.channel = C.CString(res.Channel)
-	}
-
-	r, _ := json.Marshal(res)
-
-	buffer := C.CString(string(r))
-	result.result = C.json_tokener_parse(buffer)
-	C.free(unsafe.Pointer(buffer))
-
-	return result
+	return goToCKuzzleResponse(res)
 }
