@@ -6,14 +6,14 @@ package main
 	#include <stdlib.h>
 	#include "kuzzlesdk.h"
 	#include "sdk_wrappers_internal.h"
- */
+*/
 import "C"
 
 import (
-	"unsafe"
 	"github.com/kuzzleio/sdk-go/kuzzle"
-	"github.com/kuzzleio/sdk-go/types"
 	"github.com/kuzzleio/sdk-go/security"
+	"github.com/kuzzleio/sdk-go/types"
+	"unsafe"
 )
 
 //export kuzzle_wrapper_security_new_profile

@@ -1,18 +1,17 @@
 package main
 
-import (
-	"encoding/json"
-	"unsafe"
-	"time"
-	"github.com/kuzzleio/sdk-go/types"
-)
-
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzlesdk.h"
 */
 import "C"
+import (
+	"encoding/json"
+	"github.com/kuzzleio/sdk-go/types"
+	"time"
+	"unsafe"
+)
 
 //export kuzzle_wrapper_new_options
 func kuzzle_wrapper_new_options() *C.options {
@@ -56,7 +55,7 @@ func kuzzle_wrapper_new_options() *C.options {
 	defaultIndex := opts.GetDefaultIndex()
 	if len(defaultIndex) > 0 {
 		copts.default_index = C.CString(defaultIndex)
-	}	
+	}
 
 	r, _ := json.Marshal(opts.GetHeaders())
 	buffer := C.CString(string(r))
@@ -74,6 +73,8 @@ func SetQueryOptions(options *C.query_options) (opts types.QueryOptions) {
 	opts = types.NewQueryOptions()
 
 	opts.SetQueuable(bool(options.queuable))
+	opts.SetWithdist(bool(options.withdist))
+	opts.SetWithcoord(bool(options.withcoord))
 	opts.SetFrom(int(options.from))
 	opts.SetSize(int(options.size))
 	opts.SetScroll(C.GoString(options.scroll))

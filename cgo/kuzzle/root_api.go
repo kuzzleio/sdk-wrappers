@@ -10,9 +10,9 @@ package main
 */
 import "C"
 import (
+	"github.com/kuzzleio/sdk-go/kuzzle"
 	"strconv"
 	"time"
-	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
 )
 
