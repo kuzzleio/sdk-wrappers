@@ -4,7 +4,7 @@ package main
 	#cgo CFLAGS: -I../../headers
 	#include <stdlib.h>
 	#include "kuzzlesdk.h"
- */
+*/
 import "C"
 import (
 	"encoding/json"
