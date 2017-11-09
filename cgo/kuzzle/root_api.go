@@ -14,6 +14,7 @@ import (
 	"time"
 	"github.com/kuzzleio/sdk-go/kuzzle"
 	"unsafe"
+	"encoding/json"
 )
 
 //export kuzzle_wrapper_list_collections

@@ -3,6 +3,7 @@ package main
 /*
 	#cgo CFLAGS: -I../../headers
 	#include <string.h>
+	#include <stdlib.h>
 	#include "kuzzlesdk.h"
 	#include "sdk_wrappers_internal.h"
 */
@@ -16,7 +17,7 @@ import (
 )
 
 // Allocates memory
-func goToCKuzzleMeta(gMeta *types.Meta) *C.meta {
+func goToCMeta(gMeta *types.Meta) *C.meta {
 	if gMeta == nil {
 		return nil
 	}
@@ -54,7 +55,7 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 	result.index = C.CString(gDoc.Index)
 	result.result = C.CString(gDoc.Result)
 	result.collection = C.CString(gDoc.Collection)
-	result.meta = goToCKuzzleMeta(gDoc.Meta)
+	result.meta = goToCMeta(gDoc.Meta)
 	result.shards = goToCShards(gDoc.Shards)
 	result._collection = col
 
@@ -68,6 +69,84 @@ func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
 
 	result.version = C.int(gDoc.Version)
 	result.created = C.bool(gDoc.Created)
+
+	return result
+}
+
+// Allocates memory
+func goToCNotificationContent(gNotifContent *types.NotificationResult) *C.notification_content {
+	result := (*C.notification_content)(C.calloc(1, C.sizeof_notification_content))
+	result.id = C.CString(gNotifContent.Id)
+	result.meta = goToCMeta(gNotifContent.Meta)
+	result.count = C.int(gNotifContent.Count)
+
+	r, _ := json.Marshal(gNotifContent.Content)
+	buffer := C.CString(string(r))
+	result.content = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
+
+	return result
+}
+
+// Allocates memory
+func goToCNotificationResult(gNotif *types.KuzzleNotification) *C.notification_result {
+	result := (*C.notification_result)(C.calloc(1, C.sizeof_notification_result))
+
+	if gNotif.Error != nil {
+		Set_notification_result_error(result, gNotif.Error)
+		return result
+	}
+
+	result.request_id = C.CString(gNotif.RequestId)
+	result.result = goToCNotificationContent(gNotif.Result)
+
+	r, _ := json.Marshal(gNotif.Volatile)
+	buffer := C.CString(string(r))
+	result.volatiles = C.json_tokener_parse(buffer)
+	C.free(unsafe.Pointer(buffer))
+
+	result.index = C.CString(gNotif.Index)
+	result.collection = C.CString(gNotif.Collection)
+	result.controller = C.CString(gNotif.Controller)
+	result.action = C.CString(gNotif.Action)
+	result.protocol = C.CString(gNotif.Protocol)
+	result.scope = C.CString(gNotif.Scope)
+	result.state = C.CString(gNotif.State)
+	result.user = C.CString(gNotif.User)
+	result.n_type = C.CString(gNotif.Type)
+	result.room_id = C.CString(gNotif.RoomId)
+	result.timestamp = C.ulonglong(gNotif.Timestamp)
+	result.status = C.int(gNotif.Status)
+
+	return result
+}
+
+func goToCKuzzleResponse(gRes *types.KuzzleResponse) *C.kuzzle_response {
+	result := (*C.kuzzle_response)(C.calloc(1, C.sizeof_kuzzle_response))
+
+	result.request_id = C.CString(gRes.RequestId)
+
+	bufResult := C.CString(string(gRes.Result))
+	result.result = C.json_tokener_parse(bufResult)
+	C.free(unsafe.Pointer(bufResult))
+
+	r, _ := json.Marshal(gRes.Volatile)
+	bufVolatile := C.CString(string(r))
+	result.volatiles = C.json_tokener_parse(bufVolatile)
+	C.free(unsafe.Pointer(bufVolatile))
+
+	result.index = C.CString(gRes.Index)
+	result.collection = C.CString(gRes.Collection)
+	result.controller = C.CString(gRes.Controller)
+	result.action = C.CString(gRes.Action)
+	result.room_id = C.CString(gRes.RoomId)
+	result.channel = C.CString(gRes.Channel)
+	result.status = C.int(gRes.Status)
+
+	if gRes.Error != nil {
+		// The error might be a partial error
+		Set_kuzzle_response_error(result, gRes.Error)
+	}
 
 	return result
 }
@@ -127,13 +206,15 @@ func goToCStringArrayResult(goRes []string, err error) *C.string_array_result {
 		return result
 	}
 
-	result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
-	result.length = C.ulong(len(goRes))
+	if goRes != nil {
+		result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
+		result.length = C.ulong(len(goRes))
 
-	cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+		cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-	for i, substring := range goRes {
-		cArray[i] = C.CString(substring)
+		for i, substring := range goRes {
+			cArray[i] = C.CString(substring)
+		}
 	}
 
 	return result
@@ -153,6 +234,29 @@ func goToCIntResult(goRes int, err error) *C.int_result {
 	return result
 }
 
+//Allocates memory
+func goToCIntArrayResult(goRes []int, err error) *C.int_array_result {
+	result := (*C.int_array_result)(C.calloc(1, C.sizeof_int_array_result))
+
+	if err != nil {
+		Set_int_array_result_error(result, err)
+		return result
+	}
+
+	if goRes != nil {
+		result.result = (*C.longlong)(C.calloc(C.size_t(len(goRes)), C.sizeof_longlong))
+		result.length = C.uint(len(goRes))
+
+		cArray := (*[1<<20 - 1]C.longlong)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
+
+		for i, num := range goRes {
+			cArray[i] = C.longlong(num)
+		}
+	}
+
+	return result
+}
+
 // Allocates memory
 func goToCDoubleResult(goRes float64, err error) *C.double_result {
 	result := (*C.double_result)(C.calloc(1, C.sizeof_double_result))
@@ -163,20 +267,6 @@ func goToCDoubleResult(goRes float64, err error) *C.double_result {
 	}
 
 	result.result = C.double(goRes)
-
-	return result
-}
-
-// Allocates memory
-func goToCBoolResult(goRes bool, err error) *C.bool_result {
-	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
-
-	if err != nil {
-		Set_bool_result_error(result, err)
-		return result
-	}
-
-	result.result = C.bool(goRes)
 
 	return result
 }
@@ -263,6 +353,20 @@ func goToCRoleSearchResult(k *C.kuzzle, res *security.RoleSearchResult, err erro
 			cArray[i] = goToCRole(k, role)
 		}
 	}
+
+	return result
+}
+
+// Allocates memory
+func goToCBoolResult(goRes bool, err error) *C.bool_result {
+	result := (*C.bool_result)(C.calloc(1, C.sizeof_bool_result))
+
+	if err != nil {
+		Set_bool_result_error(result, err)
+		return result
+	}
+
+	result.result = C.bool(goRes)
 
 	return result
 }
@@ -448,8 +552,8 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 	result := (*C.json_array_result)(C.calloc(1, C.sizeof_json_array_result))
 
 	if err != nil {
-	  Set_json_array_result_error(result, err)
-	  return result
+		Set_json_array_result_error(result, err)
+		return result
 	}
 
 	result.length = C.uint(len(goRes))
@@ -457,7 +561,7 @@ func goToCJsonArrayResult(goRes []interface{}, err error) *C.json_array_result {
 		result.result = (**C.json_object)(C.calloc(C.size_t(result.length), C.sizeof_json_object_ptr))
 		cArray := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
-		for i, res := range(goRes) {
+		for i, res := range goRes {
 			cArray[i], err = goToCJson(res)
 			if err != nil {
 				Set_json_array_result_error(result, err)
@@ -535,7 +639,6 @@ func goToCUser(k *C.kuzzle, user *security.User) (*C.user, error) {
 		}
 	}
 
-
 	return cuser, nil
 }
 
@@ -595,7 +698,7 @@ func goToCUserRight(right *types.UserRights) *C.user_right {
 
 func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights_result {
 	result := (*C.user_rights_result)(C.calloc(1, C.sizeof_user_rights_result))
-	if (err != nil) {
+	if err != nil {
 		Set_user_rights_error(result, err)
 		return result
 	}
