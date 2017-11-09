@@ -5,7 +5,7 @@ package main
 	#include <stdlib.h>
 	#include <string.h>
 	#include "kuzzle.h"
-  #include "sdk_wrappers_internal.h"
+	#include "sdk_wrappers_internal.h"
 */
 import "C"
 import (
