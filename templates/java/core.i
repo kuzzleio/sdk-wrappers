@@ -245,4 +245,9 @@ struct json_object { };
     string_array_result* listIndexes() {
         return kuzzle_wrapper_list_indexes($self, NULL);
     }
+
+    // disconnect
+    void disconnect() {
+        kuzzle_wrapper_disconnect($self);
+    }
 }
