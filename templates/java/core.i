@@ -12,15 +12,10 @@
 %rename(StatisticsResult) statistics_result;
 %rename(CollectionsList) collections_list;
 %rename(CollectionsListResult) collections_list_result;
+%rename(StringArrayResult) string_array_result;
 
 %include "typemap.i"
 %include "../../kcore.i"
-//
-//if (strcmp(JSON_C_VERSION, "0.12.99")) {
-//    printf("You version of json-c is not equal to 0.12.99, please ensure to have the right version\n");
-//    exit(1);
-//}
-
 
 %pragma(java) jniclasscode=%{
   static {
@@ -241,5 +236,13 @@ struct json_object { };
     }
     collections_list_result* listCollections(char *index) {
         return kuzzle_wrapper_list_collections($self, index, NULL);
+    }
+
+    // listIndexes
+    string_array_result* listIndexes(query_options* options) {
+        return kuzzle_wrapper_list_indexes($self, options);
+    }
+    string_array_result* listIndexes() {
+        return kuzzle_wrapper_list_indexes($self, NULL);
     }
 }

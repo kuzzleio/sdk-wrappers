@@ -311,8 +311,8 @@ typedef struct {
     char *stack;
 } statistics_result;
 
-typedef struct {
-    statistics* res;
+typedef struct all_statistics_result {
+    statistics* result;
     int res_size;
     int status;
     char *error;
@@ -415,7 +415,7 @@ typedef struct {
 } string_result;
 
 //any array of strings result
-typedef struct {
+typedef struct string_array_result {
     char **result;
     unsigned long length;
     int status;
@@ -542,8 +542,8 @@ typedef struct  {
     char* name;
 } collections_list;
 
-typedef struct {
-    collections_list* res;
+typedef struct collections_list_result {
+    collections_list* result;
     int collection_list_length;
     int status;
     char* error;
