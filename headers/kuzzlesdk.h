@@ -356,6 +356,13 @@ typedef struct {
     char *stack;
 } kuzzle_response;
 
+//any void result
+typedef struct {
+    int status;
+    char *error;
+    char *stack;
+} void_result;
+
 //any json result
 typedef struct {
     json_object *result;
