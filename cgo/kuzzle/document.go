@@ -13,7 +13,7 @@ import (
 
 //export kuzzle_wrapper_new_document
 func kuzzle_wrapper_new_document(c *C.collection) *C.document {
-	return goToCDocument(c, cToGoCollection(c).Document())
+	return goToCDocument(c, cToGoCollection(c).Document(), nil)
 }
 
 //export kuzzle_wrapper_document_subscribe
