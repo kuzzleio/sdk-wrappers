@@ -716,7 +716,7 @@ func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights
 	return result
 }
 
-func goToCCollectionList(collection *types.CollectionsList, entry *C.collection_entry) {
+func fillCollectionList(collection *types.CollectionsList, entry *C.collection_entry) {
 	if collection == nil {
 		return
 	}
@@ -734,11 +734,11 @@ func goToCCollectionListResult(collections []*types.CollectionsList, err error) 
 
 	if collections != nil {
 		result.result = (*C.collection_entry)(C.calloc(C.size_t(len(collections)), C.sizeof_collection_entry))
-		result.collection_list_length = C.int(len(collections))
+		result.result_length = C.int(len(collections))
 		carray := (*[1<<30 - 1]C.collection_entry)(unsafe.Pointer(result.result))[:len(collections):len(collections)]
 
 		for i, collection := range collections {
-			goToCCollectionList(collection, &carray[i])
+			fillCollectionList(collection, &carray[i])
 		}
 	}
 
@@ -746,7 +746,7 @@ func goToCCollectionListResult(collections []*types.CollectionsList, err error) 
 }
 
 // Allocates memory
-func goToCStatistics(res *types.Statistics, statistics *C.statistics) {
+func fillStatistics(res *types.Statistics, statistics *C.statistics) {
 	ongoing, _ := json.Marshal(res.OngoingRequests)
 	completedRequests, _ := json.Marshal(res.CompletedRequests)
 	connections, _ := json.Marshal(res.Connections)

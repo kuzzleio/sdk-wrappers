@@ -2,7 +2,7 @@
 %ignore all_statistics_result::result;
 %typemap(javacode) struct all_statistics_result %{
   public Statistics[] getResult() {
-    Statistics[] result = new Statistics[getRes_size()];
+    Statistics[] result = new Statistics[getResult_length()];
     for (int i = 0; i < result.length; ++i) {
       result[i] = getResult(i);
     }
@@ -21,7 +21,7 @@
 %ignore collection_entry_result::result;
 %typemap(javacode) struct collection_entry_result %{
   public CollectionsList[] getResult() {
-    CollectionsList[] result = new CollectionsList[getCollection_list_length()];
+    CollectionsList[] result = new CollectionsList[getResult_length()];
     for (int i = 0; i < result.length; ++i) {
       result[i] = getResult(i);
     }
