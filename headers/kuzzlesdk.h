@@ -313,7 +313,7 @@ typedef struct {
 
 typedef struct all_statistics_result {
     statistics* result;
-    int result_length;
+    unsigned int result_length;
     int status;
     char *error;
     char *stack;
@@ -544,7 +544,7 @@ typedef struct  {
 
 typedef struct collection_entry_result {
     collection_entry* result;
-    int result_length;
+    unsigned int result_length;
     int status;
     char* error;
     char* stack;
