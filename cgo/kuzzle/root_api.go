@@ -17,7 +17,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.collections_list_result {
+func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.collection_entry_result {
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(
 		C.GoString(index),
 		SetQueryOptions(options))

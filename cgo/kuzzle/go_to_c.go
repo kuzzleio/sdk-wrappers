@@ -716,26 +716,26 @@ func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights
 	return result
 }
 
-func goToCCollectionList(collection *types.CollectionsList, carray *C.collections_list) {
+func goToCCollectionList(collection *types.CollectionsList, entry *C.collection_entry) {
 	if collection == nil {
 		return
 	}
 
-	carray.types = C.CString(collection.Type)
-	carray.name = C.CString(collection.Name)
+	entry.persisted = collection.Type == "persisted"
+	entry.name = C.CString(collection.Name)
 }
 
-func goToCCollectionListResult(collections []*types.CollectionsList, err error) *C.collections_list_result {
-	result := (*C.collections_list_result)(C.calloc(1, C.sizeof_collections_list_result))
+func goToCCollectionListResult(collections []*types.CollectionsList, err error) *C.collection_entry_result {
+	result := (*C.collection_entry_result)(C.calloc(1, C.sizeof_collection_entry_result))
 	if err != nil {
-		Set_collections_list_error(result, err)
+		Set_collection_entry_error(result, err)
 		return result
 	}
 
 	if collections != nil {
-		result.result = (*C.collections_list)(C.calloc(C.size_t(len(collections)), C.sizeof_collections_list))
+		result.result = (*C.collection_entry)(C.calloc(C.size_t(len(collections)), C.sizeof_collection_entry))
 		result.collection_list_length = C.int(len(collections))
-		carray := (*[1<<30 - 1]C.collections_list)(unsafe.Pointer(result.result))[:len(collections):len(collections)]
+		carray := (*[1<<30 - 1]C.collection_entry)(unsafe.Pointer(result.result))[:len(collections):len(collections)]
 
 		for i, collection := range collections {
 			goToCCollectionList(collection, &carray[i])
@@ -746,7 +746,7 @@ func goToCCollectionListResult(collections []*types.CollectionsList, err error) 
 }
 
 // Allocates memory
-func goToCStatistics(res *types.Statistics, carray *C.statistics) {
+func goToCStatistics(res *types.Statistics, statistics *C.statistics) {
 	ongoing, _ := json.Marshal(res.OngoingRequests)
 	completedRequests, _ := json.Marshal(res.CompletedRequests)
 	connections, _ := json.Marshal(res.Connections)
@@ -757,11 +757,11 @@ func goToCStatistics(res *types.Statistics, carray *C.statistics) {
 	cConnections := C.CString(string(connections))
 	cFailedRequests := C.CString(string(failedRequests))
 
-	carray.ongoing_requests = C.json_tokener_parse(cOnGoing)
-	carray.completed_requests = C.json_tokener_parse(cCompleteRequest)
-	carray.connections = C.json_tokener_parse(cConnections)
-	carray.failed_requests = C.json_tokener_parse(cFailedRequests)
-	carray.timestamp = C.ulonglong(res.Timestamp)
+	statistics.ongoing_requests = C.json_tokener_parse(cOnGoing)
+	statistics.completed_requests = C.json_tokener_parse(cCompleteRequest)
+	statistics.connections = C.json_tokener_parse(cConnections)
+	statistics.failed_requests = C.json_tokener_parse(cFailedRequests)
+	statistics.timestamp = C.ulonglong(res.Timestamp)
 
 	C.free(unsafe.Pointer(cOnGoing))
 	C.free(unsafe.Pointer(cCompleteRequest))

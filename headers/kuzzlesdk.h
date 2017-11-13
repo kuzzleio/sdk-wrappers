@@ -538,16 +538,16 @@ typedef struct {
 } mapping_result;
 
 typedef struct  {
-    char* types;
+    bool persisted;
     char* name;
-} collections_list;
+} collection_entry;
 
-typedef struct collections_list_result {
-    collections_list* result;
+typedef struct collection_entry_result {
+    collection_entry* result;
     int collection_list_length;
     int status;
     char* error;
     char* stack;
-} collections_list_result;
+} collection_entry_result;
 
 #endif
