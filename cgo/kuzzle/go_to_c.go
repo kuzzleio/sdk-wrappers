@@ -787,10 +787,37 @@ func goToCUserSearchResult(k *C.kuzzle, res *security.UserSearchResult, err erro
 	return result
 }
 
-// Allocates memory
-func goToCStatistics(res *types.Statistics, err error) *C.statistics {
-	result := (*C.statistics)(C.calloc(1, C.sizeof_statistics))
+func fillCollectionList(collection *types.CollectionsList, entry *C.collection_entry) {
+	if collection == nil {
+		return
+	}
 
+	entry.persisted = collection.Type == "persisted"
+	entry.name = C.CString(collection.Name)
+}
+
+func goToCCollectionListResult(collections []*types.CollectionsList, err error) *C.collection_entry_result {
+	result := (*C.collection_entry_result)(C.calloc(1, C.sizeof_collection_entry_result))
+	if err != nil {
+		Set_collection_entry_error(result, err)
+		return result
+	}
+
+	if collections != nil {
+		result.result = (*C.collection_entry)(C.calloc(C.size_t(len(collections)), C.sizeof_collection_entry))
+		result.result_length = C.uint(len(collections))
+		carray := (*[1<<30 - 1]C.collection_entry)(unsafe.Pointer(result.result))[:len(collections):len(collections)]
+
+		for i, collection := range collections {
+			fillCollectionList(collection, &carray[i])
+		}
+	}
+
+	return result
+}
+
+// Allocates memory
+func fillStatistics(res *types.Statistics, statistics *C.statistics) {
 	ongoing, _ := json.Marshal(res.OngoingRequests)
 	completedRequests, _ := json.Marshal(res.CompletedRequests)
 	connections, _ := json.Marshal(res.Connections)
@@ -801,16 +828,26 @@ func goToCStatistics(res *types.Statistics, err error) *C.statistics {
 	cConnections := C.CString(string(connections))
 	cFailedRequests := C.CString(string(failedRequests))
 
-	result.ongoing_requests = C.json_tokener_parse(cOnGoing)
-	result.completed_requests = C.json_tokener_parse(cCompleteRequest)
-	result.connections = C.json_tokener_parse(cConnections)
-	result.failed_requests = C.json_tokener_parse(cFailedRequests)
-	result.timestamp = C.ulonglong(res.Timestamp)
+	statistics.ongoing_requests = C.json_tokener_parse(cOnGoing)
+	statistics.completed_requests = C.json_tokener_parse(cCompleteRequest)
+	statistics.connections = C.json_tokener_parse(cConnections)
+	statistics.failed_requests = C.json_tokener_parse(cFailedRequests)
+	statistics.timestamp = C.ulonglong(res.Timestamp)
 
 	C.free(unsafe.Pointer(cOnGoing))
 	C.free(unsafe.Pointer(cCompleteRequest))
 	C.free(unsafe.Pointer(cConnections))
 	C.free(unsafe.Pointer(cFailedRequests))
+}
+
+// Allocates memory
+func goToCVoidResult(err error) *C.void_result {
+	if err == nil {
+		return nil
+	}
+
+	result := (*C.void_result)(C.calloc(1, C.sizeof_void_result))
+	Set_void_result_error(result, err)
 
 	return result
 }
