@@ -311,9 +311,9 @@ typedef struct {
     char *stack;
 } statistics_result;
 
-typedef struct {
-    statistics* res;
-    int res_size;
+typedef struct all_statistics_result {
+    statistics* result;
+    unsigned int result_length;
     int status;
     char *error;
     char *stack;
@@ -415,7 +415,7 @@ typedef struct {
 } string_result;
 
 //any array of strings result
-typedef struct {
+typedef struct string_array_result {
     char **result;
     unsigned long length;
     int status;
@@ -536,5 +536,18 @@ typedef struct {
     char *error;
     char *stack;
 } mapping_result;
+
+typedef struct  {
+    bool persisted;
+    char* name;
+} collection_entry;
+
+typedef struct collection_entry_result {
+    collection_entry* result;
+    unsigned int result_length;
+    int status;
+    char* error;
+    char* stack;
+} collection_entry_result;
 
 #endif
