@@ -168,7 +168,7 @@ func goToCDocumentResult(col *C.collection, goRes *collection.Document, err erro
 func goToCPolicyRestriction(restriction *types.PolicyRestriction) *C.policy_restriction {
 	crestriction := (*C.policy_restriction)(C.calloc(1, C.sizeof_policy_restriction))
 	crestriction.index = C.CString(restriction.Index)
-	crestriction.collections_length = C.int(len(restriction.Collections))
+	crestriction.collections_length = C.uint(len(restriction.Collections))
 
 	if restriction.Collections != nil {
 		crestriction.collections = (**C.char)(C.calloc(C.size_t(len(restriction.Collections)), C.sizeof_char_ptr))
@@ -208,7 +208,7 @@ func goToCStringArrayResult(goRes []string, err error) *C.string_array_result {
 
 	if goRes != nil {
 		result.result = (**C.char)(C.calloc(C.size_t(len(goRes)), C.sizeof_char_ptr))
-		result.length = C.ulong(len(goRes))
+		result.length = C.uint(len(goRes))
 
 		cArray := (*[1<<30 - 1]*C.char)(unsafe.Pointer(result.result))[:len(goRes):len(goRes)]
 
@@ -292,7 +292,7 @@ func goToCProfile(k *C.kuzzle, profile *security.Profile) *C.profile {
 	cprofile := (*C.profile)(C.calloc(1, C.sizeof_profile))
 
 	cprofile.id = C.CString(profile.Id)
-	cprofile.policies_length = C.int(len(profile.Policies))
+	cprofile.policies_length = C.uint(len(profile.Policies))
 	cprofile.kuzzle = k
 
 	if profile.Policies != nil {
@@ -318,7 +318,7 @@ func goToCProfileSearchResult(k *C.kuzzle, res *security.ProfileSearchResult, er
 	result.result.length = C.int(len(res.Hits))
 	result.result.total = C.int(res.Total)
 	if res.ScrollId != "" {
-		result.result.scrollId = C.CString(res.ScrollId)
+		result.result.scroll_id = C.CString(res.ScrollId)
 	}
 
 	if len(res.Hits) > 0 {
@@ -384,7 +384,7 @@ func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err er
 	result.result.length = C.uint(len(goRes.Hits))
 	result.result.total = C.uint(goRes.Total)
 	if goRes.ScrollId != "" {
-		result.result.scrollId = C.CString(goRes.ScrollId)
+		result.result.scroll_id = C.CString(goRes.ScrollId)
 	}
 
 	if len(goRes.Hits) > 0 {
@@ -498,7 +498,10 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 	result.result = (*C.specification_search)(C.calloc(1, C.sizeof_specification_search))
 	result.result.length = C.uint(len(goRes.Hits))
 	result.result.total = C.uint(goRes.Total)
-	result.result.scrollId = C.CString(goRes.ScrollId)
+
+	if goRes.ScrollId != "" {
+		result.result.scroll_id = C.CString(goRes.ScrollId)
+	}
 
 	if len(goRes.Hits) > 0 {
 		result.result.hits = (**C.specification_entry)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_specification_entry_ptr))

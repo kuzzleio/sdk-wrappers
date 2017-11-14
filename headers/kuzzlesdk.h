@@ -106,7 +106,7 @@ typedef struct {
     char *scope;
     char *state;
     char *user;
-    int subscribe_to_self;
+    bool subscribe_to_self;
     json_object *volatiles;
 } room_options;
 
@@ -145,7 +145,7 @@ typedef json_object controllers;
 typedef struct {
     char *index;
     char **collections;
-    int collections_length;
+    unsigned collections_length;
 } policy_restriction;
 
 typedef struct {
@@ -157,7 +157,7 @@ typedef struct {
 typedef struct {
     char *id;
     policy **policies;
-    int policies_length;
+    unsigned policies_length;
     kuzzle *kuzzle;
 } profile;
 
@@ -417,14 +417,14 @@ typedef struct {
 //any array of strings result
 typedef struct {
     char **result;
-    unsigned long length;
+    unsigned length;
     int status;
     char *error;
     char *stack;
 } string_array_result;
 
 typedef struct {
-    char* type;
+    char *_type;
     json_object* fields;
 } field_mapping;
 
@@ -439,14 +439,14 @@ typedef struct {
     document** hits;
     uint length;
     uint total;
-    char *scrollId;
+    char *scroll_id;
 } document_search;
 
 typedef struct {
     profile **hits;
     int length;
     int total;
-    char *scrollId;
+    char *scroll_id;
 } profile_search;
 
 typedef struct {
@@ -515,7 +515,7 @@ typedef struct {
     specification_entry** hits;
     uint length;
     uint total;
-    char *scrollId;
+    char *scroll_id;
 } specification_search;
 
 typedef struct {
