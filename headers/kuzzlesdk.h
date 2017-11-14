@@ -424,11 +424,6 @@ typedef struct {
 } string_array_result;
 
 typedef struct {
-    char *_type;
-    json_object* fields;
-} field_mapping;
-
-typedef struct {
     json_object* query;
     json_object* sort;
     json_object* aggregations;
