@@ -2,7 +2,7 @@
 %ignore all_statistics_result::result;
 %typemap(javacode) struct all_statistics_result %{
   public Statistics[] getResult() {
-    Statistics[] result = new Statistics[getRes_size()];
+    Statistics[] result = new Statistics[(int)getResult_length()];
     for (int i = 0; i < result.length; ++i) {
       result[i] = getResult(i);
     }
@@ -18,10 +18,10 @@
 }
 
 // CollectionsList[]
-%ignore collections_list_result::result;
-%typemap(javacode) struct collections_list_result %{
+%ignore collection_entry_result::result;
+%typemap(javacode) struct collection_entry_result %{
   public CollectionsList[] getResult() {
-    CollectionsList[] result = new CollectionsList[getCollection_list_length()];
+    CollectionsList[] result = new CollectionsList[(int)getResult_length()];
     for (int i = 0; i < result.length; ++i) {
       result[i] = getResult(i);
     }
@@ -29,9 +29,9 @@
   }
 %}
 
-%javamethodmodifiers collections_list_result::getResult(size_t pos) "private";
-%extend collections_list_result {
-    collections_list *getResult(size_t pos) {
+%javamethodmodifiers collection_entry_result::getResult(size_t pos) "private";
+%extend collection_entry_result {
+    collection_entry *getResult(size_t pos) {
         return $self->result + pos;
     }
 }

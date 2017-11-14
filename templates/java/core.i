@@ -11,8 +11,8 @@
 %rename(Statistics) statistics;
 %rename(AllStatisticsResult) all_statistics_result;
 %rename(StatisticsResult) statistics_result;
-%rename(CollectionsList) collections_list;
-%rename(CollectionsListResult) collections_list_result;
+%rename(CollectionsList) collection_entry;
+%rename(CollectionsListResult) collection_entry_result;
 %rename(StringArrayResult) string_array_result;
 
 %include "typemap.i"
@@ -236,13 +236,13 @@ struct json_object { };
     }
 
     // listCollections
-    collections_list_result* listCollections(char *index, query_options* options) {
+    collection_entry_result* listCollections(char *index, query_options* options) {
         return kuzzle_wrapper_list_collections($self, index, options);
     }
-    collections_list_result* listCollections(char *index) {
+    collection_entry_result* listCollections(char *index) {
         return kuzzle_wrapper_list_collections($self, index, NULL);
     }
-    collections_list_result* listCollections() {
+    collection_entry_result* listCollections() {
         return kuzzle_wrapper_list_collections($self, NULL, NULL);
     }
 

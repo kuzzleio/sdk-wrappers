@@ -150,13 +150,13 @@ typedef struct {
 
 typedef struct {
     char *role_id;
-    policy_restriction **restricted_to;
+    policy_restriction *restricted_to;
     int restricted_to_length;
 } policy;
 
 typedef struct {
     char *id;
-    policy **policies;
+    policy *policies;
     int policies_length;
     kuzzle *kuzzle;
 } profile;
@@ -252,7 +252,7 @@ typedef struct {
 } profile_result;
 
 typedef struct {
-    profile **profiles;
+    profile *profiles;
     uint profiles_length;
     int status;
     char *error;
@@ -275,7 +275,7 @@ typedef struct {
 } user_right;
 
 typedef struct {
-    user_right **user_rights;
+    user_right *user_rights;
     uint user_rights_length;
     int status;
     char *error;
@@ -313,7 +313,7 @@ typedef struct {
 
 typedef struct all_statistics_result {
     statistics* result;
-    int res_size;
+    unsigned int result_length;
     int status;
     char *error;
     char *stack;
@@ -355,6 +355,13 @@ typedef struct {
     char *error;
     char *stack;
 } kuzzle_response;
+
+//any void result
+typedef struct {
+    int status;
+    char *error;
+    char *stack;
+} void_result;
 
 //any json result
 typedef struct {
@@ -436,24 +443,31 @@ typedef struct {
 } search_filters;
 
 typedef struct {
-    document** hits;
+    document *hits;
     uint length;
     uint total;
     char *scrollId;
 } document_search;
 
 typedef struct {
-    profile **hits;
-    int length;
-    int total;
+    profile *hits;
+    uint length;
+    uint total;
     char *scrollId;
 } profile_search;
 
 typedef struct {
-    role** hits;
-    int length;
-    int total;
+    role *hits;
+    uint length;
+    uint total;
 } role_search;
+
+typedef struct {
+    user *hits;
+    uint length;
+    uint total;
+    char *scrollId;
+} user_search;
 
 //any delete* function
 typedef struct {
@@ -512,7 +526,14 @@ typedef struct {
 } search_roles_result;
 
 typedef struct {
-    specification_entry** hits;
+    user_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_users_result;
+
+typedef struct {
+    specification_entry *hits;
     uint length;
     uint total;
     char *scrollId;
@@ -538,16 +559,16 @@ typedef struct {
 } mapping_result;
 
 typedef struct  {
-    char* types;
+    bool persisted;
     char* name;
-} collections_list;
+} collection_entry;
 
-typedef struct collections_list_result {
-    collections_list* result;
-    int collection_list_length;
+typedef struct collection_entry_result {
+    collection_entry* result;
+    unsigned int result_length;
     int status;
     char* error;
     char* stack;
-} collections_list_result;
+} collection_entry_result;
 
 #endif
