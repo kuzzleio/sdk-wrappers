@@ -48,8 +48,13 @@ func goToCShards(gShards *types.Shards) *C.shards {
 }
 
 // Allocates memory
-func goToCDocument(col *C.collection, gDoc *collection.Document) *C.document {
-	result := (*C.document)(C.calloc(1, C.sizeof_document))
+func goToCDocument(col *C.collection, gDoc *collection.Document, dest *C.document) *C.document {
+	var result *C.document
+	if dest == nil {
+		result = (*C.document)(C.calloc(1, C.sizeof_document))
+	} else {
+		result = dest
+	}
 
 	result.id = C.CString(gDoc.Id)
 	result.index = C.CString(gDoc.Index)
@@ -160,13 +165,18 @@ func goToCDocumentResult(col *C.collection, goRes *collection.Document, err erro
 		return result
 	}
 
-	result.result = goToCDocument(col, goRes)
+	result.result = goToCDocument(col, goRes, nil)
 
 	return result
 }
 
-func goToCPolicyRestriction(restriction *types.PolicyRestriction) *C.policy_restriction {
-	crestriction := (*C.policy_restriction)(C.calloc(1, C.sizeof_policy_restriction))
+func goToCPolicyRestriction(restriction *types.PolicyRestriction, dest *C.policy_restriction) *C.policy_restriction {
+	var crestriction *C.policy_restriction
+	if dest == nil {
+		crestriction = (*C.policy_restriction)(C.calloc(1, C.sizeof_policy_restriction))
+	} else {
+		crestriction = dest
+	}
 	crestriction.index = C.CString(restriction.Index)
 	crestriction.collections_length = C.int(len(restriction.Collections))
 
@@ -271,35 +281,46 @@ func goToCDoubleResult(goRes float64, err error) *C.double_result {
 	return result
 }
 
-func goToCPolicy(policy *types.Policy) *C.policy {
-	cpolicy := (*C.policy)(C.calloc(1, C.sizeof_policy))
+func goToCPolicy(policy *types.Policy, dest *C.policy) *C.policy {
+	var cpolicy *C.policy
+	if dest == nil {
+		cpolicy = (*C.policy)(C.calloc(1, C.sizeof_policy))
+	} else {
+		cpolicy = dest
+	}
+
 	cpolicy.role_id = C.CString(policy.RoleId)
 	cpolicy.restricted_to_length = C.int(len(policy.RestrictedTo))
 
 	if policy.RestrictedTo != nil {
-		cpolicy.restricted_to = (**C.policy_restriction)(C.calloc(C.size_t(len(policy.RestrictedTo)), C.sizeof_policy_restriction_ptr))
-		restrictions := (*[1<<30 - 1]*C.policy_restriction)(unsafe.Pointer(cpolicy.restricted_to))[:len(policy.RestrictedTo)]
+		cpolicy.restricted_to = (*C.policy_restriction)(C.calloc(C.size_t(len(policy.RestrictedTo)), C.sizeof_policy_restriction))
+		restrictions := (*[1<<30 - 1]C.policy_restriction)(unsafe.Pointer(cpolicy.restricted_to))[:len(policy.RestrictedTo)]
 
 		for i, restriction := range policy.RestrictedTo {
-			restrictions[i] = goToCPolicyRestriction(restriction)
+			goToCPolicyRestriction(restriction, &restrictions[i])
 		}
 	}
 
 	return cpolicy
 }
 
-func goToCProfile(k *C.kuzzle, profile *security.Profile) *C.profile {
-	cprofile := (*C.profile)(C.calloc(1, C.sizeof_profile))
+func goToCProfile(k *C.kuzzle, profile *security.Profile, dest *C.profile) *C.profile {
+	var cprofile *C.profile
+	if dest == nil {
+		cprofile = (*C.profile)(C.calloc(1, C.sizeof_profile))
+	} else {
+		cprofile = dest
+	}
 
 	cprofile.id = C.CString(profile.Id)
 	cprofile.policies_length = C.int(len(profile.Policies))
 	cprofile.kuzzle = k
 
 	if profile.Policies != nil {
-		cprofile.policies = (**C.policy)(C.calloc(C.size_t(len(profile.Policies)), C.sizeof_policy_ptr))
-		policies := (*[1<<30 - 1]*C.policy)(unsafe.Pointer(cprofile.policies))[:len(profile.Policies)]
+		cprofile.policies = (*C.policy)(C.calloc(C.size_t(len(profile.Policies)), C.sizeof_policy))
+		policies := (*[1<<30 - 1]C.policy)(unsafe.Pointer(cprofile.policies))[:len(profile.Policies)]
 		for i, policy := range profile.Policies {
-			policies[i] = goToCPolicy(policy)
+			goToCPolicy(policy, &policies[i])
 		}
 	}
 
@@ -315,18 +336,18 @@ func goToCProfileSearchResult(k *C.kuzzle, res *security.ProfileSearchResult, er
 	}
 
 	result.result = (*C.profile_search)(C.calloc(1, C.sizeof_profile_search))
-	result.result.length = C.int(len(res.Hits))
-	result.result.total = C.int(res.Total)
+	result.result.length = C.uint(len(res.Hits))
+	result.result.total = C.uint(res.Total)
 	if res.ScrollId != "" {
 		result.result.scrollId = C.CString(res.ScrollId)
 	}
 
 	if len(res.Hits) > 0 {
-		result.result.hits = (**C.profile)(C.calloc(C.size_t(len(res.Hits)), C.sizeof_profile_ptr))
-		profiles := (*[1<<30 - 1]*C.profile)(unsafe.Pointer(result.result.hits))[:len(res.Hits)]
+		result.result.hits = (*C.profile)(C.calloc(C.size_t(len(res.Hits)), C.sizeof_profile))
+		profiles := (*[1<<30 - 1]C.profile)(unsafe.Pointer(result.result.hits))[:len(res.Hits)]
 
 		for i, profile := range res.Hits {
-			profiles[i] = goToCProfile(k, profile)
+			goToCProfile(k, profile, &profiles[i])
 		}
 	}
 
@@ -342,15 +363,15 @@ func goToCRoleSearchResult(k *C.kuzzle, res *security.RoleSearchResult, err erro
 	}
 
 	result.result = (*C.role_search)(C.calloc(1, C.sizeof_role_search))
-	result.result.length = C.int(len(res.Hits))
-	result.result.total = C.int(res.Total)
+	result.result.length = C.uint(len(res.Hits))
+	result.result.total = C.uint(res.Total)
 
 	if len(res.Hits) > 0 {
-		result.result.hits = (**C.role)(C.calloc(C.size_t(len(res.Hits)), C.sizeof_role_ptr))
-		cArray := (*[1<<30 - 1]*C.role)(unsafe.Pointer(result.result.hits))[:len(res.Hits):len(res.Hits)]
+		result.result.hits = (*C.role)(C.calloc(C.size_t(len(res.Hits)), C.sizeof_role))
+		cArray := (*[1<<30 - 1]C.role)(unsafe.Pointer(result.result.hits))[:len(res.Hits):len(res.Hits)]
 
 		for i, role := range res.Hits {
-			cArray[i] = goToCRole(k, role)
+			goToCRole(k, role, &cArray[i])
 		}
 	}
 
@@ -388,11 +409,11 @@ func goToCSearchResult(col *C.collection, goRes *collection.SearchResult, err er
 	}
 
 	if len(goRes.Hits) > 0 {
-		result.result.hits = (**C.document)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_document_ptr))
-		cArray := (*[1<<30 - 1]*C.document)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
+		result.result.hits = (*C.document)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_document))
+		cArray := (*[1<<30 - 1]C.document)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
 
 		for i, doc := range goRes.Hits {
-			cArray[i] = goToCDocument(col, doc)
+			goToCDocument(col, doc, &cArray[i])
 		}
 	}
 
@@ -426,8 +447,13 @@ func goToCMappingResult(c *C.collection, goRes *collection.Mapping, err error) *
 	return result
 }
 
-func goToCRole(k *C.kuzzle, role *security.Role) *C.role {
-	crole := (*C.role)(C.calloc(1, C.sizeof_role))
+func goToCRole(k *C.kuzzle, role *security.Role, dest *C.role) *C.role {
+	var crole *C.role
+	if dest == nil {
+		crole = (*C.role)(C.calloc(1, C.sizeof_role))
+	} else {
+		crole = dest
+	}
 
 	crole.id = C.CString(role.Id)
 	crole.kuzzle = k
@@ -463,8 +489,14 @@ func goToCSpecification(goSpec *types.Specification) *C.specification {
 }
 
 // Allocates memory
-func goToCSpecificationEntry(goEntry *types.SpecificationEntry) *C.specification_entry {
-	result := (*C.specification_entry)(C.calloc(1, C.sizeof_specification_entry))
+func goToCSpecificationEntry(goEntry *types.SpecificationEntry, dest *C.specification_entry) *C.specification_entry {
+	var result *C.specification_entry
+	if dest == nil {
+		result = (*C.specification_entry)(C.calloc(1, C.sizeof_specification_entry))
+	} else {
+		result = dest
+	}
+
 	result.index = C.CString(goEntry.Index)
 	result.collection = C.CString(goEntry.Collection)
 	result.validation = goToCSpecification(goEntry.Validation)
@@ -501,11 +533,11 @@ func goToCSpecificationSearchResult(goRes *types.SpecificationSearchResult, err 
 	result.result.scrollId = C.CString(goRes.ScrollId)
 
 	if len(goRes.Hits) > 0 {
-		result.result.hits = (**C.specification_entry)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_specification_entry_ptr))
-		cArray := (*[1<<30 - 1]*C.specification_entry)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
+		result.result.hits = (*C.specification_entry)(C.calloc(C.size_t(len(goRes.Hits)), C.sizeof_specification_entry))
+		cArray := (*[1<<30 - 1]C.specification_entry)(unsafe.Pointer(result.result.hits))[:len(goRes.Hits):len(goRes.Hits)]
 
 		for i, spec := range goRes.Hits {
-			cArray[i] = goToCSpecificationEntry(&spec.Source)
+			goToCSpecificationEntry(&spec.Source, &cArray[i])
 		}
 	}
 
@@ -580,7 +612,7 @@ func goToCProfileResult(k *C.kuzzle, res *security.Profile, err error) *C.profil
 		return result
 	}
 
-	result.profile = goToCProfile(k, res)
+	result.profile = goToCProfile(k, res, nil)
 	return result
 }
 
@@ -612,12 +644,18 @@ func goToCUserData(data *types.UserData) (*C.user_data, error) {
 	return cdata, nil
 }
 
-func goToCUser(k *C.kuzzle, user *security.User) (*C.user, error) {
+func goToCUser(k *C.kuzzle, user *security.User, dest *C.user) (*C.user, error) {
 	if user == nil {
 		return nil, nil
 	}
 
-	cuser := (*C.user)(C.calloc(1, C.sizeof_user))
+	var cuser *C.user
+	if dest == nil {
+		cuser = (*C.user)(C.calloc(1, C.sizeof_user))
+	} else {
+		cuser = dest
+	}
+
 	cuser.id = C.CString(user.Id)
 	cuser.kuzzle = k
 
@@ -649,7 +687,7 @@ func goToCUserResult(k *C.kuzzle, user *security.User, err error) *C.user_result
 		return result
 	}
 
-	cuser, err := goToCUser(k, user)
+	cuser, err := goToCUser(k, user, nil)
 	if err != nil {
 		Set_user_result_error(result, err)
 		return result
@@ -670,23 +708,29 @@ func goToCProfilesResult(k *C.kuzzle, profiles []*security.Profile, err error) *
 	result.profiles_length = C.uint(len(profiles))
 
 	if profiles != nil {
-		result.profiles = (**C.profile)(C.calloc(C.size_t(len(profiles)), C.sizeof_profile_ptr))
-		carray := (*[1<<30 - 1]*C.profile)(unsafe.Pointer(result.profiles))[:len(profiles):len(profiles)]
+		result.profiles = (*C.profile)(C.calloc(C.size_t(len(profiles)), C.sizeof_profile))
+		carray := (*[1<<30 - 1]C.profile)(unsafe.Pointer(result.profiles))[:len(profiles):len(profiles)]
 
 		for i, profile := range profiles {
-			carray[i] = goToCProfile(k, profile)
+			goToCProfile(k, profile, &carray[i])
 		}
 	}
 
 	return result
 }
 
-func goToCUserRight(right *types.UserRights) *C.user_right {
+func goToCUserRight(right *types.UserRights, dest *C.user_right) *C.user_right {
 	if right == nil {
 		return nil
 	}
 
-	cright := (*C.user_right)(C.calloc(1, C.sizeof_user_right))
+	var cright *C.user_right
+	if dest == nil {
+		cright = (*C.user_right)(C.calloc(1, C.sizeof_user_right))
+	} else {
+		cright = dest
+	}
+
 	cright.controller = C.CString(right.Controller)
 	cright.action = C.CString(right.Action)
 	cright.index = C.CString(right.Index)
@@ -705,11 +749,38 @@ func goToCUserRightsResult(rights []*types.UserRights, err error) *C.user_rights
 
 	result.user_rights_length = C.uint(len(rights))
 	if rights != nil {
-		result.user_rights = (**C.user_right)(C.calloc(C.size_t(len(rights)), C.sizeof_user_right_ptr))
-		carray := (*[1<<30 - 1]*C.user_right)(unsafe.Pointer(result.user_rights))[:len(rights):len(rights)]
+		result.user_rights = (*C.user_right)(C.calloc(C.size_t(len(rights)), C.sizeof_user_right))
+		carray := (*[1<<30 - 1]C.user_right)(unsafe.Pointer(result.user_rights))[:len(rights):len(rights)]
 
 		for i, right := range rights {
-			carray[i] = goToCUserRight(right)
+			goToCUserRight(right, &carray[i])
+		}
+	}
+
+	return result
+}
+
+func goToCUserSearchResult(k *C.kuzzle, res *security.UserSearchResult, err error) *C.search_users_result {
+	result := (*C.search_users_result)(C.calloc(1, C.sizeof_search_users_result))
+
+	if err != nil {
+		Set_search_users_result_error(result, err)
+		return result
+	}
+
+	result.result = (*C.user_search)(C.calloc(1, C.sizeof_user_search))
+	result.result.length = C.uint(len(res.Hits))
+	result.result.total = C.uint(res.Total)
+	if res.ScrollId != "" {
+		result.result.scrollId = C.CString(res.ScrollId)
+	}
+
+	if len(res.Hits) > 0 {
+		result.result.hits = (*C.user)(C.calloc(C.size_t(len(res.Hits)), C.sizeof_user))
+		users := (*[1<<30 - 1]C.user)(unsafe.Pointer(result.result.hits))[:len(res.Hits)]
+
+		for i, user := range res.Hits {
+			goToCUser(k, user, &users[i])
 		}
 	}
 
@@ -767,4 +838,16 @@ func fillStatistics(res *types.Statistics, statistics *C.statistics) {
 	C.free(unsafe.Pointer(cCompleteRequest))
 	C.free(unsafe.Pointer(cConnections))
 	C.free(unsafe.Pointer(cFailedRequests))
+}
+
+// Allocates memory
+func goToCVoidResult(err error) *C.void_result {
+	if err == nil {
+		return nil
+	}
+
+	result := (*C.void_result)(C.calloc(1, C.sizeof_void_result))
+	Set_void_result_error(result, err)
+
+	return result
 }

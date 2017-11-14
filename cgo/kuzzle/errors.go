@@ -119,6 +119,10 @@ func Set_search_roles_result_error(s *C.search_roles_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
+func Set_search_users_result_error(s *C.search_users_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
 func Set_user_result_error(s *C.user_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
@@ -136,6 +140,10 @@ func Set_notification_result_error(s *C.notification_result, err error) {
 }
 
 func Set_collection_entry_error(s *C.collection_entry_result, err error) {
+	setErr(&s.status, s.error, s.stack, err)
+}
+
+func Set_void_result_error(s *C.void_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
