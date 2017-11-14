@@ -51,19 +51,19 @@ typedef struct {
     char *member1;
     char *member2;
     char **members;
-    unsigned members_length;
+    size_t members_length;
     double lon;
     double lat;
     double distance;
     char *unit;
     json_object *options;
     char **keys;
-    unsigned keys_length;
+    size_t keys_length;
     long cursor;
     long offset;
     char *field;
     char **fields;
-    unsigned fields_length;
+    size_t fields_length;
     char *subcommand;
     char *pattern;
     long idx;
@@ -83,7 +83,7 @@ typedef struct {
 
 typedef struct {
     query_object **queries;
-    unsigned long length;
+    size_t queries_length;
 } offline_queue;
 
 //options passed to query()
@@ -125,7 +125,7 @@ typedef struct {
     enum Mode connect;
     char *refresh;
     char *default_index;
-    json_object    *headers;
+    json_object *headers;
 } options;
 
 //meta of a document
@@ -145,19 +145,19 @@ typedef json_object controllers;
 typedef struct {
     char *index;
     char **collections;
-    unsigned collections_length;
+    size_t collections_length;
 } policy_restriction;
 
 typedef struct {
     char *role_id;
-    policy_restriction **restricted_to;
-    int restricted_to_length;
+    policy_restriction *restricted_to;
+    size_t restricted_to_length;
 } policy;
 
 typedef struct {
     char *id;
-    policy **policies;
-    unsigned policies_length;
+    policy *policies;
+    size_t policies_length;
     kuzzle *kuzzle;
 } profile;
 
@@ -172,7 +172,7 @@ typedef struct {
     char *id;
     json_object *content;
     char **profile_ids;
-    uint profile_ids_length;
+    size_t profile_ids_length;
     kuzzle *kuzzle;
 } user;
 
@@ -180,7 +180,7 @@ typedef struct {
 typedef struct {
     json_object *content;
     char **profile_ids;
-    uint profile_ids_length;
+    size_t profile_ids_length;
 } user_data;
 
 /* === Dedicated response structures === */
@@ -252,8 +252,8 @@ typedef struct {
 } profile_result;
 
 typedef struct {
-    profile **profiles;
-    uint profiles_length;
+    profile *profiles;
+    size_t profiles_length;
     int status;
     char *error;
     char *stack;
@@ -275,8 +275,8 @@ typedef struct {
 } user_right;
 
 typedef struct {
-    user_right **user_rights;
-    uint user_rights_length;
+    user_right *user_rights;
+    size_t user_rights_length;
     int status;
     char *error;
     char *stack;
@@ -313,7 +313,7 @@ typedef struct {
 
 typedef struct all_statistics_result {
     statistics* result;
-    unsigned int result_length;
+    size_t result_length;
     int status;
     char *error;
     char *stack;
@@ -322,7 +322,7 @@ typedef struct all_statistics_result {
 // ms.geopos
 typedef struct {
     double (*result)[2];
-    unsigned length;
+    size_t result_length;
     int status;
     char *error;
     char *stack;
@@ -374,7 +374,7 @@ typedef struct {
 //any array of json_object result
 typedef struct {
     json_object **result;
-    unsigned length;
+    size_t result_length;
     int status;
     char *error;
     char *stack;
@@ -407,7 +407,7 @@ typedef struct {
 //any array of integers result
 typedef struct {
     long long *result;
-    unsigned length;
+    size_t result_length;
     int status;
     char *error;
     char*stack;
@@ -424,7 +424,7 @@ typedef struct {
 //any array of strings result
 typedef struct string_array_result {
     char **result;
-    unsigned length;
+    size_t result_length;
     int status;
     char *error;
     char *stack;
@@ -438,24 +438,31 @@ typedef struct {
 } search_filters;
 
 typedef struct {
-    document** hits;
-    uint length;
+    document *hits;
+    size_t hits_length;
     uint total;
     char *scroll_id;
 } document_search;
 
 typedef struct {
-    profile **hits;
-    int length;
-    int total;
+    profile *hits;
+    size_t hits_length;
+    uint total;
     char *scroll_id;
 } profile_search;
 
 typedef struct {
-    role** hits;
-    int length;
-    int total;
+    role *hits;
+    size_t hits_length;
+    uint total;
 } role_search;
+
+typedef struct {
+    user *hits;
+    size_t hits_length;
+    uint total;
+    char *scroll_id;
+} user_search;
 
 //any delete* function
 typedef struct {
@@ -514,8 +521,15 @@ typedef struct {
 } search_roles_result;
 
 typedef struct {
-    specification_entry** hits;
-    uint length;
+    user_search *result;
+    int status;
+    char *error;
+    char *stack;
+} search_users_result;
+
+typedef struct {
+    specification_entry *hits;
+    size_t hits_length;
     uint total;
     char *scroll_id;
 } specification_search;
@@ -546,7 +560,7 @@ typedef struct  {
 
 typedef struct collection_entry_result {
     collection_entry* result;
-    unsigned int result_length;
+    size_t result_length;
     int status;
     char* error;
     char* stack;

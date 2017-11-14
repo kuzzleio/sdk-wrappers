@@ -96,7 +96,7 @@ func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C
 	}
 
 	result.result = (*C.statistics)(C.calloc(C.size_t(len(stats)), C.sizeof_statistics))
-	result.result_length = C.uint(len(stats))
+	result.result_length = C.size_t(len(stats))
 	statistics := (*[1<<30 - 1]C.statistics)(unsafe.Pointer(result.result))[:len(stats):len(stats)]
 
 	for i, stat := range stats {

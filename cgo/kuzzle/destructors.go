@@ -7,7 +7,7 @@ package main
   #include <stdlib.h>
   #include "kuzzlesdk.h"
 
-  static void free_char_array(char **arr, unsigned length) {
+  static void free_char_array(char **arr, size_t length) {
     if (arr != NULL) {
       for(int i = 0; i < length; i++) {
         free(arr[i]);
@@ -76,7 +76,7 @@ func destroy_query_object(st *C.query_object) {
 //export destroy_offline_queue
 func destroy_offline_queue(st *C.offline_queue) {
   if st != nil  && st.queries != nil {
-    queries := (*[1<<30 - 1]*C.query_object)(unsafe.Pointer(st.queries))[:int(st.length):int(st.length)]
+    queries := (*[1<<30 - 1]*C.query_object)(unsafe.Pointer(st.queries))[:int(st.queries_length):int(st.queries_length)]
 
     for _, query := range(queries) {
       destroy_query_object(query)
@@ -131,69 +131,97 @@ func destroy_meta(st *C.meta) {
   }
 }
 
-//export destroy_policy_restriction
-func destroy_policy_restriction(st *C.policy_restriction) {
+// do not export => used to free the content of a structure
+// and not the structure itself
+func _free_policy_restriction(st *C.policy_restriction) {
   if st != nil {
     C.free(unsafe.Pointer(st.index))
     C.free_char_array(st.collections, st.collections_length)
-    C.free(unsafe.Pointer(st))
+  }
+}
+
+//export destroy_policy_restriction
+func destroy_policy_restriction(st *C.policy_restriction) {
+  _free_policy_restriction(st)
+  C.free(unsafe.Pointer(st))
+}
+
+
+// do not export => used to free the content of a structure
+// and not the structure itself
+func _free_policy(st *C.policy) {
+  if st != nil {
+    C.free(unsafe.Pointer(st.role_id))
+
+    if st.restricted_to != nil {
+      restrictions := (*[1<<30 - 1]C.policy_restriction)(unsafe.Pointer(st.restricted_to))[:int(st.restricted_to_length):int(st.restricted_to_length)]
+
+      for _, restriction := range(restrictions) {
+        _free_policy_restriction(&restriction)
+      }
+    
+      C.free(unsafe.Pointer(st.restricted_to))
+    }
   }
 }
 
 //export destroy_policy
 func destroy_policy(st *C.policy) {
+  _free_policy(st)
+  C.free(unsafe.Pointer(st))
+}
+
+// do not export => used to free the content of a structure
+// and not the structure itself
+func _free_profile(st *C.profile) {
   if st != nil {
-    C.free(unsafe.Pointer(st.role_id))
+    C.free(unsafe.Pointer(st.id))
 
-    if st.restricted_to != nil {
-      restrictions := (*[1<<30 - 1]*C.policy_restriction)(unsafe.Pointer(st.restricted_to))[:int(st.restricted_to_length):int(st.restricted_to_length)]
+    if st.policies != nil {
+      policies := (*[1<<30 - 1]C.policy)(unsafe.Pointer(st.policies))[:int(st.policies_length):int(st.policies_length)]
 
-      for _, restriction := range(restrictions) {
-        destroy_policy_restriction(restriction)
+      for _, policy := range(policies) {
+        _free_policy(&policy)
       }
-      C.free(unsafe.Pointer(st.restricted_to))
-    }
 
-    C.free(unsafe.Pointer(st))
+      C.free(unsafe.Pointer(st.policies))
+    }
   }
 }
 
 //export destroy_profile
 func destroy_profile(st *C.profile) {
+  _free_profile(st)
+  C.free(unsafe.Pointer(st))
+}
+
+//do not export
+func _free_role(st *C.role) {
   if st != nil {
     C.free(unsafe.Pointer(st.id))
-
-    if st.policies != nil {
-      policies := (*[1<<30 - 1]*C.policy)(unsafe.Pointer(st.policies))[:int(st.policies_length):int(st.policies_length)]
-
-      for _, policy := range(policies) {
-        destroy_policy(policy)
-      }
-
-      C.free(unsafe.Pointer(st.policies))
-    }
-
-    C.free(unsafe.Pointer(st))
+    kuzzle_wrapper_free_json_object(st.controllers)
   }
 }
 
 //export destroy_role
 func destroy_role(st *C.role) {
+  _free_role(st)
+  C.free(unsafe.Pointer(st))
+}
+
+//do not export
+func _free_user(st *C.user) {
   if st != nil {
     C.free(unsafe.Pointer(st.id))
-    kuzzle_wrapper_free_json_object(st.controllers)
-    C.free(unsafe.Pointer(st))
+    kuzzle_wrapper_free_json_object(st.content)
+    C.free_char_array(st.profile_ids, st.profile_ids_length)
   }
 }
 
 //export destroy_user
 func destroy_user(st *C.user) {
-  if st != nil {
-    C.free(unsafe.Pointer(st.id))
-    kuzzle_wrapper_free_json_object(st.content)
-    C.free_char_array(st.profile_ids, st.profile_ids_length)
-    C.free(unsafe.Pointer(st))
-  }
+  _free_user(st)
+  C.free(unsafe.Pointer(st))
 }
 
 //export destroy_user_data
@@ -214,8 +242,8 @@ func destroy_collection(st *C.collection) {
   }
 }
 
-//export destroy_document
-func destroy_document(st *C.document) {
+//do not export
+func _free_document(st *C.document) {
   if st != nil {
     C.free(unsafe.Pointer(st.id))
     C.free(unsafe.Pointer(st.index))
@@ -227,9 +255,13 @@ func destroy_document(st *C.document) {
 
     destroy_meta(st.meta)
     destroy_collection(st._collection)
-
-    C.free(unsafe.Pointer(st))
   }
+}
+
+//export destroy_document
+func destroy_document(st *C.document) {
+  _free_document(st)
+  C.free(unsafe.Pointer(st))
 }
 
 //export destroy_document_result
@@ -291,10 +323,10 @@ func destroy_profile_result(st *C.profile_result){
 func destroy_profiles_result(st *C.profiles_result) {
   if st != nil {
     if st.profiles != nil {
-      profiles := (*[1<<30 - 1]*C.profile)(unsafe.Pointer(st.profiles))[:int(st.profiles_length):int(st.profiles_length)]
+      profiles := (*[1<<30 - 1]C.profile)(unsafe.Pointer(st.profiles))[:int(st.profiles_length):int(st.profiles_length)]
 
       for _, profile := range(profiles) {
-        destroy_profile(profile)
+        _free_profile(&profile)
       }
 
       C.free(unsafe.Pointer(st.profiles))
@@ -316,26 +348,32 @@ func destroy_role_result(st *C.role_result) {
   }
 }
 
-//export destroy_user_right
-func destroy_user_right(st *C.user_right) {
+// do not export => used to free the content of a structure
+// and not the structure itself
+func _free_user_right(st *C.user_right) {
   if st != nil {
     C.free(unsafe.Pointer(st.controller))
     C.free(unsafe.Pointer(st.action))
     C.free(unsafe.Pointer(st.index))
     C.free(unsafe.Pointer(st.collection))
     C.free(unsafe.Pointer(st.value))
-    C.free(unsafe.Pointer(st))
   }
+}
+
+//export destroy_user_right
+func destroy_user_right(st *C.user_right) {
+  _free_user_right(st)
+  C.free(unsafe.Pointer(st))
 }
 
 //export destroy_user_rights_result
 func destroy_user_rights_result(st *C.user_rights_result) {
   if st != nil {
     if st.user_rights != nil {
-      rights := (*[1<<30-1]*C.user_right)(unsafe.Pointer(st.user_rights))[:int(st.user_rights_length):int(st.user_rights_length)]
+      rights := (*[1<<30-1]C.user_right)(unsafe.Pointer(st.user_rights))[:int(st.user_rights_length):int(st.user_rights_length)]
 
       for _, right := range(rights) {
-        destroy_user_right(right)
+        _free_user_right(&right)
       }
 
       C.free(unsafe.Pointer(st.user_rights))
@@ -357,15 +395,21 @@ func destroy_user_result(st *C.user_result) {
   }
 }
 
-//export destroy_statistics
-func destroy_statistics(st *C.statistics) {
+// do not export => used to free the content of a structure
+// and not the structure itself
+func _free_statistics(st *C.statistics) {
   if st != nil {
     kuzzle_wrapper_free_json_object(st.completed_requests)
     kuzzle_wrapper_free_json_object(st.connections)
     kuzzle_wrapper_free_json_object(st.failed_requests)
     kuzzle_wrapper_free_json_object(st.ongoing_requests)
-    C.free(unsafe.Pointer(st))
   }
+}
+
+//export destroy_statistics
+func destroy_statistics(st *C.statistics) {
+  _free_statistics(st)
+  C.free(unsafe.Pointer(st))
 }
 
 //export destroy_statistics_result
@@ -385,10 +429,7 @@ func destroy_all_statistics_result(st *C.all_statistics_result) {
       stats := (*[1<<30 - 1]C.statistics)(unsafe.Pointer(st.result))
 
       for _, stat := range(stats) {
-        kuzzle_wrapper_free_json_object(stat.completed_requests)
-        kuzzle_wrapper_free_json_object(stat.connections)
-        kuzzle_wrapper_free_json_object(stat.failed_requests)
-        kuzzle_wrapper_free_json_object(stat.ongoing_requests)
+        _free_statistics(&stat)
       }
 
       C.free(unsafe.Pointer(st.result))
@@ -454,7 +495,7 @@ func destroy_json_result(st *C.json_result) {
 func destroy_json_array_result(st *C.json_array_result) {
   if st != nil {
     if st.result != nil {
-      jobjects := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(st.result))[:int(st.length):int(st.length)]
+      jobjects := (*[1<<30 - 1]*C.json_object)(unsafe.Pointer(st.result))[:int(st.result_length):int(st.result_length)]
 
       for _, jobject := range(jobjects) {
         kuzzle_wrapper_free_json_object(jobject)
@@ -519,7 +560,7 @@ func destroy_string_result(st *C.string_result) {
 //export destroy_string_array_result
 func destroy_string_array_result(st *C.string_array_result) {
   if st != nil {
-    C.free_char_array(st.result, st.length)
+    C.free_char_array(st.result, st.result_length)
     C.free(unsafe.Pointer(st.error))
     C.free(unsafe.Pointer(st.stack))
     C.free(unsafe.Pointer(st))
@@ -543,10 +584,10 @@ func destroy_document_search(st *C.document_search) {
     C.free(unsafe.Pointer(st.scroll_id))
 
     if st.hits != nil {
-      hits := (*[1<<30 - 1]*C.document)(unsafe.Pointer(st.hits))[:int(st.length):int(st.length)]
+      hits := (*[1<<30 - 1]C.document)(unsafe.Pointer(st.hits))[:int(st.hits_length):int(st.hits_length)]
 
       for _, document := range(hits) {
-        destroy_document(document)
+        _free_document(&document)
       }
 
       C.free(unsafe.Pointer(st.hits))
@@ -562,10 +603,10 @@ func destroy_profile_search(st *C.profile_search) {
     C.free(unsafe.Pointer(st.scroll_id))
 
     if st.hits != nil {
-      hits := (*[1<<30 - 1]*C.profile)(unsafe.Pointer(st.hits))[:int(st.length):int(st.length)]
+      hits := (*[1<<30 - 1]C.profile)(unsafe.Pointer(st.hits))[:int(st.hits_length):int(st.hits_length)]
 
       for _, profile := range(hits) {
-        destroy_profile(profile)
+        _free_profile(&profile)
       }
 
       C.free(unsafe.Pointer(st.hits))
@@ -579,10 +620,10 @@ func destroy_profile_search(st *C.profile_search) {
 func destroy_role_search(st *C.role_search) {
   if st != nil {
     if st.hits != nil {
-      hits := (*[1<<30 - 1]*C.role)(unsafe.Pointer(st.hits))[:int(st.length):int(st.length)]
+      hits := (*[1<<30 - 1]C.role)(unsafe.Pointer(st.hits))[:int(st.hits_length):int(st.hits_length)]
 
       for _, role := range(hits) {
-        destroy_role(role)
+        _free_role(&role)
       }
 
       C.free(unsafe.Pointer(st.hits))
@@ -620,14 +661,19 @@ func destroy_specification(st *C.specification) {
   }
 }
 
-//export destroy_specification_entry
-func destroy_specification_entry(st *C.specification_entry) {
+//do not export
+func _free_specification_entry(st *C.specification_entry) {
   if st != nil {
     destroy_specification(st.validation)
     C.free(unsafe.Pointer(st.index))
     C.free(unsafe.Pointer(st.collection))
-    C.free(unsafe.Pointer(st))
   }
+}
+
+//export destroy_specification_entry
+func destroy_specification_entry(st *C.specification_entry) {
+  _free_specification_entry(st)
+  C.free(unsafe.Pointer(st))
 }
 
 //export destroy_specification_result
@@ -674,10 +720,10 @@ func destroy_search_roles_result(st *C.search_roles_result) {
 func destroy_specification_search(st *C.specification_search) {
   if st != nil {
     if st.hits != nil {
-      hits := (*[1<<30  - 1]*C.specification_entry)(unsafe.Pointer(st.hits))[:int(st.length):int(st.length)]
+      hits := (*[1<<30  - 1]C.specification_entry)(unsafe.Pointer(st.hits))[:int(st.hits_length):int(st.hits_length)]
 
       for _, entry := range(hits) {
-        destroy_specification_entry(entry)
+        _free_specification_entry(&entry)
       }
 
       C.free(unsafe.Pointer(st.hits))
@@ -710,6 +756,76 @@ func destroy_mapping(st *C.mapping) {
 func destroy_mapping_result(st *C.mapping_result) {
   if st != nil {
     destroy_mapping(st.result)
+    C.free(unsafe.Pointer(st.error))
+    C.free(unsafe.Pointer(st.stack))
+    C.free(unsafe.Pointer(st))
+  }
+}
+
+//export destroy_void_result
+func destroy_void_result(st *C.void_result) {
+  if st != nil {
+    C.free(unsafe.Pointer(st.error))
+    C.free(unsafe.Pointer(st.stack))
+    C.free(unsafe.Pointer(st))
+  }
+}
+
+
+//do not export
+func _free_collection_entry(st *C.collection_entry) {
+  if st != nil {
+    C.free(unsafe.Pointer(st.name))
+  }
+}
+
+//export destroy_collection_entry
+func destroy_collection_entry(st *C.collection_entry) {
+  _free_collection_entry(st)
+  C.free(unsafe.Pointer(st))
+}
+
+//export destroy_collection_entry_result
+func destroy_collection_entry_result(st *C.collection_entry_result) {
+  if st != nil {
+    if st.result != nil {
+      entries := (*[1<<30 - 1]C.collection_entry)(unsafe.Pointer(st.result))[:int(st.result_length):int(st.result_length)]
+
+      for _, entry := range(entries) {
+        _free_collection_entry(&entry)
+      }
+
+      C.free(unsafe.Pointer(st.result))
+    }
+
+    C.free(unsafe.Pointer(st.error))
+    C.free(unsafe.Pointer(st.stack))
+    C.free(unsafe.Pointer(st))
+  }
+}
+
+//export destroy_user_search
+func destroy_user_search(st *C.user_search) {
+  if st != nil {
+    if st.hits != nil {
+      hits := (*[1<<30-1]C.user)(unsafe.Pointer(st.hits))[:int(st.hits_length):int(st.hits_length)]
+
+      for _, user := range(hits) {
+        _free_user(&user)
+      }
+
+      C.free(unsafe.Pointer(st.hits))
+    }
+
+    C.free(unsafe.Pointer(st.scroll_id))
+    C.free(unsafe.Pointer(st))
+  }
+}
+
+//export destroy_search_users_result
+func destroy_search_users_result(st *C.search_users_result) {
+  if st != nil {
+    destroy_user_search(st.result)
     C.free(unsafe.Pointer(st.error))
     C.free(unsafe.Pointer(st.stack))
     C.free(unsafe.Pointer(st))

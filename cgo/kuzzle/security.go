@@ -16,11 +16,14 @@ import (
 	"unsafe"
 )
 
+// --- profile
+
 //export kuzzle_wrapper_security_new_profile
-func kuzzle_wrapper_security_new_profile(k *C.kuzzle, id *C.char, policies **C.policy) *C.profile {
+func kuzzle_wrapper_security_new_profile(k *C.kuzzle, id *C.char, policies *C.policy, policies_length C.size_t) *C.profile {
 	cprofile := (*C.profile)(C.calloc(1, C.sizeof_profile))
 	cprofile.id = id
 	cprofile.policies = policies
+	cprofile.policies_length = policies_length
 	cprofile.kuzzle = k
 
 	return cprofile
@@ -67,7 +70,7 @@ func kuzzle_wrapper_security_fetch_profile(k *C.kuzzle, id *C.char, o *C.query_o
 		return result
 	}
 
-	result.profile = goToCProfile(k, profile)
+	result.profile = goToCProfile(k, profile, nil)
 
 	return result
 }
@@ -92,7 +95,8 @@ func kuzzle_wrapper_security_search_profiles(k *C.kuzzle, f *C.search_filters, o
 func kuzzle_wrapper_security_profile_add_policy(p *C.profile, policy *C.policy) *C.profile {
 	profile := cToGoProfile(p).AddPolicy(cToGoPolicy(policy))
 
-	return goToCProfile(p.kuzzle, profile)
+	// @TODO: check if this method is useful and if so, the original pointer to p should be returned instead of a new allocated struct
+	return goToCProfile(p.kuzzle, profile, nil)
 }
 
 //export kuzzle_wrapper_security_profile_delete
@@ -112,6 +116,8 @@ func kuzzle_wrapper_security_profile_save(p *C.profile, o *C.query_options) *C.p
 
 	return goToCProfileResult(p.kuzzle, res, err)
 }
+
+// --- role
 
 //export kuzzle_wrapper_security_new_role
 func kuzzle_wrapper_security_new_role(k *C.kuzzle, id *C.char, c *C.controllers) *C.role {
@@ -150,7 +156,7 @@ func kuzzle_wrapper_security_fetch_role(k *C.kuzzle, id *C.char, o *C.query_opti
 		return result
 	}
 
-	result.role = goToCRole(k, role)
+	result.role = goToCRole(k, role, nil)
 
 	return result
 }
@@ -194,10 +200,12 @@ func kuzzle_wrapper_security_role_save(r *C.role, o *C.query_options) *C.role_re
 		return result
 	}
 
-	result.role = goToCRole(r.kuzzle, res)
+	result.role = goToCRole(r.kuzzle, res, nil)
 
 	return result
 }
+
+// --- user
 
 //export kuzzle_wrapper_security_new_user
 func kuzzle_wrapper_security_new_user(k *C.kuzzle, id *C.char, d *C.user_data) *C.user {
@@ -238,6 +246,24 @@ func kuzzle_wrapper_security_destroy_user(u *C.user) {
 	}
 
 	C.free(unsafe.Pointer(u))
+}
+
+//export kuzzle_wrapper_security_fetch_user
+func kuzzle_wrapper_security_fetch_user(k *C.kuzzle, id *C.char, o *C.query_options) *C.user_result {
+	res, err := (*kuzzle.Kuzzle)(k.instance).Security.FetchUser(C.GoString(id), SetQueryOptions(o))
+	return goToCUserResult(k, res, err)
+}
+
+//export kuzzle_wrapper_security_scroll_users
+func kuzzle_wrapper_security_scroll_users(k *C.kuzzle, s *C.char, o *C.query_options) *C.search_users_result {
+	res, err := (*kuzzle.Kuzzle)(k.instance).Security.ScrollUsers(C.GoString(s), SetQueryOptions(o))
+	return goToCUserSearchResult(k, res, err)
+}
+
+//export kuzzle_wrapper_security_search_users
+func kuzzle_wrapper_security_search_users(k *C.kuzzle, f *C.search_filters, o *C.query_options) *C.search_users_result {
+	res, err := (*kuzzle.Kuzzle)(k.instance).Security.SearchUsers(cToGoSearchFilters(f), SetQueryOptions(o))
+	return goToCUserSearchResult(k, res, err)
 }
 
 //export kuzzle_wrapper_security_user_create
