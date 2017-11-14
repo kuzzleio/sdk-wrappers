@@ -440,27 +440,27 @@ typedef struct {
 typedef struct {
     document *hits;
     size_t hits_length;
-    uint total;
+    unsigned total;
     char *scroll_id;
 } document_search;
 
 typedef struct {
     profile *hits;
     size_t hits_length;
-    uint total;
+    unsigned total;
     char *scroll_id;
 } profile_search;
 
 typedef struct {
     role *hits;
     size_t hits_length;
-    uint total;
+    unsigned total;
 } role_search;
 
 typedef struct {
     user *hits;
     size_t hits_length;
-    uint total;
+    unsigned total;
     char *scroll_id;
 } user_search;
 
@@ -530,7 +530,7 @@ typedef struct {
 typedef struct {
     specification_entry *hits;
     size_t hits_length;
-    uint total;
+    unsigned total;
     char *scroll_id;
 } specification_search;
 
