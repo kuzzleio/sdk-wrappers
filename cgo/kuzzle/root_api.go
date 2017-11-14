@@ -17,7 +17,7 @@ import (
 )
 
 //export kuzzle_wrapper_list_collections
-func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.collections_list_result {
+func kuzzle_wrapper_list_collections(k *C.kuzzle, index *C.char, options *C.query_options) *C.collection_entry_result {
 	res, err := (*kuzzle.Kuzzle)(k.instance).ListCollections(
 		C.GoString(index),
 		SetQueryOptions(options))
@@ -96,11 +96,11 @@ func kuzzle_wrapper_get_all_statistics(k *C.kuzzle, options *C.query_options) *C
 	}
 
 	result.result = (*C.statistics)(C.calloc(C.size_t(len(stats)), C.sizeof_statistics))
-	result.res_size = C.int(len(stats))
+	result.result_length = C.uint(len(stats))
 	statistics := (*[1<<30 - 1]C.statistics)(unsafe.Pointer(result.result))[:len(stats):len(stats)]
 
 	for i, stat := range stats {
-		goToCStatistics(stat, &statistics[i])
+		fillStatistics(stat, &statistics[i])
 	}
 
 	return result
@@ -121,7 +121,7 @@ func kuzzle_wrapper_get_statistics(k *C.kuzzle, timestamp C.time_t, options *C.q
 		return result
 	}
 
-	goToCStatistics(res, result.result)
+	fillStatistics(res, result.result)
 
 	return result
 }

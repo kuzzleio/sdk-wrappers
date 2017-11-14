@@ -135,7 +135,7 @@ func Set_notification_result_error(s *C.notification_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 
-func Set_collections_list_error(s *C.collections_list_result, err error) {
+func Set_collection_entry_error(s *C.collection_entry_result, err error) {
 	setErr(&s.status, s.error, s.stack, err)
 }
 

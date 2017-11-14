@@ -10,8 +10,8 @@
 %rename(Statistics) statistics;
 %rename(AllStatisticsResult) all_statistics_result;
 %rename(StatisticsResult) statistics_result;
-%rename(CollectionsList) collections_list;
-%rename(CollectionsListResult) collections_list_result;
+%rename(CollectionsList) collection_entry;
+%rename(CollectionsListResult) collection_entry_result;
 %rename(StringArrayResult) string_array_result;
 
 %include "typemap.i"
@@ -231,10 +231,10 @@ struct json_object { };
     }
 
     // listCollections
-    collections_list_result* listCollections(char *index, query_options* options) {
+    collection_entry_result* listCollections(char *index, query_options* options) {
         return kuzzle_wrapper_list_collections($self, index, options);
     }
-    collections_list_result* listCollections(char *index) {
+    collection_entry_result* listCollections(char *index) {
         return kuzzle_wrapper_list_collections($self, index, NULL);
     }
 
@@ -244,10 +244,5 @@ struct json_object { };
     }
     string_array_result* listIndexes() {
         return kuzzle_wrapper_list_indexes($self, NULL);
-    }
-
-    // disconnect
-    void disconnect() {
-        kuzzle_wrapper_disconnect($self);
     }
 }
