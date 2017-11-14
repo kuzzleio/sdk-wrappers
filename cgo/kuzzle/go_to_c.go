@@ -768,3 +768,15 @@ func fillStatistics(res *types.Statistics, statistics *C.statistics) {
 	C.free(unsafe.Pointer(cConnections))
 	C.free(unsafe.Pointer(cFailedRequests))
 }
+
+// Allocates memory
+func goToCVoidResult(err error) *C.void_result {
+	if err == nil {
+		return nil
+	}
+
+	result := (*C.void_result)(C.calloc(1, C.sizeof_void_result))
+	Set_void_result_error(result, err)
+
+	return result
+}
