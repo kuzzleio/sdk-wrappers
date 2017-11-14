@@ -2,6 +2,7 @@
 %rename(AckResponse) ack_response;
 %rename(queueTTL) queue_ttl;
 %rename(Options) options;
+%rename(QueryOptions) query_options;
 %rename(Kuzzle) kuzzle;
 %rename(JsonObject) json_object;
 %rename(JsonResult) json_result;
@@ -15,6 +16,7 @@
 %rename(StringArrayResult) string_array_result;
 
 %include "typemap.i"
+%include "javadoc.i"
 %include "../../kcore.i"
 
 %pragma(java) jniclasscode=%{
@@ -184,6 +186,9 @@ struct json_object { };
     string_result* login(char* strategy, json_object* credentials) {
         return kuzzle_wrapper_login($self, strategy, credentials, NULL);
     }
+    string_result* login(char* strategy) {
+        return kuzzle_wrapper_login($self, strategy, NULL, NULL);
+    }
 
     // getAllStatistics
     all_statistics_result* getAllStatistics(query_options* options) {
@@ -237,6 +242,9 @@ struct json_object { };
     collection_entry_result* listCollections(char *index) {
         return kuzzle_wrapper_list_collections($self, index, NULL);
     }
+    collection_entry_result* listCollections() {
+        return kuzzle_wrapper_list_collections($self, NULL, NULL);
+    }
 
     // listIndexes
     string_array_result* listIndexes(query_options* options) {
@@ -244,5 +252,15 @@ struct json_object { };
     }
     string_array_result* listIndexes() {
         return kuzzle_wrapper_list_indexes($self, NULL);
+    }
+
+    // disconnect
+    void disconnect() {
+        kuzzle_wrapper_disconnect($self);
+    }
+
+    // logout
+    void logout() {
+        kuzzle_wrapper_logout($self);
     }
 }
