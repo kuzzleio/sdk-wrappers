@@ -381,7 +381,19 @@ func destroy_statistics_result(st *C.statistics_result) {
 //export destroy_all_statistics_result
 func destroy_all_statistics_result(st *C.all_statistics_result) {
   if st != nil {
-    destroy_statistics(st.res)
+    if st.result != nil {
+      stats := (*[1<<30 - 1]C.statistics)(unsafe.Pointer(st.result))
+
+      for _, stat := range(stats) {
+        kuzzle_wrapper_free_json_object(stat.completed_requests)
+        kuzzle_wrapper_free_json_object(stat.connections)
+        kuzzle_wrapper_free_json_object(stat.failed_requests)
+        kuzzle_wrapper_free_json_object(stat.ongoing_requests)
+      }
+
+      C.free(unsafe.Pointer(st.result))
+    }
+
     C.free(unsafe.Pointer(st.error))
     C.free(unsafe.Pointer(st.stack))
     C.free(unsafe.Pointer(st))
